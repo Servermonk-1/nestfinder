@@ -1,0 +1,47 @@
+# ── Secrets ──────────────────────────────────────────────
+# server/.env holds the Atlas connection string, JWT secret, Gmail app password
+# and Turnstile secret. Committing it publishes all of them — and a public repo
+# is scraped for credentials within minutes.
+.env
+.env.*
+!.env.example
+
+# ── Uploaded files ───────────────────────────────────────
+# This folder receives KYC identity documents as well as listing photos and
+# profile pictures. It contains real people's ID scans and must never be
+# committed. Keep the folder itself so the server can write to it on a fresh
+# clone.
+server/uploads/*
+!server/uploads/.gitkeep
+
+# ── Dependencies & build output ──────────────────────────
+node_modules/
+dist/
+dist-ssr/
+build/
+*.local
+
+# ── Logs ─────────────────────────────────────────────────
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Test artefacts ───────────────────────────────────────
+coverage/
+.vitest/
+
+# ── Editors & OS ─────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea/
+.DS_Store
+Thumbs.db
+*.suo
+*.swp
+
+# Claude Code local settings (per-machine, not project source)
+.claude/settings.local.json
+**/.claude/settings.local.json

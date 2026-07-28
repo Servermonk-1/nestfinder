@@ -1,0 +1,119 @@
+/* Leaflet renders markers as bare DOM nodes, so their styling lives here rather
+   than in Tailwind classes on a component. */
+
+.leaflet-container {
+	font-family: inherit;
+	background: #eae3d6;
+}
+
+/* ── Price pill (dashboard map) ── */
+.nf-price-marker {
+	background: none;
+	border: 0;
+}
+
+.nf-price-pill {
+	display: inline-block;
+	transform: translate(-50%, -50%);
+	white-space: nowrap;
+	padding: 4px 10px;
+	border-radius: 999px;
+	background: #fffdf9;
+	color: #8a4028;
+	border: 1.5px solid #c2603f;
+	font-size: 12px;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	box-shadow: 0 3px 10px -2px rgba(60, 40, 25, 0.35);
+	cursor: pointer;
+	transition: background-color 0.15s, color 0.15s, transform 0.15s;
+}
+
+.nf-price-pill:hover,
+.nf-price-pill--active {
+	background: #c2603f;
+	color: #fffdf9;
+	transform: translate(-50%, -50%) scale(1.08);
+}
+
+/* Keep the hovered/selected pill above its neighbours. */
+.leaflet-marker-icon:hover,
+.nf-price-marker:has(.nf-price-pill--active) {
+	z-index: 1000 !important;
+}
+
+/* ── Teardrop pin (single-listing map) ── */
+.nf-pin-marker {
+	background: none;
+	border: 0;
+}
+
+.nf-pin {
+	display: block;
+	width: 22px;
+	height: 22px;
+	margin: 2px;
+	border-radius: 50% 50% 50% 0;
+	transform: rotate(-45deg);
+	background: #c2603f;
+	border: 2.5px solid #fffdf9;
+	box-shadow: 0 3px 9px -1px rgba(60, 40, 25, 0.45);
+}
+
+/* ── Workplace marker (SIWES placement) ──
+   Deliberately a different shape and colour from the room pins: a student must
+   never confuse where they'll work with where they'd live. */
+.nf-work-marker {
+	background: none;
+	border: 0;
+}
+
+.nf-work {
+	display: block;
+	width: 24px;
+	height: 24px;
+	margin: 3px;
+	border-radius: 6px;
+	transform: rotate(45deg);
+	background: #8a5a44;
+	border: 3px solid #fffdf9;
+	box-shadow: 0 3px 10px -1px rgba(60, 40, 25, 0.5);
+}
+
+/* ── Popups, restyled to match the surrounding cards ── */
+.leaflet-popup-content-wrapper {
+	border-radius: 14px;
+	background: #fffdf9;
+	box-shadow: 0 14px 34px -12px rgba(60, 40, 25, 0.4);
+}
+
+.leaflet-popup-content {
+	margin: 0;
+	width: 208px !important;
+}
+
+.leaflet-popup-tip {
+	background: #fffdf9;
+}
+
+.leaflet-popup-close-button {
+	color: #5e5649 !important;
+	padding: 6px 7px 0 0 !important;
+}
+
+.leaflet-control-attribution {
+	background: rgba(255, 253, 249, 0.85) !important;
+	font-size: 10px;
+}
+
+/* Leaflet's default zoom buttons are stark white squares against a warm map. */
+.leaflet-bar a {
+	background: #fffdf9;
+	color: #5e5649;
+	border-bottom-color: rgba(94, 86, 73, 0.18);
+}
+
+.leaflet-bar a:hover {
+	background: #f5f1ea;
+	color: #8a4028;
+}

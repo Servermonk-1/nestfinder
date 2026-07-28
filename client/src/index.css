@@ -1,0 +1,147 @@
+@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Inter:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html,
+  body,
+  #root {
+    min-height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #2B2620;
+    background-color: #DAD4C9;
+    /* Calm warm wash — terracotta, ochre & a whisper of sage over warm stone */
+    background-image:
+      radial-gradient(880px 500px at 8% -6%, rgba(194, 96, 63, 0.12), transparent 60%),
+      radial-gradient(820px 600px at 104% 2%, rgba(199, 154, 62, 0.12), transparent 55%),
+      radial-gradient(760px 760px at 52% 118%, rgba(110, 139, 94, 0.08), transparent 60%);
+    background-attachment: fixed;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  input,
+  textarea,
+  select {
+    outline: none;
+    font-family: inherit;
+  }
+
+  ::selection {
+    background: rgba(194, 96, 63, 0.22);
+    color: #2B2620;
+  }
+
+  ::-webkit-scrollbar {
+    width: 11px;
+    height: 11px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #D2CBBE;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(#B9AF9C, #A79C86);
+    border: 3px solid #D2CBBE;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(#A79C86, #948872);
+  }
+}
+
+@layer components {
+  /* Frosted cream glass for the warm theme */
+  .glass {
+    background: rgba(245, 241, 234, 0.68);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+  .glass-strong {
+    background: rgba(245, 241, 234, 0.86);
+    backdrop-filter: blur(22px);
+    -webkit-backdrop-filter: blur(22px);
+    border: 1px solid rgba(255, 255, 255, 0.75);
+  }
+  /* Glass on top of a warm coloured panel */
+  .glass-tint {
+    background: rgba(255, 250, 244, 0.15);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 250, 244, 0.28);
+  }
+
+  .btn-primary {
+    @apply bg-brand-gradient text-white font-bold px-6 py-3 rounded-xl shadow-glow-sm transition-all duration-200 cursor-pointer;
+  }
+  .btn-primary:hover {
+    @apply shadow-glow -translate-y-0.5;
+  }
+  .btn-secondary {
+    @apply text-text font-semibold px-6 py-3 rounded-xl border border-line bg-surface transition-all duration-200 cursor-pointer hover:border-primary/50 hover:shadow-card;
+  }
+
+  .card {
+    @apply bg-surface rounded-2xl border border-line shadow-card transition-all duration-300;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl text-text border border-line bg-surface-alt focus:border-primary/70 focus:bg-surface focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder-muted;
+  }
+
+  .badge-available {
+    @apply bg-success/15 text-success text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+  .badge-unavailable {
+    @apply bg-danger/12 text-danger text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+  .badge-verified {
+    @apply bg-primary/12 text-primary text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+  .badge-flagged {
+    @apply bg-highlight/18 text-highlight text-xs font-semibold px-2.5 py-1 rounded-full;
+  }
+}
+
+@layer utilities {
+  /* Warm terracotta→ochre gradient text */
+  .text-gradient {
+    background: linear-gradient(120deg, #C2603F 0%, #C79A3E 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+  .text-shimmer {
+    background: linear-gradient(100deg, #9C4A2E 20%, #C2603F 42%, #E4C079 52%, #C2603F 62%, #9C4A2E 84%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    animation: shimmer 6s linear infinite;
+  }
+
+  .bg-grid {
+    background-image:
+      linear-gradient(rgba(43, 38, 32, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(43, 38, 32, 0.05) 1px, transparent 1px);
+    background-size: 46px 46px;
+  }
+
+  .mask-fade-b {
+    -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+    mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+}

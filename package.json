@@ -1,0 +1,10 @@
+{
+  "name": "nestfinder",
+  "private": true,
+  "description": "NestFinder — SIWES off-campus housing platform (client + server).",
+  "scripts": {
+    "test": "npm --prefix server test && npm --prefix client test",
+    "test:server": "npm --prefix server test",
+    "test:client": "npm --prefix client test"
+  }
+}
