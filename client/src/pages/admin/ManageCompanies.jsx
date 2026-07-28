@@ -175,7 +175,7 @@ export default function ManageCompanies() {
 						</button>
 						<button
 							onClick={() => openEditor(null)}
-							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25"
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25"
 						>
 							<Plus className="h-4 w-4" /> Add company
 						</button>
@@ -190,7 +190,7 @@ export default function ManageCompanies() {
 							onClick={() => setStatus(t.id)}
 							aria-pressed={status === t.id}
 							className={`rounded-full px-4 py-2 text-xs font-bold transition ${
-								status === t.id ? 'bg-primary text-base' : 'border border-muted/20 text-muted hover:text-text'
+								status === t.id ? 'bg-primary text-white' : 'border border-muted/20 text-muted hover:text-text'
 							}`}
 						>
 							{t.label} ({t.count ?? 0})
@@ -240,7 +240,7 @@ export default function ManageCompanies() {
 										<div className="flex flex-wrap items-center gap-2">
 											<h2 className="font-serif text-base font-bold text-text">{c.name}</h2>
 											{c.verified ? (
-												<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success">
+												<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
 													<Check className="h-3 w-3" /> Published
 												</span>
 											) : (
@@ -374,7 +374,7 @@ export default function ManageCompanies() {
 							<button
 								onClick={runBulkImport}
 								disabled={bulkSaving}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base disabled:opacity-60"
+								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
 							>
 								{bulkSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />} Import
 							</button>
@@ -438,7 +438,7 @@ export default function ManageCompanies() {
 										onClick={() => toggleFaculty(f)}
 										aria-pressed={form.faculties.includes(f)}
 										className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-											form.faculties.includes(f) ? 'bg-primary text-base' : 'border border-muted/20 text-muted'
+											form.faculties.includes(f) ? 'bg-primary text-white' : 'border border-muted/20 text-muted'
 										}`}
 									>
 										{f}
@@ -497,7 +497,7 @@ export default function ManageCompanies() {
 							<button
 								type="submit"
 								disabled={saving}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base disabled:opacity-60"
+								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
 							>
 								{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Save
 							</button>

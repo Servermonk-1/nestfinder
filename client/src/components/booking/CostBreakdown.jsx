@@ -32,7 +32,7 @@ export default function CostBreakdown({ cost, showSplit = false }) {
 						<span className="text-muted">
 							{r.label(cost)}
 							{r.note && (
-								<span className="ml-1.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-bold text-success">
+								<span className="ml-1.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-bold text-success-ink">
 									{r.note}
 								</span>
 							)}
@@ -55,7 +55,7 @@ export default function CostBreakdown({ cost, showSplit = false }) {
 			)}
 
 			<p className="mt-3 flex items-start gap-2 rounded-xl bg-success/8 p-3 text-xs text-text">
-				<ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+				<ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success-ink" />
 				<span>
 					Your money is <span className="font-bold">held by NestFinder</span>, not sent to the landlord.
 					It's only released once you confirm you've moved in — so if the room isn't what was advertised,

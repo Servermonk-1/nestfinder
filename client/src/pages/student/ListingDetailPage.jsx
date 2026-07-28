@@ -385,7 +385,7 @@ export default function ListingDetailPage() {
 								<ArrowLeft className="h-4 w-4" /> Back
 							</button>
 							<div>
-								<span className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${listing.available ? 'border border-success/30 bg-success/10 text-success' : 'border border-danger/30 bg-danger/10 text-danger-ink'}`}>
+								<span className={`inline-block rounded-full px-3 py-1 text-xs font-bold ${listing.available ? 'border border-success/30 bg-success/10 text-success-ink' : 'border border-danger/30 bg-danger/10 text-danger-ink'}`}>
 									{listing.available ? 'Available' : 'Unavailable'}
 								</span>
 							</div>
@@ -508,7 +508,7 @@ export default function ListingDetailPage() {
 								<div className="flex flex-col items-center gap-8 sm:flex-row sm:items-center sm:gap-10">
 									<div className="flex flex-col items-center gap-3 text-center">
 										<ScoreRing value={suitability.overall} />
-										<p className="text-sm font-semibold text-success">
+										<p className="text-sm font-semibold text-success-ink">
 											{suitability.overall >= 85 ? 'Highly Recommended for SIWES' : suitability.overall >= 65 ? 'Recommended for SIWES' : 'Consider Carefully'}
 										</p>
 									</div>
@@ -529,7 +529,7 @@ export default function ListingDetailPage() {
 									<div className="grid gap-3 sm:grid-cols-2">
 										{whyChoose.map((reason) => (
 											<div key={reason} className="flex items-center gap-2 text-base text-text">
-												<CheckCircle2 className="h-4 w-4 shrink-0 text-success" /> {reason}
+												<CheckCircle2 className="h-4 w-4 shrink-0 text-success-ink" /> {reason}
 											</div>
 										))}
 									</div>
@@ -553,11 +553,11 @@ export default function ListingDetailPage() {
 									{safetyChecks.map((c) => (
 										<div key={c.label} className="flex items-center gap-2 text-base">
 											{c.ok
-												? <CheckCircle2 className="h-4 w-4 shrink-0 text-success" />
+												? <CheckCircle2 className="h-4 w-4 shrink-0 text-success-ink" />
 												: c.neutral
 													? <Info className="h-4 w-4 shrink-0 text-muted" />
-													: <AlertTriangle className="h-4 w-4 shrink-0 text-highlight" />}
-											<span className={c.ok ? 'text-text' : c.neutral ? 'text-muted' : 'text-highlight'}>{c.label}</span>
+													: <AlertTriangle className="h-4 w-4 shrink-0 text-highlight-ink" />}
+											<span className={c.ok ? 'text-text' : c.neutral ? 'text-muted' : 'text-highlight-ink'}>{c.label}</span>
 										</div>
 									))}
 								</div>
@@ -690,7 +690,7 @@ export default function ListingDetailPage() {
 							{leaseFit?.fits && (
 								<FlowSection title="Lease vs your SIWES period" icon={CalendarDays}>
 									<p className="flex items-start gap-2 rounded-xl border border-success/30 bg-success/8 p-5 text-base text-text">
-										<CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+										<CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-success-ink" />
 										<span>
 											The {leaseFit.requiredMonths}-month minimum stay fits inside your{' '}
 											{leaseFit.placementMonths}-month training period.
@@ -803,9 +803,9 @@ export default function ListingDetailPage() {
 									<div className="mb-4 flex items-center justify-between">
 										<p className="text-xs font-bold uppercase tracking-widest text-primary-ink">Landlord</p>
 										{verified ? (
-											<span className="flex items-center gap-1 text-xs font-bold text-success"><ShieldCheck className="h-3.5 w-3.5" /> Verified</span>
+											<span className="flex items-center gap-1 text-xs font-bold text-success-ink"><ShieldCheck className="h-3.5 w-3.5" /> Verified</span>
 										) : (
-											<span className="flex items-center gap-1 text-xs font-bold text-highlight"><ShieldAlert className="h-3.5 w-3.5" /> Unverified</span>
+											<span className="flex items-center gap-1 text-xs font-bold text-highlight-ink"><ShieldAlert className="h-3.5 w-3.5" /> Unverified</span>
 										)}
 									</div>
 
@@ -862,7 +862,7 @@ export default function ListingDetailPage() {
 												href={whatsappLink}
 												target="_blank"
 												rel="noreferrer"
-												className="flex w-full items-center justify-center gap-2 rounded-xl border border-success/30 bg-success/10 py-3 text-sm font-bold text-success transition hover:bg-success/20"
+												className="flex w-full items-center justify-center gap-2 rounded-xl border border-success/30 bg-success/10 py-3 text-sm font-bold text-success-ink transition hover:bg-success/20"
 											>
 												<WhatsAppIcon className="h-4 w-4" /> Chat on WhatsApp
 											</a>

@@ -155,7 +155,7 @@ export default function BookingDetailPage() {
 
 				{escrowHeld && (
 					<p className="mt-3 flex items-start gap-2 rounded-xl border border-success/30 bg-success/8 p-4 text-sm text-text">
-						<ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+						<ShieldCheck className="mt-0.5 h-4 w-4 shrink-0 text-success-ink" />
 						<span>
 							<span className="font-bold">{naira(booking.cost.total)} is being held by NestFinder.</span>{' '}
 							{isLandlord
@@ -172,7 +172,7 @@ export default function BookingDetailPage() {
 							<button
 								disabled={busy}
 								onClick={() => act(() => api.patch(`/bookings/${id}/respond`, { accept: true }))}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base disabled:opacity-60"
+								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
 							>
 								<CheckCircle2 className="h-4 w-4" /> Accept application
 							</button>
@@ -194,7 +194,7 @@ export default function BookingDetailPage() {
 							<button
 								disabled={busy}
 								onClick={() => pay()}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base disabled:opacity-60"
+								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
 							>
 								{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
 								Pay {naira(booking.cost.total)}

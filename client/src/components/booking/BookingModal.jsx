@@ -140,7 +140,7 @@ export default function BookingModal({ listing, placement, open, onClose }) {
 					<button
 						type="submit"
 						disabled={submitting || !quote}
-						className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
+						className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
 					>
 						{submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
 						Send application

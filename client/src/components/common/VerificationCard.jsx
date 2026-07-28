@@ -78,7 +78,7 @@ export default function VerificationCard({ role = 'student' }) {
 			<motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-success/30 bg-success/5 p-6">
 				<div className="flex items-center gap-3">
 					<div className="flex h-11 w-11 items-center justify-center rounded-xl bg-success/15">
-						<BadgeCheck className="h-6 w-6 text-success" />
+						<BadgeCheck className="h-6 w-6 text-success-ink" />
 					</div>
 					<div>
 						<p className="font-serif text-lg font-bold text-text">{COPY[role].verifiedTitle}</p>
@@ -95,7 +95,7 @@ export default function VerificationCard({ role = 'student' }) {
 			<motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="rounded-2xl border border-highlight/30 bg-highlight/5 p-6">
 				<div className="flex items-center gap-3">
 					<div className="flex h-11 w-11 items-center justify-center rounded-xl bg-highlight/15">
-						<Clock className="h-6 w-6 text-highlight" />
+						<Clock className="h-6 w-6 text-highlight-ink" />
 					</div>
 					<div>
 						<p className="font-serif text-lg font-bold text-text">Verification under review</p>
@@ -124,9 +124,9 @@ export default function VerificationCard({ role = 'student' }) {
 
 			{!user?.profilePicture && (
 				<div className="mt-4 flex items-start gap-2 rounded-xl border border-highlight/40 bg-highlight/10 p-3">
-					<Camera className="mt-0.5 h-4 w-4 shrink-0 text-highlight" />
+					<Camera className="mt-0.5 h-4 w-4 shrink-0 text-highlight-ink" />
 					<div>
-						<p className="text-xs font-bold text-highlight">Add a profile photo first</p>
+						<p className="text-xs font-bold text-highlight-ink">Add a profile photo first</p>
 						<p className="text-xs text-muted">Tap your avatar at the top of the page. We compare it with your ID to confirm it's really you.</p>
 					</div>
 				</div>
@@ -168,7 +168,7 @@ export default function VerificationCard({ role = 'student' }) {
 			<button
 				onClick={handleSubmit}
 				disabled={submitting || !user?.profilePicture}
-				className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-base shadow-lg shadow-primary/20 transition hover:shadow-xl disabled:opacity-60"
+				className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:shadow-xl disabled:opacity-60"
 			>
 				{submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
 				{rejected ? 'Re-submit for review' : 'Submit for verification'}

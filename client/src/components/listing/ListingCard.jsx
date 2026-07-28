@@ -78,12 +78,12 @@ export default function ListingCard({ listing, isFirst = false }) {
 				{/* Top-left badges */}
 				<div className="absolute left-3 top-3 flex items-center gap-2">
 					{listing.landlord?.verified && (
-						<span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-success shadow-sm">
+						<span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-success-ink shadow-sm">
 							<BadgeCheck className="h-3.5 w-3.5" /> Verified
 						</span>
 					)}
 					{listing.flagged && (
-						<span className="rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-highlight shadow-sm">Under review</span>
+						<span className="rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-highlight-ink shadow-sm">Under review</span>
 					)}
 				</div>
 
@@ -126,7 +126,7 @@ export default function ListingCard({ listing, isFirst = false }) {
 					    automatic guess must never wear a confirmation badge. */}
 					{listing.locationSource === 'landlord' && (
 						<span
-							className="ml-0.5 inline-flex shrink-0 items-center gap-0.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-bold text-success"
+							className="ml-0.5 inline-flex shrink-0 items-center gap-0.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-bold text-success-ink"
 							title="The landlord placed this property's pin on the map themselves"
 						>
 							<BadgeCheck className="h-3 w-3" /> Pinned

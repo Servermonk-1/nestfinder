@@ -7,7 +7,7 @@ const Stars = ({ value, onChange = null, size = 'h-4 w-4' }) => (
 	<span className="inline-flex items-center gap-0.5">
 		{[1, 2, 3, 4, 5].map((n) => {
 			const filled = n <= value;
-			const star = <Star className={`${size} ${filled ? 'fill-highlight text-highlight' : 'text-muted/40'}`} />;
+			const star = <Star className={`${size} ${filled ? 'fill-highlight text-highlight-ink' : 'text-muted/40'}`} />;
 			return onChange ? (
 				<button key={n} type="button" onClick={() => onChange(n)} aria-label={`${n} star${n > 1 ? 's' : ''}`}>
 					{star}
@@ -31,7 +31,7 @@ const Tri = ({ label, value, onChange, Icon }) => (
 				onClick={() => onChange(value === v ? null : v)}
 				aria-pressed={value === v}
 				className={`rounded-full px-3 py-1 text-xs font-bold transition ${
-					value === v ? 'bg-primary text-base' : 'border border-muted/20 text-muted hover:text-text'
+					value === v ? 'bg-primary text-white' : 'border border-muted/20 text-muted hover:text-text'
 				}`}
 			>
 				{text}
@@ -177,7 +177,7 @@ export default function CompanyFeedback({ companyId, companyName }) {
 					</div>
 					<div className="flex gap-2">
 						<button type="submit" disabled={saving}
-							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base disabled:opacity-60">
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60">
 							{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Post
 						</button>
 						<button type="button" onClick={() => setWriting(false)}
@@ -206,7 +206,7 @@ export default function CompanyFeedback({ companyId, companyName }) {
 				</div>
 			) : data.canReview ? (
 				<button onClick={startEdit}
-					className="mb-5 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25">
+					className="mb-5 inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25">
 					<Star className="h-4 w-4" /> Review this placement
 				</button>
 			) : (
@@ -229,7 +229,7 @@ export default function CompanyFeedback({ companyId, companyName }) {
 								<Stars value={f.rating} />
 								<span className="text-sm font-bold text-text">{f.reviewer}</span>
 								{f.verified && (
-									<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success">
+									<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
 										<BadgeCheck className="h-3 w-3" /> Verified student
 									</span>
 								)}

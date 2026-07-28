@@ -62,7 +62,7 @@ export default function AccountPage() {
 						<div className="flex items-center gap-3 rounded-xl border border-line bg-surface-alt px-4 py-3">
 							{user?.verified ? (
 								<>
-									<BadgeCheck className="h-4 w-4 text-success flex-shrink-0" />
+									<BadgeCheck className="h-4 w-4 text-success-ink flex-shrink-0" />
 									<span className="text-text">Identity verified</span>
 								</>
 							) : (

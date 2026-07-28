@@ -8,6 +8,7 @@ import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 import { runFraudShield, computeTrustScore } from '../services/fraudShield.js';
 import { geocodeOne } from '../services/geocodeListing.js';
+import { optimiseUploaded } from '../services/optimiseImages.js';
 import { geocodeListing as lookupAddress, distanceKm } from '../utils/geocode.js';
 
 // Read a landlord-placed pin off a request body. Returns undefined when there
@@ -84,6 +85,11 @@ export const createListing = async (req, res) => {
 			applyPin(listing, pin, { address, area, city, state });
 			await listing.save({ timestamps: false });
 		}
+
+		// Shrink the photos in the background. A landlord's 4MB phone photo is
+		// unusable over Nigerian mobile data, but a slow conversion must never
+		// delay their upload — so this runs after the response goes out.
+		optimiseUploaded(req.files || []).catch((err) => console.error('Image optimisation failed:', err.message));
 
 		screenInBackground(listing._id, req.user.id);
 

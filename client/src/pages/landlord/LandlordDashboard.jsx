@@ -58,7 +58,7 @@ function ListingRow({ listing, onToggle, onDelete }) {
 				<div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
 					<span className="font-bold text-primary-ink">{formatPrice(listing)}</span>
 					<span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {listing.views || 0} views</span>
-					<span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${listing.available ? 'bg-success/15 text-success' : 'bg-danger/15 text-danger-ink'}`}>
+					<span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${listing.available ? 'bg-success/15 text-success-ink' : 'bg-danger/15 text-danger-ink'}`}>
 						{listing.available ? 'Available' : 'Taken'}
 					</span>
 				</div>

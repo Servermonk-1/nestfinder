@@ -26,8 +26,8 @@ function Pill({ tone = 'muted', children }) {
 	const tones = {
 		muted: 'bg-surface-alt text-muted border-line',
 		danger: 'bg-danger/10 text-danger-ink border-danger/30',
-		success: 'bg-success/10 text-success border-success/30',
-		warn: 'bg-highlight/15 text-highlight border-highlight/40',
+		success: 'bg-success/10 text-success-ink border-success/30',
+		warn: 'bg-highlight/15 text-highlight-ink border-highlight/40',
 	};
 	return <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${tones[tone]}`}>{children}</span>;
 }
@@ -130,7 +130,7 @@ function ReportCard({ report, type, onReview, onAction, busy }) {
 			{!isListing && <ConversationContext reportId={report._id} />}
 
 			{report.actionTaken && (
-				<p className="mt-3 text-xs font-semibold text-success">Action taken: {report.actionTaken}</p>
+				<p className="mt-3 text-xs font-semibold text-success-ink">Action taken: {report.actionTaken}</p>
 			)}
 			{report.adminNote && (
 				<p className="mt-1 text-xs text-muted">Note: {report.adminNote}</p>
@@ -157,7 +157,7 @@ function ReportCard({ report, type, onReview, onAction, busy }) {
 							</button>
 						)}
 						<button onClick={() => onReview(report._id, 'resolved', note)} disabled={busy}
-							className="inline-flex items-center gap-1.5 rounded-xl border border-success/40 px-4 py-2 text-xs font-bold text-success transition hover:bg-success/10 disabled:opacity-50">
+							className="inline-flex items-center gap-1.5 rounded-xl border border-success/40 px-4 py-2 text-xs font-bold text-success-ink transition hover:bg-success/10 disabled:opacity-50">
 							<Check className="h-3.5 w-3.5" /> Resolve
 						</button>
 						<button onClick={() => onReview(report._id, 'dismissed', note)} disabled={busy}
@@ -250,7 +250,7 @@ export default function ManageReports() {
 					{STATUSES.map((s) => (
 						<button key={s} onClick={() => setStatus(s)}
 							className={`rounded-full border px-3.5 py-1.5 text-xs font-bold capitalize transition ${status === s ? 'border-primary/40 bg-primary/10 text-primary-ink' : 'border-line text-muted hover:text-text'}`}>
-							{s} {counts[s] !== undefined && <span className="opacity-70">({counts[s]})</span>}
+							{s} {counts[s] !== undefined && <span>({counts[s]})</span>}
 						</button>
 					))}
 				</div>
@@ -260,7 +260,7 @@ export default function ManageReports() {
 						[...Array(2)].map((_, i) => <div key={i} className="h-40 animate-pulse rounded-2xl border border-line bg-surface" />)
 					) : reports.length === 0 ? (
 						<div className="flex flex-col items-center justify-center rounded-2xl border border-line bg-surface py-20 text-center shadow-card">
-							<ShieldCheck className="h-10 w-10 text-success" />
+							<ShieldCheck className="h-10 w-10 text-success-ink" />
 							<p className="mt-4 font-serif text-lg font-bold text-text">Nothing here</p>
 							<p className="mt-1 text-sm text-muted">No {status} {type === 'listing' ? 'listing' : 'chat'} reports.</p>
 						</div>

@@ -10,7 +10,7 @@ export default function CompareDecisionCard({ listing, score, index, matchPercen
 
 	const getRiskColor = (score) => {
 		if (score >= 80) return 'text-primary-ink';
-		if (score >= 60) return 'text-highlight';
+		if (score >= 60) return 'text-highlight-ink';
 		if (score >= 40) return 'text-muted';
 		return 'text-danger-ink';
 	};

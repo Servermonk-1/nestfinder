@@ -31,12 +31,16 @@ const emptyForm = {
 	contactEmail: '',
 };
 
+// The label WRAPS its control rather than sitting beside it. As siblings with
+// no `htmlFor`, none of these fields were programmatically labelled — a screen
+// reader announced "edit text, blank" for the room count and the room-type
+// select. Wrapping associates them implicitly and makes the label clickable.
 const Field = ({ label, error, children }) => (
-	<div>
-		<label className="mb-1.5 block text-sm font-semibold text-text">{label}</label>
+	<label className="block">
+		<span className="mb-1.5 block text-sm font-semibold text-text">{label}</span>
 		{children}
 		{error && <p className="mt-1 text-xs font-medium text-danger-ink">{error}</p>}
-	</div>
+	</label>
 );
 
 const inputClass = (error) =>
@@ -270,7 +274,7 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 								onClick={() => toggleAmenity(a)}
 								className={`rounded-full border px-4 py-2 text-sm font-semibold transition ${
 									active
-										? 'border-primary bg-primary text-base'
+										? 'border-primary bg-primary text-white'
 										: 'border-muted/20 bg-surface-alt/50 text-muted hover:border-primary/40 hover:text-text'
 								}`}
 							>
@@ -349,7 +353,7 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 				disabled={submitting}
 				whileHover={{ scale: 1.01 }}
 				whileTap={{ scale: 0.98 }}
-				className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold uppercase tracking-wide text-base shadow-lg shadow-primary/20 transition hover:shadow-xl hover:shadow-primary/30 disabled:opacity-60"
+				className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-lg shadow-primary/20 transition hover:shadow-xl hover:shadow-primary/30 disabled:opacity-60"
 			>
 				{submitting ? (
 					<>

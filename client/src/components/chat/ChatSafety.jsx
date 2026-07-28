@@ -17,11 +17,11 @@ const REASONS = [
 /** Small "Verified"/"Unverified" pill for the other party in the chat header. */
 export function VerifiedPill({ verified }) {
 	return verified ? (
-		<span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
+		<span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success-ink">
 			<ShieldCheck className="h-3 w-3" /> Verified
 		</span>
 	) : (
-		<span className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2 py-0.5 text-[10px] font-bold text-highlight">
+		<span className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2 py-0.5 text-[10px] font-bold text-highlight-ink">
 			<ShieldAlert className="h-3 w-3" /> Unverified
 		</span>
 	);
@@ -37,7 +37,7 @@ export function SafetyTipsBanner() {
 				aria-expanded={open}
 				className="flex w-full items-center gap-2 text-left text-xs font-bold text-text"
 			>
-				<Info className="h-3.5 w-3.5 shrink-0 text-highlight" />
+				<Info className="h-3.5 w-3.5 shrink-0 text-highlight-ink" />
 				Staying safe when arranging a viewing
 				<ChevronDown className={`ml-auto h-3.5 w-3.5 shrink-0 text-muted transition-transform ${open ? 'rotate-180' : ''}`} />
 			</button>
@@ -68,7 +68,7 @@ export function RedFlagWarning({ warnings }) {
 		<div className="mt-1.5 max-w-[75%] rounded-xl border border-highlight/40 bg-highlight/10 px-3 py-2">
 			{warnings.map((w) => (
 				<p key={w.id} className="flex gap-1.5 text-[11px] font-medium leading-relaxed text-text">
-					<ShieldAlert className="mt-0.5 h-3 w-3 shrink-0 text-highlight" /> {w.warning}
+					<ShieldAlert className="mt-0.5 h-3 w-3 shrink-0 text-highlight-ink" /> {w.warning}
 				</p>
 			))}
 		</div>
@@ -153,7 +153,7 @@ export default function ChatSafetyMenu({ conversationId, blocked, blockedByMe, o
 										onClick={() => toggleBlock(false)}
 										className="flex w-full items-center gap-2.5 px-3.5 py-2.5 text-left text-sm text-text transition hover:bg-primary/5"
 									>
-										<Ban className="h-4 w-4 text-success" /> Unblock
+										<Ban className="h-4 w-4 text-success-ink" /> Unblock
 									</button>
 								) : (
 									<button

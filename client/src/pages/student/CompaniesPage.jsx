@@ -106,7 +106,7 @@ export default function CompaniesPage() {
 							onClick={() => setFilter({ mine: mine ? '' : '1', department: '' })}
 							aria-pressed={mine}
 							className={`inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold transition ${
-								mine ? 'bg-primary text-base' : 'border border-muted/20 text-muted hover:text-text'
+								mine ? 'bg-primary text-white' : 'border border-muted/20 text-muted hover:text-text'
 							}`}
 						>
 							<GraduationCap className="h-4 w-4" /> My department
@@ -139,7 +139,7 @@ export default function CompaniesPage() {
 							onClick={() => setFilter({ faculty: '' })}
 							aria-pressed={!faculty}
 							className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
-								!faculty ? 'bg-primary text-base' : 'border border-muted/20 text-muted hover:text-text'
+								!faculty ? 'bg-primary text-white' : 'border border-muted/20 text-muted hover:text-text'
 							}`}
 						>
 							All faculties
@@ -150,7 +150,7 @@ export default function CompaniesPage() {
 								onClick={() => setFilter({ faculty: faculty === f.faculty ? '' : f.faculty })}
 								aria-pressed={faculty === f.faculty}
 								className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
-									faculty === f.faculty ? 'bg-primary text-base' : 'border border-muted/20 text-muted hover:text-text'
+									faculty === f.faculty ? 'bg-primary text-white' : 'border border-muted/20 text-muted hover:text-text'
 								}`}
 							>
 								{f.faculty} ({f.count})
@@ -167,7 +167,7 @@ export default function CompaniesPage() {
 							onClick={() => setView(id)}
 							aria-pressed={view === id}
 							className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-								view === id ? 'bg-primary text-base' : 'text-muted hover:text-text'
+								view === id ? 'bg-primary text-white' : 'text-muted hover:text-text'
 							}`}
 						>
 							<Icon className="h-3.5 w-3.5" /> {label}

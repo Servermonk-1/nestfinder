@@ -44,7 +44,7 @@ export default function ListingMap({ listing, height = 320 }) {
 
 			<p className="mt-3 flex items-start gap-2 text-sm text-muted">
 				{key === 'landlord' ? (
-					<BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-success" />
+					<BadgeCheck className="mt-0.5 h-4 w-4 shrink-0 text-success-ink" />
 				) : (
 					<Info className="mt-0.5 h-4 w-4 shrink-0 text-primary-ink" />
 				)}

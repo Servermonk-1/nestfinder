@@ -33,7 +33,7 @@ const AMENITIES = [
 const ROOM_TYPE_STYLES = {
 	single: 'border-primary/20 bg-primary/10 text-primary-ink',
 	shared: 'border-royal/25 bg-royal/10 text-royal',
-	'self-contained': 'border-success/25 bg-success/10 text-success',
+	'self-contained': 'border-success/25 bg-success/10 text-success-ink',
 };
 
 const RANK_LABELS = ['#1 Best', '#2', '#3'];
@@ -43,8 +43,8 @@ const hasAmenity = (listing, key) => listing.amenities?.some((a) => a.toLowerCas
 
 function getMatchTier(score) {
 	if (score >= 80) return { label: 'Excellent Match', caption: 'This home checks almost every box.', icon: Trophy, bar: 'bg-primary', chip: 'border-primary/30 bg-primary/10 text-primary-ink' };
-	if (score >= 60) return { label: 'Good Match', caption: 'A solid choice with only a few trade-offs.', icon: Medal, bar: 'bg-success', chip: 'border-success/30 bg-success/10 text-success' };
-	if (score >= 40) return { label: 'Fair Match', caption: 'Okay, but a few things could be better.', icon: Award, bar: 'bg-highlight', chip: 'border-highlight/30 bg-highlight/10 text-highlight' };
+	if (score >= 60) return { label: 'Good Match', caption: 'A solid choice with only a few trade-offs.', icon: Medal, bar: 'bg-success', chip: 'border-success/30 bg-success/10 text-success-ink' };
+	if (score >= 40) return { label: 'Fair Match', caption: 'Okay, but a few things could be better.', icon: Award, bar: 'bg-highlight', chip: 'border-highlight/30 bg-highlight/10 text-highlight-ink' };
 	return { label: 'Limited Match', caption: 'This one falls short on several fronts.', icon: ShieldAlert, bar: 'bg-muted', chip: 'border-muted/30 bg-muted/10 text-muted' };
 }
 
@@ -427,7 +427,7 @@ export default function ComparePage() {
 
 											<div className="mt-3 flex flex-wrap gap-1.5">
 												{hasMostAmenities && (
-													<span className="inline-block rounded-full border border-highlight/30 bg-highlight/10 px-2.5 py-1 text-[11px] font-bold text-highlight">
+													<span className="inline-block rounded-full border border-highlight/30 bg-highlight/10 px-2.5 py-1 text-[11px] font-bold text-highlight-ink">
 														Most Equipped
 													</span>
 												)}
@@ -450,7 +450,7 @@ export default function ComparePage() {
 											</div>
 											{isLowestPrice && (
 												<>
-													<span className="mt-2 inline-block rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success">
+													<span className="mt-2 inline-block rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success-ink">
 														Best Price
 													</span>
 													<p className="mt-1.5 text-[11px] text-muted">You save ₦{(maxPrice - minPrice).toLocaleString()}/month vs the priciest option</p>
@@ -465,7 +465,7 @@ export default function ComparePage() {
 											<span className={`rounded-full border px-3 py-1 text-xs font-bold capitalize ${ROOM_TYPE_STYLES[listing.roomType] || 'border-muted/20 bg-surface-alt text-muted'}`}>
 												{listing.roomType || 'Room'}
 											</span>
-											<span className={`rounded-full border px-3 py-1 text-xs font-bold ${listing.available ? 'border-success/30 bg-success/10 text-success' : 'border-danger/30 bg-danger/10 text-danger-ink'}`}>
+											<span className={`rounded-full border px-3 py-1 text-xs font-bold ${listing.available ? 'border-success/30 bg-success/10 text-success-ink' : 'border-danger/30 bg-danger/10 text-danger-ink'}`}>
 												{listing.available ? 'Available' : 'Unavailable'}
 											</span>
 										</div>
@@ -475,7 +475,7 @@ export default function ComparePage() {
 											<div className="mb-3 flex items-center justify-between">
 												<p className="text-xs font-bold uppercase tracking-widest text-primary-ink">What's Included</p>
 												{amenityDifferentiators.size > 0 && (
-													<span className="text-[10px] font-semibold text-highlight">Highlighted = key difference</span>
+													<span className="text-[10px] font-semibold text-highlight-ink">Highlighted = key difference</span>
 												)}
 											</div>
 											<div className="grid grid-cols-2 gap-2">
@@ -494,7 +494,7 @@ export default function ComparePage() {
 																: { duration: 0.3, delay: i * 0.05 }
 															}
 															className={`flex items-center gap-1.5 rounded-lg px-2 py-1.5 text-xs transition-all ${
-																has ? 'bg-success/10 text-success' : 'bg-surface-alt/60 text-muted'
+																has ? 'bg-success/10 text-success-ink' : 'bg-surface-alt/60 text-muted'
 															} ${isDifferentiator ? 'ring-1 ring-highlight/60' : ''}`}
 														>
 															{has ? <CheckCircle2 className="h-3.5 w-3.5 shrink-0" /> : <XCircle className="h-3.5 w-3.5 shrink-0" />}
@@ -511,9 +511,9 @@ export default function ComparePage() {
 											<div className="flex items-center justify-between gap-2">
 												<p className="text-xs font-bold uppercase tracking-widest text-primary-ink">Landlord</p>
 												{verified ? (
-													<span className="flex items-center gap-1 text-[11px] font-bold text-success"><ShieldCheck className="h-3.5 w-3.5" /> Verified</span>
+													<span className="flex items-center gap-1 text-[11px] font-bold text-success-ink"><ShieldCheck className="h-3.5 w-3.5" /> Verified</span>
 												) : (
-													<span className="flex items-center gap-1 text-[11px] font-bold text-highlight"><ShieldAlert className="h-3.5 w-3.5" /> Unverified</span>
+													<span className="flex items-center gap-1 text-[11px] font-bold text-highlight-ink"><ShieldAlert className="h-3.5 w-3.5" /> Unverified</span>
 												)}
 											</div>
 											<p className="mt-2 text-sm font-semibold text-text">{listing.landlord?.name || listing.landlord?.fullName || 'Not provided'}</p>

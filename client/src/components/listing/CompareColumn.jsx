@@ -37,7 +37,7 @@ export default function CompareColumn({ listing, index, totalListings, score, is
 					whileHover={{ scale: 1.1 }}
 					whileTap={{ scale: 0.95 }}
 					onClick={onRemove}
-					className="absolute top-3 right-3 z-10 bg-primary/80 hover:bg-primary text-base p-2 rounded-lg transition-colors"
+					className="absolute top-3 right-3 z-10 bg-primary/80 hover:bg-primary text-white p-2 rounded-lg transition-colors"
 				>
 					<X className="h-4 w-4" />
 				</motion.button>

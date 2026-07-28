@@ -108,7 +108,7 @@ function PropertyCard({ listing, onClick, index }) {
 				<img src={getImageUrl(listing.images?.[0]) || HERO_IMG} alt={listing.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
 				<div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 				{verified && (
-					<span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-success shadow-sm">
+					<span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-success-ink shadow-sm">
 						<BadgeCheck className="h-3.5 w-3.5" /> Verified
 					</span>
 				)}
@@ -270,7 +270,7 @@ export default function LandingPageV2() {
 						<div className="relative overflow-hidden rounded-[28px] border-4 border-surface shadow-card-lg">
 							<img src={HERO_IMG} alt="A verified home on NestFinder" className="h-[420px] w-full object-cover md:h-[500px]" />
 							<div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success shadow-sm">
+							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success-ink shadow-sm">
 								<BadgeCheck className="h-4 w-4" /> Verified Listing
 							</span>
 						</div>
@@ -402,7 +402,7 @@ export default function LandingPageV2() {
 						<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 						<div className="glass-strong absolute inset-x-5 bottom-5 rounded-2xl p-5">
 							<div className="flex items-center gap-2">
-								<BadgeCheck className="h-5 w-5 text-success" />
+								<BadgeCheck className="h-5 w-5 text-success-ink" />
 								<h3 className="font-serif text-lg font-bold text-text">Every home, verified</h3>
 							</div>
 							<p className="mt-1.5 text-sm text-muted">Landlord ID checked · profile-photo matched · reviewed by an admin.</p>

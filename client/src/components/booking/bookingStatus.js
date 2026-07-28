@@ -60,7 +60,7 @@ export const STATUS_META = {
 export const TONE_CLASS = {
 	muted: 'bg-surface-alt text-muted',
 	primary: 'bg-primary/12 text-primary-ink',
-	success: 'bg-success/12 text-success',
+	success: 'bg-success/12 text-success-ink',
 	danger: 'bg-danger/12 text-danger-ink',
 };
 

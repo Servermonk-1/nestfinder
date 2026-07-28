@@ -1,0 +1,27 @@
+# Render blueprint — deploys the API. The client goes to Vercel/Netlify
+# separately (see DEPLOYMENT.md).
+services:
+  - type: web
+    name: nestfinder-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm ci
+    startCommand: node server.js
+    healthCheckPath: /healthz
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Set the rest in the dashboard — never commit real secrets.
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: GMAIL_USER
+        sync: false
+      - key: GMAIL_APP_PASSWORD
+        sync: false
+      - key: ADMIN_EMAIL
+        sync: false

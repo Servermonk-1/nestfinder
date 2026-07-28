@@ -19,7 +19,7 @@ export default function StarRating({ value = 0, onChange, size = 'h-4 w-4' }) {
 					className={interactive ? 'cursor-pointer' : 'cursor-default'}
 					aria-label={interactive ? `Rate ${star} star${star > 1 ? 's' : ''}` : undefined}
 				>
-					<Star className={`${size} ${star <= display ? 'fill-highlight text-highlight' : 'text-muted/30'}`} />
+					<Star className={`${size} ${star <= display ? 'fill-highlight text-highlight-ink' : 'text-muted/30'}`} />
 				</button>
 			))}
 		</div>

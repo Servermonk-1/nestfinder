@@ -71,7 +71,7 @@ export default function AddListingPage() {
 						</p>
 						<button
 							onClick={() => navigate('/landlord/dashboard')}
-							className="mt-6 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-base shadow-lg shadow-primary/20 transition hover:shadow-xl"
+							className="mt-6 rounded-xl bg-primary px-6 py-3 text-sm font-bold text-white shadow-lg shadow-primary/20 transition hover:shadow-xl"
 						>
 							Go to verification
 						</button>

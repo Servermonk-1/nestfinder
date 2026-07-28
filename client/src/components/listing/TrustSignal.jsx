@@ -19,9 +19,9 @@ const BANDS = [
 ];
 
 const TONES = {
-	success: { pill: 'border-success/30 bg-success/10 text-success', bar: 'bg-success', Icon: ShieldCheck },
+	success: { pill: 'border-success/30 bg-success/10 text-success-ink', bar: 'bg-success', Icon: ShieldCheck },
 	muted: { pill: 'border-line bg-surface-alt text-muted', bar: 'bg-muted', Icon: Info },
-	warn: { pill: 'border-highlight/40 bg-highlight/15 text-highlight', bar: 'bg-highlight', Icon: ShieldAlert },
+	warn: { pill: 'border-highlight/40 bg-highlight/15 text-highlight-ink', bar: 'bg-highlight', Icon: ShieldAlert },
 };
 
 export default function TrustSignal({ score, verified }) {
@@ -55,7 +55,7 @@ export default function TrustSignal({ score, verified }) {
 			<p className="mt-2 text-[11px] leading-relaxed text-muted">{band.blurb}</p>
 
 			{!verified && (
-				<p className="mt-1.5 flex items-start gap-1.5 text-[11px] font-medium leading-relaxed text-highlight">
+				<p className="mt-1.5 flex items-start gap-1.5 text-[11px] font-medium leading-relaxed text-highlight-ink">
 					<ShieldAlert className="mt-0.5 h-3 w-3 shrink-0" />
 					This landlord hasn't completed identity verification.
 				</p>

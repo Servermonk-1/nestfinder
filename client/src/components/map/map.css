@@ -4,6 +4,13 @@
 .leaflet-container {
 	font-family: inherit;
 	background: #eae3d6;
+	/* Leaflet positions tiles and its zoom-animation proxy well outside the
+	   container and relies on the container clipping them. On a 393px phone
+	   that leaked ~3px and gave the whole page a sideways scroll, so clip
+	   explicitly rather than depending on a parent's overflow. */
+	max-width: 100%;
+	overflow: hidden;
+	contain: paint;
 }
 
 /* ── Price pill (dashboard map) ── */

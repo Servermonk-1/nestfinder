@@ -135,7 +135,7 @@ export default function ListingsMap({ listings = [], height = 620, anchor = null
 											</span>
 											{listing.totalReviews > 0 && (
 												<span className="flex items-center gap-1 text-xs font-bold text-muted">
-													<Star className="h-3 w-3 fill-highlight text-highlight" />
+													<Star className="h-3 w-3 fill-highlight text-highlight-ink" />
 													{listing.rating}
 												</span>
 											)}

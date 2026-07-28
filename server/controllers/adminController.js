@@ -1,3 +1,4 @@
+import { recentErrors, errorStats } from '../utils/errorReporter.js';
 import Listing from '../models/Listing.js';
 import Landlord from '../models/Landlord.js';
 import Student from '../models/Student.js';
@@ -490,6 +491,22 @@ export const removeListing = async (req, res) => {
 
 		await listing.deleteOne();
 		res.status(200).json({ message: 'Listing removed by admin successfully' });
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+// ── SYSTEM HEALTH ─────────────────────────────────────────
+// GET /api/admin/health — recent server errors, so a fault in production is
+// visible to someone who can act on it instead of scrolling past in a log.
+export const getSystemHealth = async (req, res) => {
+	try {
+		res.status(200).json({
+			stats: errorStats(),
+			errors: recentErrors(50),
+			uptimeSeconds: Math.round(process.uptime()),
+			env: process.env.NODE_ENV || 'development',
+		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}

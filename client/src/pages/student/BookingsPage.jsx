@@ -67,7 +67,7 @@ export default function BookingsPage() {
 								: 'When you find a room you like, apply from its page.'}
 						</p>
 						{!isLandlord && (
-							<Link to="/dashboard" className="mt-4 inline-block rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base">
+							<Link to="/dashboard" className="mt-4 inline-block rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white">
 								Browse homes
 							</Link>
 						)}
@@ -97,7 +97,7 @@ export default function BookingsPage() {
 														{meta.label}
 													</span>
 													{b.escrow?.state === 'held' && (
-														<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success">
+														<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
 															<ShieldCheck className="h-3 w-3" /> In escrow
 														</span>
 													)}

@@ -56,7 +56,7 @@ export default function CompareRiskCard({ listing, index }) {
 								factor.severity === 'high'
 									? 'bg-danger/10 text-danger-ink'
 									: factor.severity === 'medium'
-										? 'bg-highlight/10 text-highlight'
+										? 'bg-highlight/10 text-highlight-ink'
 										: 'bg-primary/10 text-primary-ink'
 							}`}
 						>

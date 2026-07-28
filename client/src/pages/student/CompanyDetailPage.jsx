@@ -236,14 +236,14 @@ export default function CompanyDetailPage() {
 				{/* ── Actions ── */}
 				<div className="mt-7 flex flex-wrap gap-3">
 					{isMyPlacement ? (
-						<span className="inline-flex items-center gap-2 rounded-xl bg-success/12 px-4 py-2.5 text-sm font-bold text-success">
+						<span className="inline-flex items-center gap-2 rounded-xl bg-success/12 px-4 py-2.5 text-sm font-bold text-success-ink">
 							<Check className="h-4 w-4" /> This is your placement
 						</span>
 					) : (
 						<button
 							onClick={makeMyPlacement}
 							disabled={setting}
-							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
 						>
 							{setting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Briefcase className="h-4 w-4" />}
 							Set as my placement
@@ -290,7 +290,7 @@ export default function CompanyDetailPage() {
 							<button
 								onClick={saveOwnEdit}
 								disabled={savingOwn}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-base disabled:opacity-60"
+								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white disabled:opacity-60"
 							>
 								{savingOwn ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
 								Save and re-locate

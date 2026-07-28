@@ -70,12 +70,12 @@ export default function LandlordAccountPage() {
 						<div className="flex items-center gap-3 rounded-xl border border-line bg-surface-alt px-4 py-3">
 							{user?.verified ? (
 								<>
-									<BadgeCheck className="h-4 w-4 flex-shrink-0 text-success" />
+									<BadgeCheck className="h-4 w-4 flex-shrink-0 text-success-ink" />
 									<span className="text-text">Identity verified — your listings show a verified badge</span>
 								</>
 							) : (
 								<>
-									<ShieldAlert className="h-4 w-4 flex-shrink-0 text-highlight" />
+									<ShieldAlert className="h-4 w-4 flex-shrink-0 text-highlight-ink" />
 									<span className="text-muted">
 										Not verified yet — <button onClick={() => navigate('/landlord/dashboard')} className="font-semibold text-primary-ink hover:underline">verify from your dashboard</button> to publish listings
 									</span>

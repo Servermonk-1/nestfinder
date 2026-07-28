@@ -299,7 +299,7 @@ export default function LandingPageV2() {
 							>
 								<div className="flex gap-1 mb-5">
 									{[...Array(5)].map((_, idx) => (
-										<span key={idx} className="text-highlight text-lg">★</span>
+										<span key={idx} className="text-highlight-ink text-lg">★</span>
 									))}
 								</div>
 								<p className="text-muted mb-6 leading-relaxed font-light text-lg">{testimonial.text}</p>

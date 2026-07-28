@@ -17,7 +17,7 @@ const FILTERS = ['all', 'risky', 'flagged', 'reported'];
 // Fraud Shield risk styling.
 const RISK = {
 	high:   { label: 'High risk',   cls: 'border-danger/40 bg-danger/10 text-danger-ink' },
-	medium: { label: 'Medium risk', cls: 'border-highlight/50 bg-highlight/15 text-highlight' },
+	medium: { label: 'Medium risk', cls: 'border-highlight/50 bg-highlight/15 text-highlight-ink' },
 	low:    { label: 'Low risk',    cls: 'border-line bg-surface-alt text-muted' },
 };
 
@@ -27,7 +27,7 @@ function FraudPanel({ listing }) {
 	const level = listing.fraudLevel;
 	if (!level || level === 'clear') {
 		return listing.fraudCheckedAt ? (
-			<span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success">
+			<span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success-ink">
 				<ShieldCheck className="h-3 w-3" /> screened · clear
 			</span>
 		) : null;
@@ -152,7 +152,7 @@ export default function ManageListings() {
 					{FILTERS.map((f) => (
 						<button key={f} onClick={() => setFilter(f)}
 							className={`rounded-full border px-3.5 py-1.5 text-xs font-bold capitalize transition ${filter === f ? 'border-primary/40 bg-primary/10 text-primary-ink' : 'border-line text-muted hover:text-text'}`}>
-							{f} {counts[f] !== undefined && <span className="opacity-70">({counts[f]})</span>}
+							{f} {counts[f] !== undefined && <span>({counts[f]})</span>}
 						</button>
 					))}
 				</div>
@@ -184,7 +184,7 @@ export default function ManageListings() {
 											<div className="flex flex-wrap items-center gap-2">
 												<p className="font-serif text-base font-bold text-text">{l.title}</p>
 												{l.flagged && <span className="inline-flex items-center gap-1 rounded-full border border-danger/30 bg-danger/10 px-2 py-0.5 text-[10px] font-bold text-danger-ink"><Flag className="h-3 w-3" /> flagged</span>}
-												{l.reportCount > 0 && <span className="rounded-full border border-highlight/40 bg-highlight/15 px-2 py-0.5 text-[10px] font-bold text-highlight">{l.reportCount} report{l.reportCount !== 1 ? 's' : ''}</span>}
+												{l.reportCount > 0 && <span className="rounded-full border border-highlight/40 bg-highlight/15 px-2 py-0.5 text-[10px] font-bold text-highlight-ink">{l.reportCount} report{l.reportCount !== 1 ? 's' : ''}</span>}
 											</div>
 											<p className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-muted">
 												<span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {l.area}, {l.city}</span>
@@ -195,8 +195,8 @@ export default function ManageListings() {
 											<p className="mt-1 flex items-center gap-1.5 text-xs text-muted">
 												by <span className="font-semibold text-text">{l.landlord?.fullName || 'Unknown'}</span>
 												{l.landlord?.verified
-													? <ShieldCheck className="h-3 w-3 text-success" />
-													: <ShieldAlert className="h-3 w-3 text-highlight" />}
+													? <ShieldCheck className="h-3 w-3 text-success-ink" />
+													: <ShieldAlert className="h-3 w-3 text-highlight-ink" />}
 												{l.landlord?.suspended && <span className="font-bold text-danger-ink">· suspended</span>}
 											{typeof l.landlord?.trustScore === 'number' && (
 												<span className="text-muted">· trust {l.landlord.trustScore}/100</span>
@@ -211,7 +211,7 @@ export default function ManageListings() {
 												View <ExternalLink className="h-3 w-3" />
 											</Link>
 											<button onClick={() => toggleFlag(l._id, l.flagged)} disabled={busy === l._id}
-												className="inline-flex items-center gap-1.5 rounded-xl border border-line px-3 py-2 text-xs font-bold text-muted transition hover:border-highlight/50 hover:text-highlight disabled:opacity-50">
+												className="inline-flex items-center gap-1.5 rounded-xl border border-line px-3 py-2 text-xs font-bold text-muted transition hover:border-highlight/50 hover:text-highlight-ink disabled:opacity-50">
 												<Flag className="h-3.5 w-3.5" /> {l.flagged ? 'Unflag' : 'Flag'}
 											</button>
 											<button onClick={() => remove(l._id, l.title)} disabled={busy === l._id}

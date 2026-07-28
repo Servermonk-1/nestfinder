@@ -47,7 +47,7 @@ export default function ComparisonHistory() {
                   <button
                     type="button"
                     onClick={() => loadSavedComparison(snapshot.id)}
-                    className="rounded-full bg-primary px-3 py-2 text-xs font-semibold text-base transition hover:bg-primary-dark"
+                    className="rounded-full bg-primary px-3 py-2 text-xs font-semibold text-white transition hover:bg-primary-dark"
                   >
                     Open
                   </button>

@@ -18,7 +18,10 @@ export default {
 
         // Terracotta hero + warm ochre — earthy, refined, not loud
         primary: {
-          DEFAULT: '#C2603F',
+          // Darkened 5% from #C2603F so WHITE button text clears WCAG AA (4.5:1).
+          // At the old value it was 4.17:1 — and white is already the lightest
+          // possible text, so the background was the only thing left to change.
+          DEFAULT: '#B85B3C',
           light: '#DB8B6A',
           dark: '#9C4A2E',
         },
@@ -35,6 +38,10 @@ export default {
           DEFAULT: '#C79A3E',
           light: '#E4C079',
         },
+        // Text-only ochre. `highlight` is a fine BACKGROUND but only reaches
+        // ~2.4:1 as small text on cream, which axe flags as a serious failure.
+        // Same trick as `primary-ink`: darken for text, leave fills alone.
+        'highlight-ink': '#7A5B15',
         royal: {
           DEFAULT: '#8A5A44',
           light: '#B08469',
@@ -42,6 +49,10 @@ export default {
         },
 
         success: '#6E8B5E',
+        // Text-only green.  is fine as a FILL but only ~3.3:1 as small
+        // text on a tinted surface. Completes the ink set: primary/danger/
+        // highlight/success all have a darkened text-safe twin.
+        'success-ink': '#47603A',
         danger: '#B4432E',
         // Text-only danger red — darkened to clear WCAG AA on tinted surfaces.
         'danger-ink': '#8F3423',

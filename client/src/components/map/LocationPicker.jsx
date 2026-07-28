@@ -138,7 +138,7 @@ export default function LocationPicker({ address, area, city, state, value, onCh
 			)}
 
 			{position && !suggestion && (
-				<p className="flex items-center gap-2 text-xs font-bold text-success">
+				<p className="flex items-center gap-2 text-xs font-bold text-success-ink">
 					<Check className="h-3.5 w-3.5" /> Pin set by you — students will see this exact spot.
 				</p>
 			)}

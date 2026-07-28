@@ -1,5 +1,6 @@
 import 'dotenv/config'; // MUST be first — loads .env before any other import reads it
 import express from 'express';
+import mongoose from 'mongoose';
 import http from 'http';
 import { Server } from 'socket.io';
 import jwt from 'jsonwebtoken';
@@ -24,6 +25,7 @@ import reviewRoutes from './routes/reviews.js';
 import companyRoutes from './routes/companies.js';
 import bookingRoutes from './routes/bookings.js';
 import errorHandler from './middleware/errorHandler.js';
+import { reportError } from './utils/errorReporter.js';
 
 dotenv.config();
 connectDB();
@@ -135,11 +137,35 @@ app.get('/', (req, res) => {
 	res.json({ message: '🏠 NestFinder API is running!' });
 });
 
+// Deployment platforms poll this to decide whether the instance is alive, so it
+// must stay cheap and must not touch the database.
+app.get('/healthz', (req, res) => {
+	res.json({
+		ok: true,
+		uptimeSeconds: Math.round(process.uptime()),
+		env: process.env.NODE_ENV || 'development',
+		db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+	});
+});
+
 // ── ERROR HANDLER ─────────────────────────────────────────
 app.use(errorHandler);
+
+// A crash that leaves no trace is the worst kind. Record it, then let the
+// process die so the platform can restart it clean — swallowing these would
+// leave the server running in an unknown state.
+process.on('uncaughtException', (err) => {
+	reportError(err, { fatal: true, kind: 'uncaughtException' });
+	setTimeout(() => process.exit(1), 200);
+});
+process.on('unhandledRejection', (reason) => {
+	reportError(reason instanceof Error ? reason : new Error(String(reason)), {
+		kind: 'unhandledRejection',
+	});
+});
 
 // ── START SERVER ──────────────────────────────────────────
 const PORT = process.env.PORT || 5000;
 httpServer.listen(PORT, () => {
-	console.log(`🚀 Server running on port ${PORT}`);
+	console.log(`🚀 Server running on port ${PORT} (${process.env.NODE_ENV || 'development'})`);
 });

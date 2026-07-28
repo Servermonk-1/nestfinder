@@ -10,7 +10,7 @@ export default function HelpTip({ title, description }) {
 				type="button"
 				onClick={() => setOpen((v) => !v)}
 				aria-label={`Help: ${title}`}
-				className="ml-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-muted/20 bg-surface-alt text-[10px] text-muted transition hover:border-primary/50 hover:bg-primary hover:text-base"
+				className="ml-1.5 flex h-4 w-4 items-center justify-center rounded-full border border-muted/20 bg-surface-alt text-[10px] text-muted transition hover:border-primary/50 hover:bg-primary hover:text-white"
 			>
 				?
 			</button>

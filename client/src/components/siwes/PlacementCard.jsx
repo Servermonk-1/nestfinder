@@ -162,7 +162,7 @@ export default function PlacementCard({ onChange }) {
 						<div className="flex flex-wrap items-center gap-2">
 							<p className="font-serif text-base font-bold text-text">{placement.company?.name}</p>
 							{placement.status === 'confirmed' ? (
-								<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success">
+								<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
 									<Check className="h-3 w-3" /> Confirmed
 								</span>
 							) : (
@@ -181,7 +181,7 @@ export default function PlacementCard({ onChange }) {
 					{placement.status === 'confirmed' ? (
 						<Link
 							to="/dashboard?nearPlacement=1"
-							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25"
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25"
 						>
 							<Search className="h-4 w-4" /> Find housing near here
 						</Link>
@@ -213,7 +213,7 @@ export default function PlacementCard({ onChange }) {
 					</p>
 					<button
 						onClick={() => setEditing(true)}
-						className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25"
+						className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25"
 					>
 						<Briefcase className="h-4 w-4" /> Add my placement
 					</button>
@@ -288,7 +288,7 @@ export default function PlacementCard({ onChange }) {
 					<div className="flex flex-wrap gap-2">
 						<button
 							type="submit" disabled={saving}
-							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
 						>
 							{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
 							Save my placement
@@ -373,7 +373,7 @@ export default function PlacementCard({ onChange }) {
 						<button
 							type="submit"
 							disabled={saving}
-							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-base transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:shadow-lg hover:shadow-primary/25 disabled:opacity-60"
 						>
 							{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
 							Save placement

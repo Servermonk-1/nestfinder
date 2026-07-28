@@ -45,7 +45,7 @@ export default function TourCompletionCard({ onClose }) {
 					transition={{ type: 'spring', stiffness: 300, damping: 15, delay: 0.15 }}
 					className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-success/15"
 				>
-					<CheckCircle2 className="h-9 w-9 text-success" />
+					<CheckCircle2 className="h-9 w-9 text-success-ink" />
 				</motion.div>
 
 				<h2 id="tour-done-title" className="font-serif text-2xl font-bold text-text">You are all set</h2>

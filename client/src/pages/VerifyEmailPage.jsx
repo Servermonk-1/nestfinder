@@ -134,7 +134,7 @@ export default function VerifyEmailPage() {
 
 						{demoToken && (
 							<div className="mt-5 rounded-2xl border border-highlight/40 bg-highlight/10 p-4 text-left">
-								<p className="text-xs font-bold uppercase tracking-wide text-highlight">Demo mode</p>
+								<p className="text-xs font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
 								<p className="mt-1 text-xs text-muted">No email service is configured, so here's your verification link for testing:</p>
 								<Link to={`/verify-email?token=${demoToken}`} className="mt-3 inline-flex items-center gap-2 rounded-lg bg-highlight px-4 py-2 text-xs font-bold text-white transition hover:brightness-105">
 									Verify my email now <ArrowRight className="h-3.5 w-3.5" />

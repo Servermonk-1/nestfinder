@@ -220,9 +220,9 @@ export default function StudentAuth() {
 
 					{otpStage.devOtp && (
 						<div className="mt-5 rounded-2xl border border-highlight/40 bg-highlight/10 p-3 text-center">
-							<p className="text-[11px] font-bold uppercase tracking-wide text-highlight">Demo mode</p>
+							<p className="text-[11px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
 							<p className="mt-1 text-xs text-muted">No email configured — your code is</p>
-							<p className="mt-1 font-serif text-2xl font-extrabold tracking-widest text-highlight">{otpStage.devOtp}</p>
+							<p className="mt-1 font-serif text-2xl font-extrabold tracking-widest text-highlight-ink">{otpStage.devOtp}</p>
 						</div>
 					)}
 				</motion.div>

@@ -89,7 +89,7 @@ export default function PreferenceSelector({ open, onClose, preferences, onChang
           <button
             type="button"
             onClick={handleSave}
-            className="inline-flex items-center justify-center rounded-3xl bg-primary px-5 py-3 text-sm font-semibold text-base transition hover:bg-primary-dark"
+            className="inline-flex items-center justify-center rounded-3xl bg-primary px-5 py-3 text-sm font-semibold text-white transition hover:bg-primary-dark"
           >
             Save preferences
           </button>

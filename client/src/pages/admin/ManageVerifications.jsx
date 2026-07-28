@@ -70,7 +70,7 @@ function ReviewCard({ person, role, onDone }) {
 						</p>
 					</div>
 				</div>
-				<span className="rounded-full bg-highlight/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-highlight">
+				<span className="rounded-full bg-highlight/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-highlight-ink">
 					{doc.documentType || 'ID'}
 				</span>
 			</div>
@@ -194,7 +194,7 @@ export default function ManageVerifications() {
 						[...Array(2)].map((_, i) => <div key={i} className="h-64 animate-pulse rounded-2xl border border-line bg-surface" />)
 					) : people.length === 0 ? (
 						<div className="flex flex-col items-center justify-center rounded-2xl border border-line bg-surface py-20 text-center shadow-card">
-							<BadgeCheck className="h-10 w-10 text-success" />
+							<BadgeCheck className="h-10 w-10 text-success-ink" />
 							<p className="mt-4 font-serif text-lg font-bold text-text">All caught up</p>
 							<p className="mt-1 text-sm text-muted">No {tab} IDs are waiting for review.</p>
 						</div>

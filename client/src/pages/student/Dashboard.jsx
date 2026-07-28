@@ -280,7 +280,7 @@ export default function Dashboard() {
 											onClick={() => setView(id)}
 											aria-pressed={view === id}
 											className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors ${
-												view === id ? 'bg-primary text-base' : 'text-muted hover:text-text'
+												view === id ? 'bg-primary text-white' : 'text-muted hover:text-text'
 											}`}
 										>
 											<Icon className="h-3.5 w-3.5" />
@@ -316,7 +316,7 @@ export default function Dashboard() {
 								aria-pressed={nearPlacement}
 								className={`inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold transition ${
 									nearPlacement
-										? 'bg-primary text-base shadow-lg shadow-primary/20'
+										? 'bg-primary text-white shadow-lg shadow-primary/20'
 										: 'border border-primary/25 bg-surface text-primary-ink hover:border-primary/50'
 								}`}
 							>
@@ -393,7 +393,7 @@ export default function Dashboard() {
 										onClick={() => setPage(i + 1)}
 										className={`w-10 h-10 rounded-xl text-sm font-bold transition-all
                       ${page === i + 1
-												? 'bg-primary text-base'
+												? 'bg-primary text-white'
 												: 'bg-surface border border-muted/10 text-muted hover:border-primary/10 hover:text-text'
 											}`}
 									>

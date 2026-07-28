@@ -65,7 +65,7 @@ export const getRiskLevel = (riskScore) => {
 		return {
 			level: 'Medium Risk',
 			color: '#D9A54C',
-			className: 'bg-highlight/10 border-highlight/20 text-highlight',
+			className: 'bg-highlight/10 border-highlight/20 text-highlight-ink',
 		};
 	}
 

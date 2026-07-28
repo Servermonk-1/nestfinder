@@ -64,7 +64,7 @@ export default function ManageBookings() {
 				<div className="mt-5 flex flex-wrap gap-3">
 					<div className="rounded-2xl border border-success/30 bg-success/8 px-5 py-4">
 						<p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted">
-							<ShieldCheck className="h-3.5 w-3.5 text-success" /> Held in escrow
+							<ShieldCheck className="h-3.5 w-3.5 text-success-ink" /> Held in escrow
 						</p>
 						<p className="mt-1 font-serif text-2xl font-bold tabular-nums text-ink">{naira(data.escrowHeldTotal)}</p>
 						<p className="text-xs text-muted">owed to students or landlords, not ours</p>
@@ -91,7 +91,7 @@ export default function ManageBookings() {
 							onClick={() => setStatus(t)}
 							aria-pressed={status === t}
 							className={`rounded-full px-4 py-2 text-xs font-bold capitalize transition ${
-								status === t ? 'bg-primary text-base' : 'border border-muted/20 text-muted hover:text-text'
+								status === t ? 'bg-primary text-white' : 'border border-muted/20 text-muted hover:text-text'
 							}`}
 						>
 							{t === 'movedIn' ? 'Moved in' : t}

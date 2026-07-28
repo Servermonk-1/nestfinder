@@ -109,7 +109,7 @@ export default function ShareViewing({ listing }) {
 									href={`https://wa.me/?text=${encodeURIComponent(message)}`}
 									target="_blank"
 									rel="noreferrer"
-									className="flex items-center justify-center gap-2 rounded-xl border border-success/30 bg-success/10 py-2.5 text-sm font-bold text-success transition hover:bg-success/20"
+									className="flex items-center justify-center gap-2 rounded-xl border border-success/30 bg-success/10 py-2.5 text-sm font-bold text-success-ink transition hover:bg-success/20"
 								>
 									<WhatsAppIcon className="h-4 w-4" /> WhatsApp
 								</a>

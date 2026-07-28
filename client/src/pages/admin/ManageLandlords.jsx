@@ -15,8 +15,8 @@ function Pill({ tone = 'muted', children }) {
 	const tones = {
 		muted: 'bg-surface-alt text-muted border-line',
 		danger: 'bg-danger/10 text-danger-ink border-danger/30',
-		success: 'bg-success/10 text-success border-success/30',
-		warn: 'bg-highlight/15 text-highlight border-highlight/40',
+		success: 'bg-success/10 text-success-ink border-success/30',
+		warn: 'bg-highlight/15 text-highlight-ink border-highlight/40',
 	};
 	return <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${tones[tone]}`}>{children}</span>;
 }
@@ -102,7 +102,7 @@ export default function ManageLandlords() {
 					{FILTERS.map((s) => (
 						<button key={s} onClick={() => setStatus(s)}
 							className={`rounded-full border px-3.5 py-1.5 text-xs font-bold capitalize transition ${status === s ? 'border-primary/40 bg-primary/10 text-primary-ink' : 'border-line text-muted hover:text-text'}`}>
-							{s} {counts[s] !== undefined && <span className="opacity-70">({counts[s]})</span>}
+							{s} {counts[s] !== undefined && <span>({counts[s]})</span>}
 						</button>
 					))}
 				</div>
@@ -148,7 +148,7 @@ export default function ManageLandlords() {
 										<div className="flex shrink-0 flex-wrap gap-2">
 											{!l.verified && (
 												<button onClick={() => verify(l._id, l.fullName)} disabled={busy === l._id}
-													className="inline-flex items-center gap-1.5 rounded-xl border border-success/40 px-3.5 py-2 text-xs font-bold text-success transition hover:bg-success/10 disabled:opacity-50">
+													className="inline-flex items-center gap-1.5 rounded-xl border border-success/40 px-3.5 py-2 text-xs font-bold text-success-ink transition hover:bg-success/10 disabled:opacity-50">
 													<Check className="h-3.5 w-3.5" /> Verify
 												</button>
 											)}

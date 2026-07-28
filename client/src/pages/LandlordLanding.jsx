@@ -160,7 +160,7 @@ export default function LandlordLanding() {
 						<div className="relative overflow-hidden rounded-[28px] border-4 border-surface shadow-card-lg">
 							<img src={HERO_IMG} alt="A room ready to list" className="h-[420px] w-full object-cover md:h-[500px]" />
 							<div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
-							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success shadow-sm"><BadgeCheck className="h-4 w-4" /> Verified Landlord</span>
+							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success-ink shadow-sm"><BadgeCheck className="h-4 w-4" /> Verified Landlord</span>
 						</div>
 						<motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="glass-strong absolute -right-4 top-10 rounded-2xl p-4 shadow-card-lg">
 							<div className="flex items-center gap-2.5">

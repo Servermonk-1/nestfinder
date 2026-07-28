@@ -19,11 +19,14 @@ import {
 	getPendingLandlordVerifications,
 	approveLandlordId,
 	rejectLandlordId,
+	getSystemHealth,
 } from '../controllers/adminController.js';
 import protect from '../middleware/auth.js';
 import adminOnly from '../middleware/adminOnly.js';
 
 const router = express.Router();
+
+router.get('/health', protect, adminOnly, getSystemHealth);
 
 // All admin routes require login + admin role
 router.use(protect, adminOnly);
