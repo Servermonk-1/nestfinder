@@ -7,52 +7,62 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── "Survey" — graphite, paper and one ultramarine signal ──
-        // Cool and measured. The previous palette was warm cream + terracotta,
-        // which reads as hospitality; this is a platform where students commit
-        // real money to a place they haven't seen, so it borrows its manners
-        // from drafting and finance instead.
-        ink: '#0B0E13',            // deepest graphite — headlines, hard edges
-        base: '#EEF0F3',           // page — cool paper
-        surface: '#FFFFFF',        // cards — true white so the grid reads crisp
-        'surface-alt': '#F4F6F8',  // inputs / nested / hover
-        line: '#DBE0E6',           // hairline rules and borders
-        muted: '#5A6472',          // secondary text (7.0:1 on white)
-        text: '#14181F',           // primary text
+        // ── "Survey" — monochrome ──
+        // Black on white, the way a technical drawing actually is. The listing
+        // photographs become the only colour on the page, which is correct:
+        // the rooms are the product, the interface is the annotation.
+        //
+        // ONE hue survives — red, for destructive actions only. Everything else
+        // (confirmed, pending, verified, approximate) is carried by FILL WEIGHT:
+        // solid black reads as settled, an outline as pending, grey as closed.
+        // That is how drawings have always encoded state, and it means the
+        // system never depends on a reader distinguishing two hues.
+        ink: '#000000',            // true black — headlines, fills, hard edges
+        base: '#F1F1F1',           // page — a desk
+        surface: '#FFFFFF',        // cards — sheets laid on it
+        'surface-alt': '#F6F6F6',  // inputs / nested / hover
+        line: '#E2E2E2',           // hairline rules and borders
+        muted: '#6B6B6B',          // secondary text (5.3:1 on white)
+        text: '#0A0A0A',           // primary text
 
-        // Ultramarine: the single interactive colour. Precision, not play.
+        // Interactive is simply black. Maximum contrast, no decoration.
         primary: {
-          DEFAULT: '#1D3FD1',
-          light: '#4B7BFF',
-          dark: '#152FA0',
+          DEFAULT: '#000000',
+          light: '#3D3D3D',
+          dark: '#262626',
         },
-        // Text-safe twin, for small labels and links on light surfaces.
-        'primary-ink': '#1A38B8',
+        'primary-ink': '#000000',
         accent: {
-          DEFAULT: '#1D3FD1',
-          light: '#4B7BFF',
-          dark: '#152FA0',
+          DEFAULT: '#000000',
+          light: '#3D3D3D',
+          dark: '#262626',
         },
 
-        // Attention — surveyor's amber. "Approximate", "awaiting", "check this".
-        // Never success, never danger.
+        // "Approximate", "awaiting", "check this" — lower emphasis by design,
+        // so it sits at mid-grey rather than shouting in amber.
         highlight: {
-          DEFAULT: '#C77A0E',
-          light: '#E8A93C',
+          DEFAULT: '#8A8A8A',
+          light: '#BDBDBD',
         },
-        'highlight-ink': '#8A5406',
+        'highlight-ink': '#4A4A4A',
 
         royal: {
-          DEFAULT: '#3B4A63',
-          light: '#5C6E8C',
-          dark: '#25314A',
+          DEFAULT: '#3D3D3D',
+          light: '#6B6B6B',
+          dark: '#1A1A1A',
         },
 
-        success: '#0E8A5F',
-        'success-ink': '#076646',
-        danger: '#C0392B',
-        'danger-ink': '#96271C',
-        info: '#1D3FD1',
+        // Confirmed / verified / released: solid black plus a check mark. The
+        // meaning comes from the tick and the label, not from green.
+        success: '#000000',
+        'success-ink': '#0A0A0A',
+
+        // The one retained hue. Deleting a listing, refunding a student,
+        // suspending an account — the places where a mis-click costs something.
+        danger: '#B3261E',
+        'danger-ink': '#8C1D18',
+
+        info: '#000000',
       },
       fontFamily: {
         // Archivo carries the interface — a grotesque with more character than
@@ -83,17 +93,17 @@ export default {
       boxShadow: {
         // Tight and low-contrast: a drawing sits ON the sheet rather than
         // hovering above it. Depth comes from the hairline, not the blur.
-        glow: '0 10px 30px -12px rgba(29, 63, 209, 0.42)',
-        'glow-sm': '0 6px 18px -10px rgba(29, 63, 209, 0.38)',
-        'glow-ochre': '0 10px 30px -12px rgba(199, 122, 14, 0.35)',
+        glow: '0 10px 30px -12px rgba(0, 0, 0, 0.30)',
+        'glow-sm': '0 6px 18px -10px rgba(0, 0, 0, 0.26)',
+        'glow-ochre': '0 10px 30px -12px rgba(0, 0, 0, 0.22)',
         card: '0 1px 2px rgba(11, 14, 19, 0.04)',
         'card-lg': '0 12px 34px -18px rgba(11, 14, 19, 0.28)',
         lift: '0 18px 44px -22px rgba(11, 14, 19, 0.34)',
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(120deg, #1D3FD1 0%, #4B7BFF 100%)',
-        'brand-sheen': 'linear-gradient(120deg, #4B7BFF 0%, #1D3FD1 55%, #152FA0 100%)',
-        'warm-deep': 'linear-gradient(140deg, #152FA0 0%, #1D3FD1 45%, #3B4A63 100%)',
+        'brand-gradient': 'linear-gradient(120deg, #000000 0%, #333333 100%)',
+        'brand-sheen': 'linear-gradient(120deg, #3D3D3D 0%, #000000 55%, #1A1A1A 100%)',
+        'warm-deep': 'linear-gradient(140deg, #000000 0%, #1F1F1F 45%, #3D3D3D 100%)',
       },
       letterSpacing: {
         meta: '0.14em',

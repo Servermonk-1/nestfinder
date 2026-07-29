@@ -31,15 +31,14 @@
 
   body {
     font-family: 'Archivo', system-ui, sans-serif;
-    color: #14181F;
-    background-color: #EEF0F3;
-    /* A drafting sheet: a faint blueprint grid, cool and even, with one
-       ultramarine wash so the page isn't dead flat. No warm gradients. */
+    color: #0A0A0A;
+    background-color: #F1F1F1;
+    /* A drafting sheet: a faint graphite grid and nothing else. No wash, no
+       gradient — the listing photographs supply the only colour on the page. */
     background-image:
-      linear-gradient(rgba(20, 24, 31, 0.035) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(20, 24, 31, 0.035) 1px, transparent 1px),
-      radial-gradient(900px 520px at 88% -8%, rgba(29, 63, 209, 0.06), transparent 62%);
-    background-size: 32px 32px, 32px 32px, 100% 100%;
+      linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 32px 32px, 32px 32px;
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -66,14 +65,14 @@
   }
 
   ::selection {
-    background: rgba(29, 63, 209, 0.18);
-    color: #14181F;
+    background: #000000;
+    color: #FFFFFF;
   }
 
   /* Keyboard focus must always be visible — it was easy to lose against the
      old soft palette. */
   :focus-visible {
-    outline: 2px solid #1D3FD1;
+    outline: 2px solid #000000;
     outline-offset: 2px;
   }
 
@@ -82,14 +81,14 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #E4E7EC;
+    background: #E8E8E8;
   }
   ::-webkit-scrollbar-thumb {
-    background: #B6BDC8;
-    border: 3px solid #E4E7EC;
+    background: #B0B0B0;
+    border: 3px solid #E8E8E8;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #8B94A3;
+    background: #6B6B6B;
   }
 }
 
@@ -127,8 +126,8 @@
     -webkit-backdrop-filter: blur(22px) saturate(1.6);
     border: 1px solid rgba(255, 255, 255, 0.9);
     box-shadow:
-      0 1px 2px rgba(20, 24, 31, 0.04),
-      0 12px 32px -12px rgba(20, 24, 31, 0.18);
+      0 1px 2px rgba(0, 0, 0, 0.05),
+      0 12px 32px -12px rgba(0, 0, 0, 0.16);
   }
 
   .btn-primary {
@@ -151,7 +150,7 @@
   }
   .input-field:focus {
     @apply border-primary;
-    box-shadow: inset 2px 0 0 0 #1D3FD1;
+    box-shadow: inset 2px 0 0 0 #000000;
   }
 
   /* Annotation label — the small uppercase caption that names a value, the way
@@ -178,18 +177,18 @@
 @layer utilities {
   /* A hairline rule, the width of a drawn line. */
   .rule {
-    border-top: 1px solid rgba(20, 24, 31, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.12);
   }
 
   .text-gradient {
-    background: linear-gradient(100deg, #1D3FD1 0%, #4B7BFF 100%);
+    background: linear-gradient(100deg, #000000 0%, #4A4A4A 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .text-shimmer {
-    background: linear-gradient(100deg, #14181F 20%, #1D3FD1 45%, #6E9BFF 52%, #1D3FD1 60%, #14181F 84%);
+    background: linear-gradient(100deg, #000000 20%, #555555 45%, #9A9A9A 52%, #555555 60%, #000000 84%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -200,8 +199,8 @@
 
   .bg-grid {
     background-image:
-      linear-gradient(rgba(20, 24, 31, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(20, 24, 31, 0.06) 1px, transparent 1px);
+      linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 
