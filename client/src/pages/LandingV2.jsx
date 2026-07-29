@@ -4,9 +4,8 @@ import NavPill from '../components/common/NavPill';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
 	ArrowRight, ArrowUpRight, BadgeCheck, Bed, ChevronDown, Home, LayoutDashboard,
-	LogOut, Mail, MapPin, Menu, MessageCircle, Phone, Quote, Search, ShieldCheck,
-	Sparkles, Star, KeyRound, X,
-} from 'lucide-react';
+	LogOut, Mail, MapPin, MessageCircle, Phone, Quote, Search, ShieldCheck,
+	Sparkles, KeyRound, } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import api from '../services/api';
 import { getImageUrl } from '../utils/urlHelper';
@@ -151,7 +150,6 @@ export default function LandingPageV2() {
 	const navigate = useNavigate();
 	const { user, logout } = useAuth();
 	const [openFaq, setOpenFaq] = useState(0);
-	const [isMenuOpen, setIsMenuOpen] = useState(false);
 	const [featured, setFeatured] = useState([]);
 
 	useEffect(() => {

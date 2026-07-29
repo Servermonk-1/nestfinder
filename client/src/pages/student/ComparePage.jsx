@@ -9,7 +9,6 @@ import {
 } from 'lucide-react';
 import { useCompare } from '../../context/CompareContext';
 import { formatPrice } from '../../utils/price';
-import { distanceToPlacement } from '../../utils/commute';
 import { calculateWeightedScore, DEFAULT_WEIGHTS } from '../../utils/compareScore';
 import { getImageUrl } from '../../utils/urlHelper';
 import api from '../../services/api';

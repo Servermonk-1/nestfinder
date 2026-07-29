@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Clock3, Save, Trash2, RotateCcw, ArrowRight } from 'lucide-react';
+import { Clock3, Save, RotateCcw, ArrowRight } from 'lucide-react';
 import { useCompare } from '../../context/CompareContext';
 
 export default function ComparisonHistory() {
@@ -7,8 +7,7 @@ export default function ComparisonHistory() {
     comparisonHistory,
     savedComparisons,
     loadSavedComparison,
-    deleteSavedComparison,
-    compareList,
+    deleteSavedComparison,
   } = useCompare();
 
   const creationCount = useMemo(() => savedComparisons.length, [savedComparisons.length]);

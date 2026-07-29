@@ -41,6 +41,27 @@ const InputField = ({ icon: Icon, error, showToggle, onToggle, show, ...props })
 	</div>
 );
 
+// Declared at module scope, not inside the component. A component created
+// during render is a NEW type on every render, so React unmounts and remounts
+// the whole subtree — which drops focus mid-typing on a form like this one.
+const Logo = () => (
+	<div className="mb-8 flex items-center gap-2.5">
+		<div className="relative">
+			<div className="absolute inset-0 rounded-xl bg-primary/40 blur-md" />
+			<div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
+				<svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
+					<path d="M3 12L12 3L21 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+					<path d="M5 10V20C5 20.55 5.45 21 6 21H10V16H14V21H18C18.55 21 19 20.55 19 20V10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+				</svg>
+			</div>
+		</div>
+		<div>
+			<p className="font-serif text-base font-extrabold leading-tight text-text">NestFinder</p>
+			<p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">SIWES Housing</p>
+		</div>
+	</div>
+);
+
 export default function StudentAuth() {
 	const navigate = useNavigate();
 	const { login } = useAuth();
@@ -139,24 +160,6 @@ export default function StudentAuth() {
 
 	const switchToSignUp = () => { setIsSignIn(false); setErrors({}); setShowPassword(false); };
 	const switchToSignIn = () => { setIsSignIn(true); setErrors({}); setShowPassword(false); };
-
-	const Logo = () => (
-		<div className="mb-8 flex items-center gap-2.5">
-			<div className="relative">
-				<div className="absolute inset-0 rounded-xl bg-primary/40 blur-md" />
-				<div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
-					<svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-						<path d="M3 12L12 3L21 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-						<path d="M5 10V20C5 20.55 5.45 21 6 21H10V16H14V21H18C18.55 21 19 20.55 19 20V10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-					</svg>
-				</div>
-			</div>
-			<div>
-				<p className="font-serif text-base font-extrabold leading-tight text-text">NestFinder</p>
-				<p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">SIWES Housing</p>
-			</div>
-		</div>
-	);
 
 	// ══ LOGIN OTP STEP (2FA) ══
 	if (otpStage) {

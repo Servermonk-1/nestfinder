@@ -76,8 +76,10 @@ jobs:
           cache-dependency-path: client/package-lock.json
       - run: npm ci
         working-directory: client
-      # Advisory only for now — the existing code has warnings that aren't
-      # worth blocking a build over, but new errors should be visible.
+      # This step can now actually fail. It previously carried
+      # continue-on-error, which meant the job reported success no matter what
+      # eslint found — 55 real findings passed under a green tick that way.
+      # Errors block; the two rules demoted to warnings in eslint.config.js
+      # (with reasons) do not, which is what --max-warnings=-1 allows.
       - run: npx eslint . --max-warnings=-1
         working-directory: client
-        continue-on-error: true

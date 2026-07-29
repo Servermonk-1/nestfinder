@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Send, MessageCircle, ShieldCheck, ArrowLeft, Home } from 'lucide-react';
+import { Send, MessageCircle, ArrowLeft, Home } from 'lucide-react';
 import StudentNavbar from '../../components/common/StudentNavbar';
 import { useAuth } from '../../context/AuthContext';
 import { useNotifications } from '../../context/NotificationContext';

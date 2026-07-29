@@ -44,7 +44,7 @@ export default function VerificationCard({ role = 'student' }) {
 			.finally(() => setLoading(false));
 	};
 
-	useEffect(() => { load(); /* eslint-disable-next-line react-hooks/exhaustive-deps */ }, [role]);
+	useEffect(() => { load(); }, [role]);
 
 	const handleSubmit = async () => {
 		if (!user?.profilePicture) { toast.error('Add a profile photo first'); return; }

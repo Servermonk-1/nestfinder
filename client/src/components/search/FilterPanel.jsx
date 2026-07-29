@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-	Search, SlidersHorizontal, X, ChevronDown, Check, MapPin,
+	SlidersHorizontal, ChevronDown, Check, MapPin,
 	Zap, Droplets, Shield, Wifi, Car, Flame, Lock, RotateCcw
 } from 'lucide-react';
 

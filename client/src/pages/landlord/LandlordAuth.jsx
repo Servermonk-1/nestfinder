@@ -40,6 +40,23 @@ const InputField = ({ icon: Icon, error, showToggle, onToggle, show, ...props })
 	</div>
 );
 
+// Module scope, not inside the component — see StudentLogin. A component
+// created during render remounts its subtree on every parent render.
+const Logo = () => (
+	<div className="mb-8 flex items-center gap-2.5">
+		<div className="relative">
+			<div className="absolute inset-0 rounded-xl bg-primary/40 blur-md" />
+			<div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
+				<Home className="h-5 w-5 text-white" />
+			</div>
+		</div>
+		<div>
+			<p className="font-serif text-base font-extrabold leading-tight text-text">NestFinder</p>
+			<p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">Landlord Portal</p>
+		</div>
+	</div>
+);
+
 export default function LandlordAuth() {
 	const navigate = useNavigate();
 	const location = useLocation();
@@ -135,21 +152,6 @@ export default function LandlordAuth() {
 
 	const switchToSignUp = () => { setIsSignIn(false); setErrors({}); setShowPassword(false); navigate('/landlord/register'); };
 	const switchToSignIn = () => { setIsSignIn(true); setErrors({}); setShowPassword(false); navigate('/landlord/login'); };
-
-	const Logo = () => (
-		<div className="mb-8 flex items-center gap-2.5">
-			<div className="relative">
-				<div className="absolute inset-0 rounded-xl bg-primary/40 blur-md" />
-				<div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
-					<Home className="h-5 w-5 text-white" />
-				</div>
-			</div>
-			<div>
-				<p className="font-serif text-base font-extrabold leading-tight text-text">NestFinder</p>
-				<p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">Landlord Portal</p>
-			</div>
-		</div>
-	);
 
 	// ══ LOGIN OTP STEP ══
 	if (otpStage) {

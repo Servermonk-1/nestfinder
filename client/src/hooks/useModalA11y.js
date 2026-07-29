@@ -61,7 +61,6 @@ export default function useModalA11y(isOpen, onClose) {
 			previouslyFocused?.focus?.();
 		};
 		// `onClose` deliberately omitted — it lives in a ref (see above).
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen]);
 
 	return ref;
