@@ -31,11 +31,11 @@
 
   body {
     font-family: 'Archivo', system-ui, sans-serif;
-    color: #0A0A0A;
-    background-color: #FFFFFF;
-    /* Gallery white, edge to edge. The grid is gone: it existed to give a grey
-       ground some texture, and on white it would only be noise. Separation now
-       comes from the hairline rule alone — which is what a drawing does. */
+    color: #1A1D24;
+    background-color: #FAF9F7;
+    /* A half-step off white — warm enough that true-white cards lift off it,
+       clean enough that it never reads as cream. No grid, no wash: the calm is
+       the point. */
 
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
@@ -62,14 +62,14 @@
   }
 
   ::selection {
-    background: #000000;
-    color: #FFFFFF;
+    background: rgba(27, 42, 65, 0.14);
+    color: #1A1D24;
   }
 
   /* Keyboard focus must always be visible — it was easy to lose against the
      old soft palette. */
   :focus-visible {
-    outline: 2px solid #000000;
+    outline: 2px solid #1B2A41;
     outline-offset: 2px;
   }
 
@@ -78,14 +78,14 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #E8E8E8;
+    background: #F0EEEA;
   }
   ::-webkit-scrollbar-thumb {
-    background: #B0B0B0;
-    border: 3px solid #E8E8E8;
+    background: #CFCAC3;
+    border: 3px solid #F0EEEA;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #6B6B6B;
+    background: #A9A39A;
   }
 }
 
@@ -99,13 +99,13 @@
     background: rgba(255, 255, 255, 0.62);
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    border: 1px solid rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(16, 19, 26, 0.07);
   }
   .glass-strong {
     background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(24px) saturate(1.5);
     -webkit-backdrop-filter: blur(24px) saturate(1.5);
-    border: 1px solid rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(16, 19, 26, 0.07);
   }
   /* Glass over a dark panel. */
   .glass-tint {
@@ -124,15 +124,17 @@
     background: rgba(255, 255, 255, 0.78);
     backdrop-filter: blur(20px) saturate(1.35);
     -webkit-backdrop-filter: blur(20px) saturate(1.35);
-    border: 1px solid rgba(0, 0, 0, 0.10);
+    border: 1px solid rgba(16, 19, 26, 0.07);
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.04),
-      0 14px 36px -16px rgba(0, 0, 0, 0.22);
+      0 1px 2px rgba(16, 19, 26, 0.03),
+      0 16px 40px -20px rgba(16, 19, 26, 0.20);
   }
 
   .btn-primary {
-    @apply bg-primary text-white font-semibold px-6 py-3 transition-all duration-200 cursor-pointer;
+    @apply bg-primary text-white font-semibold px-6 py-3 cursor-pointer;
     letter-spacing: -0.01em;
+    transition: background-color 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.3s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .btn-primary:hover {
     @apply bg-primary-dark;
@@ -142,12 +144,16 @@
   }
 
   .card {
-    /* Same white as the page, so the 1px rule is the ONLY thing defining the
-       card. That is the whole idea: structure drawn, not shaded. */
-    @apply bg-surface border border-line transition-all duration-200;
+    /* White on warm paper: the card lifts by tone alone, with the hairline
+       giving it an edge. No heavy shadow, nothing to make it shout. */
+    @apply bg-surface border border-line;
+    transition: border-color 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                box-shadow 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .card:hover {
-    @apply border-ink/35;
+    border-color: rgba(27, 42, 65, 0.28);
+    box-shadow: 0 16px 40px -24px rgba(16, 19, 26, 0.22);
   }
 
   .input-field {
@@ -155,7 +161,7 @@
   }
   .input-field:focus {
     @apply border-primary;
-    box-shadow: inset 2px 0 0 0 #000000;
+    box-shadow: inset 2px 0 0 0 #1B2A41;
   }
 
   /* Annotation label — the small uppercase caption that names a value, the way
@@ -182,18 +188,18 @@
 @layer utilities {
   /* A hairline rule, the width of a drawn line. */
   .rule {
-    border-top: 1px solid rgba(0, 0, 0, 0.12);
+    border-top: 1px solid rgba(16, 19, 26, 0.09);
   }
 
   .text-gradient {
-    background: linear-gradient(100deg, #000000 0%, #4A4A4A 100%);
+    background: linear-gradient(100deg, #1B2A41 0%, #3A4560 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .text-shimmer {
-    background: linear-gradient(100deg, #000000 20%, #555555 45%, #9A9A9A 52%, #555555 60%, #000000 84%);
+    background: linear-gradient(100deg, #1B2A41 20%, #3A4560 45%, #7B88A5 52%, #3A4560 60%, #1B2A41 84%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -204,8 +210,8 @@
 
   .bg-grid {
     background-image:
-      linear-gradient(rgba(0, 0, 0, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.06) 1px, transparent 1px);
+      linear-gradient(rgba(16, 19, 26, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(16, 19, 26, 0.05) 1px, transparent 1px);
     background-size: 32px 32px;
   }
 

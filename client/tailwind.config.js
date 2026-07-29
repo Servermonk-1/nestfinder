@@ -7,62 +7,58 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── "Survey" — monochrome ──
-        // Black on white, the way a technical drawing actually is. The listing
-        // photographs become the only colour on the page, which is correct:
-        // the rooms are the product, the interface is the annotation.
-        //
-        // ONE hue survives — red, for destructive actions only. Everything else
-        // (confirmed, pending, verified, approximate) is carried by FILL WEIGHT:
-        // solid black reads as settled, an outline as pending, grey as closed.
-        // That is how drawings have always encoded state, and it means the
-        // system never depends on a reader distinguishing two hues.
-        ink: '#000000',            // true black — headlines, fills, hard edges
-        base: '#FFFFFF',           // page — gallery white, edge to edge
-        surface: '#FFFFFF',        // cards — same white; the RULE separates them
-        'surface-alt': '#F4F4F4',  // inputs / nested / hover — the only tone used
-        line: '#D6D6D6',           // hairline rules; slightly darker now they do the work
-        muted: '#6B6B6B',          // secondary text (5.3:1 on white)
-        text: '#0A0A0A',           // primary text
+        // ── "Survey" — quiet, warm, premium ──
+        // A near-white paper ground (warm, but nowhere near cream — cream is
+        // the giveaway of generic warmth) with a deep ink-navy accent that is
+        // desaturated almost to black, so it reads as considered rather than
+        // technological. Smoothness comes from soft rules and gentle shadow,
+        // not from rounding the corners.
+        ink: '#10131A',            // deepest — headlines and hard edges
+        base: '#FAF9F7',           // page — warm paper, a half-step off white
+        surface: '#FFFFFF',        // cards — true white, lifted by warmth beneath
+        'surface-alt': '#F4F2EF',  // inputs / nested / hover
+        line: '#E7E3DE',           // soft warm hairline — the main structural tool
+        muted: '#5E636C',          // secondary text — dark enough to clear AA on the
+                                   // TINTED panels too, not just on white. The
+                                   // lighter value passed at 5.6:1 on white and
+                                   // then failed at 4.38:1 on a tinted banner.
+        text: '#1A1D24',           // primary text
 
-        // Interactive is simply black. Maximum contrast, no decoration.
+        // Deep ink navy. Almost black, quietly blue — the colour of good
+        // stationery rather than of software.
         primary: {
-          DEFAULT: '#000000',
-          light: '#3D3D3D',
-          dark: '#262626',
+          DEFAULT: '#1B2A41',
+          light: '#2F4568',
+          dark: '#121C2C',
         },
-        'primary-ink': '#000000',
+        'primary-ink': '#1B2A41',
         accent: {
-          DEFAULT: '#000000',
-          light: '#3D3D3D',
-          dark: '#262626',
+          DEFAULT: '#1B2A41',
+          light: '#2F4568',
+          dark: '#121C2C',
         },
 
-        // "Approximate", "awaiting", "check this" — lower emphasis by design,
-        // so it sits at mid-grey rather than shouting in amber.
+        // Warm bronze for attention — "approximate", "awaiting", "check this".
+        // Distinct from the navy so it never reads as an action.
         highlight: {
-          DEFAULT: '#8A8A8A',
-          light: '#BDBDBD',
+          DEFAULT: '#A87C3E',
+          light: '#D0A96A',
         },
-        'highlight-ink': '#4A4A4A',
+        'highlight-ink': '#7A5522',
 
         royal: {
-          DEFAULT: '#3D3D3D',
-          light: '#6B6B6B',
-          dark: '#1A1A1A',
+          DEFAULT: '#3A4560',
+          light: '#5A688A',
+          dark: '#232C42',
         },
 
-        // Confirmed / verified / released: solid black plus a check mark. The
-        // meaning comes from the tick and the label, not from green.
-        success: '#000000',
-        'success-ink': '#0A0A0A',
-
-        // The one retained hue. Deleting a listing, refunding a student,
-        // suspending an account — the places where a mis-click costs something.
-        danger: '#B3261E',
-        'danger-ink': '#8C1D18',
-
-        info: '#000000',
+        // Semantic colours stay clearly separate from the navy, so "confirmed"
+        // and "interactive" can never be confused.
+        success: '#2F7A5A',
+        'success-ink': '#1F5C42',
+        danger: '#B23B2E',
+        'danger-ink': '#8E2C21',
+        info: '#3A4560',
       },
       fontFamily: {
         // Archivo carries the interface — a grotesque with more character than
@@ -93,17 +89,17 @@ export default {
       boxShadow: {
         // Tight and low-contrast: a drawing sits ON the sheet rather than
         // hovering above it. Depth comes from the hairline, not the blur.
-        glow: '0 10px 30px -12px rgba(0, 0, 0, 0.30)',
-        'glow-sm': '0 6px 18px -10px rgba(0, 0, 0, 0.26)',
-        'glow-ochre': '0 10px 30px -12px rgba(0, 0, 0, 0.22)',
-        card: '0 1px 2px rgba(11, 14, 19, 0.04)',
-        'card-lg': '0 12px 34px -18px rgba(11, 14, 19, 0.28)',
-        lift: '0 18px 44px -22px rgba(11, 14, 19, 0.34)',
+        glow: '0 20px 48px -22px rgba(27,42,65,0.30)',
+        'glow-sm': '0 10px 28px -16px rgba(27,42,65,0.26)',
+        'glow-ochre': '0 20px 48px -22px rgba(168,124,62,0.26)',
+        card: '0 1px 2px rgba(16,19,26,0.04)',
+        'card-lg': '0 16px 40px -24px rgba(16,19,26,0.22)',
+        lift: '0 24px 56px -28px rgba(16,19,26,0.26)',
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(120deg, #000000 0%, #333333 100%)',
-        'brand-sheen': 'linear-gradient(120deg, #3D3D3D 0%, #000000 55%, #1A1A1A 100%)',
-        'warm-deep': 'linear-gradient(140deg, #000000 0%, #1F1F1F 45%, #3D3D3D 100%)',
+        'brand-gradient': 'linear-gradient(135deg, #1B2A41 0%, #3A4560 100%)',
+        'brand-sheen': 'linear-gradient(120deg, #2F4568 0%, #1B2A41 58%, #121C2C 100%)',
+        'warm-deep': 'linear-gradient(140deg, #121C2C 0%, #1B2A41 45%, #3A4560 100%)',
       },
       letterSpacing: {
         meta: '0.14em',
