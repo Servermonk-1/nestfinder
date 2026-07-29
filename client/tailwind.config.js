@@ -18,10 +18,10 @@ export default {
         // That is how drawings have always encoded state, and it means the
         // system never depends on a reader distinguishing two hues.
         ink: '#000000',            // true black — headlines, fills, hard edges
-        base: '#F1F1F1',           // page — a desk
-        surface: '#FFFFFF',        // cards — sheets laid on it
-        'surface-alt': '#F6F6F6',  // inputs / nested / hover
-        line: '#E2E2E2',           // hairline rules and borders
+        base: '#FFFFFF',           // page — gallery white, edge to edge
+        surface: '#FFFFFF',        // cards — same white; the RULE separates them
+        'surface-alt': '#F4F4F4',  // inputs / nested / hover — the only tone used
+        line: '#D6D6D6',           // hairline rules; slightly darker now they do the work
         muted: '#6B6B6B',          // secondary text (5.3:1 on white)
         text: '#0A0A0A',           // primary text
 

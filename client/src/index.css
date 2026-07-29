@@ -3,8 +3,8 @@
  *
  * Everything that matters on this platform is measured: kilometres to a
  * placement, minutes on a danfo, naira held in escrow. So the interface borrows
- * from technical drawing rather than interior décor — a strict grid, hairline
- * rules, square corners, annotation-style labels, and every number set in mono
+ * from technical drawing rather than interior décor — hairline rules, square
+ * corners, annotation-style labels, and every number set in mono
  * because the numbers ARE the content.
  *
  * Archivo carries the interface, Archivo Expanded the headlines (wide and
@@ -32,14 +32,11 @@
   body {
     font-family: 'Archivo', system-ui, sans-serif;
     color: #0A0A0A;
-    background-color: #F1F1F1;
-    /* A drafting sheet: a faint graphite grid and nothing else. No wash, no
-       gradient — the listing photographs supply the only colour on the page. */
-    background-image:
-      linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
-    background-size: 32px 32px, 32px 32px;
-    background-attachment: fixed;
+    background-color: #FFFFFF;
+    /* Gallery white, edge to edge. The grid is gone: it existed to give a grey
+       ground some texture, and on white it would only be noise. Separation now
+       comes from the hairline rule alone — which is what a drawing does. */
+
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     font-feature-settings: 'cv05' 1, 'ss01' 1;
@@ -102,13 +99,13 @@
     background: rgba(255, 255, 255, 0.62);
     backdrop-filter: blur(20px) saturate(1.4);
     -webkit-backdrop-filter: blur(20px) saturate(1.4);
-    border: 1px solid rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(0, 0, 0, 0.08);
   }
   .glass-strong {
     background: rgba(255, 255, 255, 0.82);
     backdrop-filter: blur(24px) saturate(1.5);
     -webkit-backdrop-filter: blur(24px) saturate(1.5);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(0, 0, 0, 0.10);
   }
   /* Glass over a dark panel. */
   .glass-tint {
@@ -121,13 +118,16 @@
   /* The floating navigation pill — the single rounded object in a square
      system, which is what makes it read as deliberate. */
   .nav-pill {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(22px) saturate(1.6);
-    -webkit-backdrop-filter: blur(22px) saturate(1.6);
-    border: 1px solid rgba(255, 255, 255, 0.9);
+    /* On a white page, white glass with a white border is invisible. The pill
+       is defined by a grey hairline and a real shadow instead — it still
+       frosts whatever scrolls beneath it. */
+    background: rgba(255, 255, 255, 0.78);
+    backdrop-filter: blur(20px) saturate(1.35);
+    -webkit-backdrop-filter: blur(20px) saturate(1.35);
+    border: 1px solid rgba(0, 0, 0, 0.10);
     box-shadow:
-      0 1px 2px rgba(0, 0, 0, 0.05),
-      0 12px 32px -12px rgba(0, 0, 0, 0.16);
+      0 1px 2px rgba(0, 0, 0, 0.04),
+      0 14px 36px -16px rgba(0, 0, 0, 0.22);
   }
 
   .btn-primary {
@@ -142,7 +142,12 @@
   }
 
   .card {
+    /* Same white as the page, so the 1px rule is the ONLY thing defining the
+       card. That is the whole idea: structure drawn, not shaded. */
     @apply bg-surface border border-line transition-all duration-200;
+  }
+  .card:hover {
+    @apply border-ink/35;
   }
 
   .input-field {
