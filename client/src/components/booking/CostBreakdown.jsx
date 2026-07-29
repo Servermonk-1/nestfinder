@@ -37,14 +37,14 @@ export default function CostBreakdown({ cost, showSplit = false }) {
 								</span>
 							)}
 						</span>
-						<span className="shrink-0 font-semibold tabular-nums text-text">{naira(r.amount)}</span>
+						<span className="shrink-0 font-semibold tabular-nums text-text font-mono">{naira(r.amount)}</span>
 					</div>
 				))}
 			</div>
 
 			<div className="mt-3 flex items-center justify-between border-t border-primary/10 pt-3">
 				<span className="font-bold text-text">Total to move in</span>
-				<span className="font-serif text-2xl font-bold tabular-nums text-primary-ink">{naira(cost.total)}</span>
+				<span className="font-serif text-2xl font-bold tabular-nums text-primary-ink font-mono">{naira(cost.total)}</span>
 			</div>
 
 			{cost.refundableAtEnd > 0 && (

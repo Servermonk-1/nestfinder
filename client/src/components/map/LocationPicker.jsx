@@ -146,7 +146,7 @@ export default function LocationPicker({ address, area, city, state, value, onCh
 			{position && (
 				<p className="flex items-center gap-1.5 text-[11px] text-muted">
 					<MapPin className="h-3 w-3" />
-					<span className="tabular-nums">{position[0].toFixed(5)}, {position[1].toFixed(5)}</span>
+					<span className="tabular-nums font-mono">{position[0].toFixed(5)}, {position[1].toFixed(5)}</span>
 				</p>
 			)}
 		</div>

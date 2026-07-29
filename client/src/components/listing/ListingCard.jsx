@@ -97,7 +97,7 @@ export default function ListingCard({ listing, isFirst = false }) {
 				</motion.button>
 
 				{/* Price */}
-				<span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 font-serif text-sm font-extrabold text-primary-ink shadow-sm">
+				<span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[13px] font-semibold tabular-nums text-ink shadow-sm">
 					{formatPrice(listing)}
 				</span>
 			</div>

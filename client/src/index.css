@@ -1,4 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,500;0,600;0,700;0,800;1,500&family=Inter:wght@400;500;600;700;800&display=swap');
+/*
+ * NestFinder — "Survey"
+ *
+ * Everything that matters on this platform is measured: kilometres to a
+ * placement, minutes on a danfo, naira held in escrow. So the interface borrows
+ * from technical drawing rather than interior décor — a strict grid, hairline
+ * rules, square corners, annotation-style labels, and every number set in mono
+ * because the numbers ARE the content.
+ *
+ * Archivo carries the interface, Archivo Expanded the headlines (wide and
+ * architectural), IBM Plex Mono every figure and identifier.
+ */
+@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=Archivo+Expanded:wght@600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -18,17 +30,26 @@
   }
 
   body {
-    font-family: 'Inter', system-ui, sans-serif;
-    color: #2B2620;
-    background-color: #DAD4C9;
-    /* Calm warm wash — terracotta, ochre & a whisper of sage over warm stone */
+    font-family: 'Archivo', system-ui, sans-serif;
+    color: #14181F;
+    background-color: #EEF0F3;
+    /* A drafting sheet: a faint blueprint grid, cool and even, with one
+       ultramarine wash so the page isn't dead flat. No warm gradients. */
     background-image:
-      radial-gradient(880px 500px at 8% -6%, rgba(194, 96, 63, 0.12), transparent 60%),
-      radial-gradient(820px 600px at 104% 2%, rgba(199, 154, 62, 0.12), transparent 55%),
-      radial-gradient(760px 760px at 52% 118%, rgba(110, 139, 94, 0.08), transparent 60%);
+      linear-gradient(rgba(20, 24, 31, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 24, 31, 0.035) 1px, transparent 1px),
+      radial-gradient(900px 520px at 88% -8%, rgba(29, 63, 209, 0.06), transparent 62%);
+    background-size: 32px 32px, 32px 32px, 100% 100%;
     background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    font-feature-settings: 'cv05' 1, 'ss01' 1;
+  }
+
+  /* Headlines are set tight and wide — the two things that make a grotesque
+     read as designed rather than default. */
+  h1, h2, h3 {
+    letter-spacing: -0.022em;
   }
 
   input,
@@ -38,93 +59,137 @@
     font-family: inherit;
   }
 
+  /* Figures line up in columns wherever they appear. */
+  .tabular-nums,
+  input[type='number'] {
+    font-variant-numeric: tabular-nums;
+  }
+
   ::selection {
-    background: rgba(194, 96, 63, 0.22);
-    color: #2B2620;
+    background: rgba(29, 63, 209, 0.18);
+    color: #14181F;
+  }
+
+  /* Keyboard focus must always be visible — it was easy to lose against the
+     old soft palette. */
+  :focus-visible {
+    outline: 2px solid #1D3FD1;
+    outline-offset: 2px;
   }
 
   ::-webkit-scrollbar {
-    width: 11px;
-    height: 11px;
+    width: 10px;
+    height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #D2CBBE;
+    background: #E4E7EC;
   }
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(#B9AF9C, #A79C86);
-    border: 3px solid #D2CBBE;
-    border-radius: 999px;
+    background: #B6BDC8;
+    border: 3px solid #E4E7EC;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(#A79C86, #948872);
+    background: #8B94A3;
   }
 }
 
 @layer components {
-  /* Frosted cream glass for the warm theme */
+  /*
+   * Glass is used sparingly and only where something genuinely floats above
+   * the page: the navbar pill, modal scrims, the sticky booking rail. Applied
+   * everywhere it becomes noise.
+   */
   .glass {
-    background: rgba(245, 241, 234, 0.68);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.62);
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border: 1px solid rgba(255, 255, 255, 0.85);
   }
   .glass-strong {
-    background: rgba(245, 241, 234, 0.86);
-    backdrop-filter: blur(22px);
-    -webkit-backdrop-filter: blur(22px);
-    border: 1px solid rgba(255, 255, 255, 0.75);
+    background: rgba(255, 255, 255, 0.82);
+    backdrop-filter: blur(24px) saturate(1.5);
+    -webkit-backdrop-filter: blur(24px) saturate(1.5);
+    border: 1px solid rgba(255, 255, 255, 0.9);
   }
-  /* Glass on top of a warm coloured panel */
+  /* Glass over a dark panel. */
   .glass-tint {
-    background: rgba(255, 250, 244, 0.15);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 250, 244, 0.28);
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px) saturate(1.3);
+    -webkit-backdrop-filter: blur(14px) saturate(1.3);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+
+  /* The floating navigation pill — the single rounded object in a square
+     system, which is what makes it read as deliberate. */
+  .nav-pill {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(22px) saturate(1.6);
+    -webkit-backdrop-filter: blur(22px) saturate(1.6);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow:
+      0 1px 2px rgba(20, 24, 31, 0.04),
+      0 12px 32px -12px rgba(20, 24, 31, 0.18);
   }
 
   .btn-primary {
-    @apply bg-brand-gradient text-white font-bold px-6 py-3 rounded-xl shadow-glow-sm transition-all duration-200 cursor-pointer;
+    @apply bg-primary text-white font-semibold px-6 py-3 transition-all duration-200 cursor-pointer;
+    letter-spacing: -0.01em;
   }
   .btn-primary:hover {
-    @apply shadow-glow -translate-y-0.5;
+    @apply bg-primary-dark;
   }
   .btn-secondary {
-    @apply text-text font-semibold px-6 py-3 rounded-xl border border-line bg-surface transition-all duration-200 cursor-pointer hover:border-primary/50 hover:shadow-card;
+    @apply text-text font-semibold px-6 py-3 border border-line bg-surface transition-all duration-200 cursor-pointer hover:border-primary/60 hover:text-primary;
   }
 
   .card {
-    @apply bg-surface rounded-2xl border border-line shadow-card transition-all duration-300;
+    @apply bg-surface border border-line transition-all duration-200;
   }
 
   .input-field {
-    @apply w-full px-4 py-3 rounded-xl text-text border border-line bg-surface-alt focus:border-primary/70 focus:bg-surface focus:ring-2 focus:ring-primary/20 transition-all duration-200 placeholder-muted;
+    @apply w-full px-4 py-3 text-text border border-line bg-surface transition-all duration-150 placeholder-muted;
+  }
+  .input-field:focus {
+    @apply border-primary;
+    box-shadow: inset 2px 0 0 0 #1D3FD1;
+  }
+
+  /* Annotation label — the small uppercase caption that names a value, the way
+     a field is annotated on a drawing. */
+  .label-meta {
+    @apply font-mono text-[10px] font-medium uppercase text-muted;
+    letter-spacing: 0.14em;
   }
 
   .badge-available {
-    @apply bg-success/15 text-success text-xs font-semibold px-2.5 py-1 rounded-full;
+    @apply bg-success/12 text-success-ink text-[11px] font-semibold px-2 py-0.5;
   }
   .badge-unavailable {
-    @apply bg-danger/12 text-danger text-xs font-semibold px-2.5 py-1 rounded-full;
+    @apply bg-danger/12 text-danger-ink text-[11px] font-semibold px-2 py-0.5;
   }
   .badge-verified {
-    @apply bg-primary/12 text-primary text-xs font-semibold px-2.5 py-1 rounded-full;
+    @apply bg-primary/10 text-primary-ink text-[11px] font-semibold px-2 py-0.5;
   }
   .badge-flagged {
-    @apply bg-highlight/18 text-highlight text-xs font-semibold px-2.5 py-1 rounded-full;
+    @apply bg-highlight/15 text-highlight-ink text-[11px] font-semibold px-2 py-0.5;
   }
 }
 
 @layer utilities {
-  /* Warm terracotta→ochre gradient text */
+  /* A hairline rule, the width of a drawn line. */
+  .rule {
+    border-top: 1px solid rgba(20, 24, 31, 0.1);
+  }
+
   .text-gradient {
-    background: linear-gradient(120deg, #C2603F 0%, #C79A3E 100%);
+    background: linear-gradient(100deg, #1D3FD1 0%, #4B7BFF 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .text-shimmer {
-    background: linear-gradient(100deg, #9C4A2E 20%, #C2603F 42%, #E4C079 52%, #C2603F 62%, #9C4A2E 84%);
+    background: linear-gradient(100deg, #14181F 20%, #1D3FD1 45%, #6E9BFF 52%, #1D3FD1 60%, #14181F 84%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -135,13 +200,36 @@
 
   .bg-grid {
     background-image:
-      linear-gradient(rgba(43, 38, 32, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(43, 38, 32, 0.05) 1px, transparent 1px);
-    background-size: 46px 46px;
+      linear-gradient(rgba(20, 24, 31, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20, 24, 31, 0.06) 1px, transparent 1px);
+    background-size: 32px 32px;
   }
 
   .mask-fade-b {
     -webkit-mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
     mask-image: linear-gradient(to bottom, black 55%, transparent 100%);
+  }
+
+  /* Entrance used across lists and panels — short, and it respects a user who
+     has asked the system for less motion. */
+  .rise {
+    animation: rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .draw-in {
+    animation: drawIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rise,
+    .draw-in,
+    .text-shimmer {
+      animation: none;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }

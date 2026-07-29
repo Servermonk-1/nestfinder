@@ -66,7 +66,7 @@ export default function ManageBookings() {
 						<p className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wide text-muted">
 							<ShieldCheck className="h-3.5 w-3.5 text-success-ink" /> Held in escrow
 						</p>
-						<p className="mt-1 font-serif text-2xl font-bold tabular-nums text-ink">{naira(data.escrowHeldTotal)}</p>
+						<p className="mt-1 font-serif text-2xl font-bold tabular-nums text-ink font-mono">{naira(data.escrowHeldTotal)}</p>
 						<p className="text-xs text-muted">owed to students or landlords, not ours</p>
 					</div>
 					<div className="rounded-2xl border border-muted/15 bg-surface px-5 py-4">
@@ -144,7 +144,7 @@ export default function ManageBookings() {
 
 										<div className="flex shrink-0 flex-col items-end gap-2">
 											<span className="text-right">
-												<span className="block font-serif text-lg font-bold tabular-nums text-primary-ink">
+												<span className="block font-serif text-lg font-bold tabular-nums text-primary-ink font-mono">
 													{naira(b.cost?.total)}
 												</span>
 												<span className="text-[11px] text-muted">

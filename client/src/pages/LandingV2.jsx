@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavPill from '../components/common/NavPill';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
 	ArrowRight, ArrowUpRight, BadgeCheck, Bed, ChevronDown, Home, LayoutDashboard,
@@ -181,57 +182,38 @@ export default function LandingPageV2() {
 	return (
 		<div className="min-h-screen bg-base text-text">
 			{/* ══ NAVBAR ══ */}
-			<nav className="fixed inset-x-0 top-0 z-50 border-b border-line/70 glass-strong">
-				<div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">
-					<button onClick={() => navigate('/')} className="group flex items-center gap-2.5">
-						<span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
-							<Home className="h-5 w-5 text-white" />
-						</span>
-						<span className="font-serif text-xl font-extrabold text-text">NestFinder</span>
-					</button>
-
-					<div className="hidden items-center gap-8 lg:flex">
-						{NAV.map((l) => (
-							<a key={l.href} href={l.href} className="text-sm font-semibold text-muted transition hover:text-primary-ink">{l.label}</a>
-						))}
-					</div>
-
-					<div className="hidden items-center gap-3 md:flex">
-						{user ? (
-							<>
-								<button onClick={() => navigate(dashLink())} className="inline-flex items-center gap-2 rounded-xl bg-brand-gradient px-5 py-2.5 text-sm font-bold text-white shadow-glow-sm transition hover:shadow-glow">
-									<LayoutDashboard className="h-4 w-4" /> Dashboard
-								</button>
-								<button onClick={() => { logout(); navigate('/'); }} className="inline-flex items-center gap-1.5 text-sm font-bold text-muted transition hover:text-danger-ink">
-									<LogOut className="h-4 w-4" /> Sign out
-								</button>
-							</>
-						) : (
-							<>
-								<button onClick={() => navigate('/student/login')} className="text-sm font-bold text-text transition hover:text-primary-ink">Sign in</button>
-								<button onClick={() => navigate('/student/register')} className="rounded-xl bg-brand-gradient px-5 py-2.5 text-sm font-bold text-white shadow-glow-sm transition hover:shadow-glow">Get started</button>
-							</>
-						)}
-					</div>
-
-					<button onClick={() => setIsMenuOpen(!isMenuOpen)} className="rounded-xl border border-line bg-surface p-2 text-text md:hidden">
-						{isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-					</button>
-				</div>
-				{isMenuOpen && (
-					<div className="space-y-1 border-t border-line px-4 py-4 md:hidden">
-						{NAV.map((l) => <a key={l.href} href={l.href} onClick={() => setIsMenuOpen(false)} className="block rounded-lg px-3 py-2 text-sm font-semibold text-muted">{l.label}</a>)}
-						{user ? (
-							<button onClick={() => navigate(dashLink())} className="mt-2 w-full rounded-xl bg-brand-gradient px-4 py-3 text-sm font-bold text-white">Dashboard</button>
-						) : (
-							<>
-								<button onClick={() => navigate('/student/login')} className="block w-full rounded-lg px-3 py-2 text-left text-sm font-semibold text-muted">Sign in</button>
-								<button onClick={() => navigate('/student/register')} className="mt-1 w-full rounded-xl bg-brand-gradient px-4 py-3 text-sm font-bold text-white">Get started</button>
-							</>
-						)}
-					</div>
-				)}
-			</nav>
+			{/* Anchor links live on this page, so the pill carries them and the
+			    account actions sit on the right. No mark — the wordmark is the brand. */}
+			<NavPill
+				links={NAV.map((l) => ({ to: l.href, label: l.label }))}
+				right={
+					user ? (
+						<>
+							<button onClick={() => navigate(dashLink())} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-primary-dark">
+								<LayoutDashboard className="h-4 w-4" strokeWidth={1.75} /> Dashboard
+							</button>
+							<button onClick={() => { logout(); navigate('/'); }} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold text-muted transition hover:text-danger-ink">
+								<LogOut className="h-4 w-4" strokeWidth={1.75} /> Sign out
+							</button>
+						</>
+					) : (
+						<>
+							<button onClick={() => navigate('/student/login')} className="rounded-full px-3.5 py-2 text-[13px] font-semibold text-ink transition hover:bg-ink/[0.06]">Sign in</button>
+							<button onClick={() => navigate('/student/register')} className="rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-primary-dark">Get started</button>
+						</>
+					)
+				}
+				mobileExtras={
+					user ? (
+						<button onClick={() => navigate(dashLink())} className="block w-full px-4 py-3 text-left text-sm font-semibold text-primary-ink">Dashboard</button>
+					) : (
+						<>
+							<button onClick={() => navigate('/student/login')} className="block w-full px-4 py-3 text-left text-sm font-semibold text-ink">Sign in</button>
+							<button onClick={() => navigate('/student/register')} className="block w-full px-4 py-3 text-left text-sm font-semibold text-primary-ink">Get started</button>
+						</>
+					)
+				}
+			/>
 
 			{/* ══ HERO ══ */}
 			<section className="relative overflow-hidden px-4 pb-16 pt-28 md:px-8 md:pt-36">

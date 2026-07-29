@@ -113,7 +113,7 @@ export default function BookingsPage() {
 												</p>
 											</div>
 											<span className="shrink-0 text-right">
-												<span className="block font-serif text-lg font-bold tabular-nums text-primary-ink">
+												<span className="block font-serif text-lg font-bold tabular-nums text-primary-ink font-mono">
 													{naira(isLandlord ? b.cost?.landlordReceives : b.cost?.total)}
 												</span>
 												<span className="text-[11px] text-muted">{isLandlord ? 'your payout' : 'total'}</span>

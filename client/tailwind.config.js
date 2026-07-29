@@ -7,76 +7,96 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── Warm Stone — a calm, mid-tone, editorial palette ──
-        ink: '#1D1712',            // deepest espresso
-        base: '#DAD4C9',           // page — warm greige (mid, not bright, not dark)
-        surface: '#F5F1EA',        // cards — soft cream that lifts off the page
-        'surface-alt': '#EAE3D6',  // inputs / hover / nested
-        line: '#C9C0B0',           // warm hairline borders
-        muted: '#5E5649',          // secondary text — warm taupe (darkened to clear WCAG AA 4.5:1 on every surface)
-        text: '#2B2620',           // primary text — espresso
+        // ── "Survey" — graphite, paper and one ultramarine signal ──
+        // Cool and measured. The previous palette was warm cream + terracotta,
+        // which reads as hospitality; this is a platform where students commit
+        // real money to a place they haven't seen, so it borrows its manners
+        // from drafting and finance instead.
+        ink: '#0B0E13',            // deepest graphite — headlines, hard edges
+        base: '#EEF0F3',           // page — cool paper
+        surface: '#FFFFFF',        // cards — true white so the grid reads crisp
+        'surface-alt': '#F4F6F8',  // inputs / nested / hover
+        line: '#DBE0E6',           // hairline rules and borders
+        muted: '#5A6472',          // secondary text (7.0:1 on white)
+        text: '#14181F',           // primary text
 
-        // Terracotta hero + warm ochre — earthy, refined, not loud
+        // Ultramarine: the single interactive colour. Precision, not play.
         primary: {
-          // Darkened 5% from #C2603F so WHITE button text clears WCAG AA (4.5:1).
-          // At the old value it was 4.17:1 — and white is already the lightest
-          // possible text, so the background was the only thing left to change.
-          DEFAULT: '#B85B3C',
-          light: '#DB8B6A',
-          dark: '#9C4A2E',
+          DEFAULT: '#1D3FD1',
+          light: '#4B7BFF',
+          dark: '#152FA0',
         },
-        // Text-only terracotta. Same family as `primary`, darkened so small
-        // labels/links clear WCAG AA (4.5:1) on every surface. Backgrounds,
-        // gradients and borders keep the brighter `primary`.
-        'primary-ink': '#8A4028',
+        // Text-safe twin, for small labels and links on light surfaces.
+        'primary-ink': '#1A38B8',
         accent: {
-          DEFAULT: '#C2603F',
-          light: '#DB8B6A',
-          dark: '#9C4A2E',
-        },
-        highlight: {
-          DEFAULT: '#C79A3E',
-          light: '#E4C079',
-        },
-        // Text-only ochre. `highlight` is a fine BACKGROUND but only reaches
-        // ~2.4:1 as small text on cream, which axe flags as a serious failure.
-        // Same trick as `primary-ink`: darken for text, leave fills alone.
-        'highlight-ink': '#7A5B15',
-        royal: {
-          DEFAULT: '#8A5A44',
-          light: '#B08469',
-          dark: '#67402F',
+          DEFAULT: '#1D3FD1',
+          light: '#4B7BFF',
+          dark: '#152FA0',
         },
 
-        success: '#6E8B5E',
-        // Text-only green.  is fine as a FILL but only ~3.3:1 as small
-        // text on a tinted surface. Completes the ink set: primary/danger/
-        // highlight/success all have a darkened text-safe twin.
-        'success-ink': '#47603A',
-        danger: '#B4432E',
-        // Text-only danger red — darkened to clear WCAG AA on tinted surfaces.
-        'danger-ink': '#8F3423',
-        info: '#5B7A99',
+        // Attention — surveyor's amber. "Approximate", "awaiting", "check this".
+        // Never success, never danger.
+        highlight: {
+          DEFAULT: '#C77A0E',
+          light: '#E8A93C',
+        },
+        'highlight-ink': '#8A5406',
+
+        royal: {
+          DEFAULT: '#3B4A63',
+          light: '#5C6E8C',
+          dark: '#25314A',
+        },
+
+        success: '#0E8A5F',
+        'success-ink': '#076646',
+        danger: '#C0392B',
+        'danger-ink': '#96271C',
+        info: '#1D3FD1',
       },
       fontFamily: {
-        // Body — Inter (clean, neutral)
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        // Headlines — Spectral (elegant editorial serif); kept under `serif`
-        // so every existing `font-serif` heading adopts it.
-        serif: ['Spectral', 'ui-serif', 'Georgia', 'serif'],
-        display: ['Spectral', 'ui-serif', 'Georgia', 'serif'],
+        // Archivo carries the interface — a grotesque with more character than
+        // the usual default, and it holds up at 11px.
+        sans: ['Archivo', 'system-ui', 'sans-serif'],
+        // `serif` is what every existing heading already uses, so pointing it
+        // at the expanded cut re-skins all of them at once. Wide, architectural.
+        serif: ['Archivo Expanded', 'Archivo', 'system-ui', 'sans-serif'],
+        display: ['Archivo Expanded', 'Archivo', 'system-ui', 'sans-serif'],
+        // Every figure, reference and coordinate.
+        mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      borderRadius: {
+        // Square by default — this is the requested shape language and it suits
+        // a measured interface. `full` is deliberately left alone so avatars,
+        // badges and the navigation pill stay circular; that contrast is what
+        // makes the pill read as intentional rather than inconsistent.
+        none: '0',
+        sm: '0',
+        DEFAULT: '0',
+        md: '0',
+        lg: '0',
+        xl: '0',
+        '2xl': '0',
+        '3xl': '0',
+        full: '9999px',
       },
       boxShadow: {
-        glow: '0 24px 58px -18px rgba(194,96,63,0.42)',
-        'glow-sm': '0 14px 32px -14px rgba(194,96,63,0.36)',
-        'glow-ochre': '0 24px 58px -18px rgba(199,154,62,0.4)',
-        card: '0 22px 48px -24px rgba(43,38,32,0.24)',
-        'card-lg': '0 46px 100px -34px rgba(43,38,32,0.3)',
+        // Tight and low-contrast: a drawing sits ON the sheet rather than
+        // hovering above it. Depth comes from the hairline, not the blur.
+        glow: '0 10px 30px -12px rgba(29, 63, 209, 0.42)',
+        'glow-sm': '0 6px 18px -10px rgba(29, 63, 209, 0.38)',
+        'glow-ochre': '0 10px 30px -12px rgba(199, 122, 14, 0.35)',
+        card: '0 1px 2px rgba(11, 14, 19, 0.04)',
+        'card-lg': '0 12px 34px -18px rgba(11, 14, 19, 0.28)',
+        lift: '0 18px 44px -22px rgba(11, 14, 19, 0.34)',
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(135deg, #C2603F 0%, #C79A3E 100%)',
-        'brand-sheen': 'linear-gradient(120deg, #DB8B6A 0%, #C2603F 58%, #9C4A2E 100%)',
-        'warm-deep': 'linear-gradient(140deg, #9C4A2E 0%, #C2603F 45%, #B0803A 100%)',
+        'brand-gradient': 'linear-gradient(120deg, #1D3FD1 0%, #4B7BFF 100%)',
+        'brand-sheen': 'linear-gradient(120deg, #4B7BFF 0%, #1D3FD1 55%, #152FA0 100%)',
+        'warm-deep': 'linear-gradient(140deg, #152FA0 0%, #1D3FD1 45%, #3B4A63 100%)',
+      },
+      letterSpacing: {
+        meta: '0.14em',
       },
       keyframes: {
         float: {
@@ -100,6 +120,21 @@ export default {
           '33%': { transform: 'translate(4%, -6%) scale(1.08)' },
           '66%': { transform: 'translate(-4%, 4%) scale(0.96)' },
         },
+        // Content arrives from just below, quickly, on a decelerating curve —
+        // it should feel like the page settling, not like a slideshow.
+        rise: {
+          '0%': { opacity: '0', transform: 'translateY(10px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        // A rule striking itself across the sheet.
+        drawIn: {
+          '0%': { transform: 'scaleX(0)', transformOrigin: 'left' },
+          '100%': { transform: 'scaleX(1)', transformOrigin: 'left' },
+        },
+        sheen: {
+          '0%': { transform: 'translateX(-120%)' },
+          '100%': { transform: 'translateX(220%)' },
+        },
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
@@ -107,6 +142,9 @@ export default {
         shimmer: 'shimmer 6s linear infinite',
         'glow-pulse': 'glowPulse 4s ease-in-out infinite',
         aurora: 'auroraShift 18s ease-in-out infinite',
+        rise: 'rise 0.5s cubic-bezier(0.16, 1, 0.3, 1) both',
+        'draw-in': 'drawIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both',
+        sheen: 'sheen 1.6s cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },
