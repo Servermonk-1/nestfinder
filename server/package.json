@@ -19,7 +19,6 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "express-mongo-sanitize": "^2.2.0",
     "express-rate-limit": "^8.4.1",
     "express-validator": "^7.3.2",
     "helmet": "^8.1.0",
@@ -30,8 +29,7 @@
     "nodemailer": "^9.0.3",
     "resend": "^6.17.2",
     "sharp": "^0.35.3",
-    "socket.io": "^4.8.3",
-    "xss-clean": "^0.1.4"
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "mongodb-memory-server": "^11.2.0",
