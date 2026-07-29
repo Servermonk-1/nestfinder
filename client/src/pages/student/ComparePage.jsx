@@ -237,7 +237,7 @@ export default function ComparePage() {
 
 	if (compareList.length === 0) {
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				<EmptyState
 					title="Nothing to compare yet"
 					subtitle="Go back to the dashboard and pick 2 or 3 homes you like — we'll line them up side by side so you can see what's different."
@@ -257,7 +257,7 @@ export default function ComparePage() {
 		const listing = compareList[0];
 		const image = getImageUrl(listing.images?.[0]);
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				<EmptyState
 					title="Add one more home to compare"
 					subtitle="Pick at least one more listing from the dashboard, then come back here to see them side by side."
@@ -308,7 +308,7 @@ export default function ComparePage() {
 	);
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<div className="mx-auto max-w-7xl px-4 py-8 md:px-8">
 				{/* Header */}
 				<motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>

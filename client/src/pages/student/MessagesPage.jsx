@@ -103,7 +103,7 @@ export default function MessagesPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
 			<div className="mx-auto max-w-7xl px-4 pb-6 pt-24 md:px-8">
@@ -190,7 +190,7 @@ export default function MessagesPage() {
 
 								<SafetyTipsBanner />
 
-								<div className="flex-1 space-y-3 overflow-y-auto bg-base/40 p-4">
+								<div className="flex-1 space-y-3 overflow-y-auto bg-paper/40 p-4">
 									{loadingThread ? (
 										<p className="text-sm text-muted">Loading messages…</p>
 									) : messages.length === 0 ? (

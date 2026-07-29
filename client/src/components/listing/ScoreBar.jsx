@@ -9,7 +9,7 @@ export default function ScoreBar({ label, value }) {
 				<span className="font-medium text-muted">{label}</span>
 				<span className="font-bold text-text">{value}%</span>
 			</div>
-			<div className="h-3 w-full overflow-hidden rounded-full bg-base/70 ring-1 ring-inset ring-white/5">
+			<div className="h-3 w-full overflow-hidden rounded-full bg-paper/70 ring-1 ring-inset ring-white/5">
 				<motion.div
 					initial={{ width: 0 }}
 					whileInView={{ width: `${value}%` }}

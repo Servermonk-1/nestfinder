@@ -32,7 +32,7 @@ export default function LandlordAccountPage() {
 	const handleSignOut = () => { logout(); navigate('/for-landlords'); };
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
 
 			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">

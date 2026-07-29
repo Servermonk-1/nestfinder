@@ -9,6 +9,8 @@ import Message from '../models/Message.js';
 import { runFraudShield, computeTrustScore } from '../services/fraudShield.js';
 import { geocodeOne } from '../services/geocodeListing.js';
 import { optimiseUploaded } from '../services/optimiseImages.js';
+import { notifyMatchingSearches } from '../services/savedSearchAlerts.js';
+import { buildListingFilter } from '../utils/listingFilter.js';
 import { geocodeListing as lookupAddress, distanceKm } from '../utils/geocode.js';
 
 // Read a landlord-placed pin off a request body. Returns undefined when there
@@ -92,6 +94,11 @@ export const createListing = async (req, res) => {
 		optimiseUploaded(req.files || []).catch((err) => console.error('Image optimisation failed:', err.message));
 
 		screenInBackground(listing._id, req.user.id);
+
+		// Tell anyone whose saved search this matches. Fire-and-forget and heavily
+		// throttled inside — a landlord posting five rooms must not send five
+		// emails, and a slow mail server must never delay their upload.
+		notifyMatchingSearches(listing._id).catch((err) => console.error('Saved-search alerts failed:', err.message));
 
 		res.status(201).json({
 			message: 'Listing created successfully',
@@ -252,8 +259,10 @@ export const searchListings = async (req, res) => {
 			page = 1, limit = 12,
 		} = req.query;
 
-		// Build filter object dynamically
-		const filter = { available: true, flagged: false };
+		// Built by the SHARED helper, so a saved search and the live search can
+		// never drift apart — an alert must only ever describe homes this very
+		// search would have returned.
+		const filter = buildListingFilter({ q, city, area, roomType, minPrice, maxPrice, amenities });
 
 		// ── "Near my placement" ──
 		// Anchor the whole search to where this student actually reports for
@@ -300,35 +309,6 @@ export const searchListings = async (req, res) => {
 				});
 			}
 			anchor = { lat: c[1], lng: c[0], name: me.placement.company.name };
-		}
-
-		// Free-text search. Every whitespace-separated word must appear somewhere
-		// in the listing, so "self contained bodija" narrows rather than widens.
-		if (q?.trim()) {
-			const words = q.trim().split(/\s+/).slice(0, 6);
-			filter.$and = words.map((word) => {
-				const rx = new RegExp(word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
-				return { $or: [{ title: rx }, { description: rx }, { area: rx }, { city: rx }, { roomType: rx }] };
-			});
-		}
-
-		if (city) filter.city = { $regex: city, $options: 'i' };
-		if (area) filter.area = { $regex: area, $options: 'i' };
-		if (roomType) filter.roomType = roomType;
-
-		// Price bounds are given per MONTH, so they must be compared against the
-		// normalised figure — never the raw price, which may be annual.
-		if (minPrice || maxPrice) {
-			filter.monthlyPrice = {};
-			if (minPrice) filter.monthlyPrice.$gte = parseInt(minPrice);
-			if (maxPrice) filter.monthlyPrice.$lte = parseInt(maxPrice);
-		}
-
-		if (amenities) {
-			const amenityList = amenities.split(',').map(a => a.trim()).filter(Boolean);
-			filter.amenities = {
-				$all: amenityList.map(a => new RegExp(`^${a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i')),
-			};
 		}
 
 		const sortOptions = {

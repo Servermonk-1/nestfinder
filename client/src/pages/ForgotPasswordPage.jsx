@@ -42,7 +42,7 @@ export default function ForgotPasswordPage() {
 	};
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base p-4">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 			<AuthBackdrop />
 			<motion.div
 				initial={{ opacity: 0, y: 18 }}

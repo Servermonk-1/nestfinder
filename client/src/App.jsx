@@ -23,8 +23,10 @@ const ComparePage = lazy(() => import('./pages/student/ComparePage'));
 const SavedPage = lazy(() => import('./pages/student/SavedPage'));
 const CompaniesPage = lazy(() => import('./pages/student/CompaniesPage'));
 const BookingsPage = lazy(() => import('./pages/student/BookingsPage'));
+const SavedSearchesPage = lazy(() => import('./pages/student/SavedSearchesPage'));
 const BookingDetailPage = lazy(() => import('./pages/student/BookingDetailPage'));
 const ManageBookings = lazy(() => import('./pages/admin/ManageBookings'));
+const SystemHealth = lazy(() => import('./pages/admin/SystemHealth'));
 const AccountPage = lazy(() => import('./pages/student/AccountPage'));
 const MessagesPage = lazy(() => import('./pages/student/MessagesPage'));
 const LandlordMessagesPage = lazy(() => import('./pages/landlord/LandlordMessagesPage'));
@@ -44,7 +46,7 @@ const NotFound = lazy(() => import('./pages/NotFound'));
 
 
 const PageLoader = () => (
-  <div className="flex min-h-screen items-center justify-center bg-base">
+  <div className="flex min-h-screen items-center justify-center bg-paper">
     <div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
   </div>
 );
@@ -93,6 +95,9 @@ function App() {
               <Route path="/companies" element={
                 <StudentRoute><CompaniesPage /></StudentRoute>
               } />
+              <Route path="/saved-searches" element={
+                <StudentRoute><SavedSearchesPage /></StudentRoute>
+              } />
               <Route path="/saved" element={
                 <StudentRoute><SavedPage /></StudentRoute>
               } />
@@ -130,6 +135,9 @@ function App() {
               } />
               <Route path="/admin/landlords" element={
                 <AdminRoute><ManageLandlords /></AdminRoute>
+              } />
+              <Route path="/admin/health" element={
+                <AdminRoute><SystemHealth /></AdminRoute>
               } />
               <Route path="/admin/bookings" element={
                 <AdminRoute><ManageBookings /></AdminRoute>

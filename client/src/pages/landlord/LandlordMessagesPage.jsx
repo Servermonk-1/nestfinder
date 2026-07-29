@@ -101,7 +101,7 @@ export default function LandlordMessagesPage() {
 	};
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
 
 			<div className="mx-auto max-w-7xl px-4 pb-10 pt-28 md:px-8">

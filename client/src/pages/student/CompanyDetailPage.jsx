@@ -106,7 +106,7 @@ export default function CompanyDetailPage() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-base">
+			<div className="min-h-screen bg-paper">
 				<StudentNavbar />
 				<div className="flex justify-center pt-40"><Loader2 className="h-6 w-6 animate-spin text-muted" /></div>
 			</div>
@@ -115,7 +115,7 @@ export default function CompanyDetailPage() {
 
 	if (notFound || !company) {
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
 				<div className="mx-auto max-w-2xl px-6 pt-40 text-center">
 					<Building2 className="mx-auto mb-3 h-10 w-10 text-muted" />
@@ -131,7 +131,7 @@ export default function CompanyDetailPage() {
 	const located = company.location?.coordinates?.length === 2;
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
 			{/* Unpublished centres are private, so they must not be indexed. */}

@@ -132,7 +132,7 @@ export default function LandlordDashboard() {
 	const availableCount = listings.filter((l) => l.available).length;
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
 			<div className="mx-auto max-w-5xl px-4 pb-16 pt-28 md:px-8">
 				<div className="flex flex-wrap items-center justify-between gap-4">

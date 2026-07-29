@@ -180,7 +180,7 @@ export default function LandingPageV2() {
 	];
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			{/* ══ NAVBAR ══ */}
 			{/* Anchor links live on this page, so the pill carries them and the
 			    account actions sit on the right. No mark — the wordmark is the brand. */}

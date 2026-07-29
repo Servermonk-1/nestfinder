@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
 	// No token in the URL → the link was mistyped or stripped.
 	if (!token) {
 		return (
-			<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base p-4">
+			<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 				<AuthBackdrop />
 				<motion.div
 					initial={{ opacity: 0, y: 18 }}
@@ -83,7 +83,7 @@ export default function ResetPasswordPage() {
 	);
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base p-4">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 			<AuthBackdrop />
 			<motion.div
 				initial={{ opacity: 0, y: 18 }}

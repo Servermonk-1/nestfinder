@@ -154,7 +154,7 @@ export default function LandlordAuth() {
 	// ══ LOGIN OTP STEP ══
 	if (otpStage) {
 		return (
-			<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base p-4">
+			<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 				<AuthBackdrop />
 				<motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="glass-strong relative w-full max-w-md rounded-3xl p-8 shadow-card-lg">
 					<button onClick={() => { setOtpStage(null); setOtpCode(''); }} className="mb-6 flex items-center gap-2 text-xs font-semibold text-muted transition hover:text-primary-ink">
@@ -188,7 +188,7 @@ export default function LandlordAuth() {
 	}
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base p-4">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 			<AuthBackdrop />
 			<motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
 				className="glass-strong relative flex min-h-[680px] w-[1000px] max-w-full overflow-hidden rounded-[28px] shadow-card-lg">

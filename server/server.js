@@ -24,6 +24,7 @@ import feedbackRoutes from './routes/feedback.js';
 import reviewRoutes from './routes/reviews.js';
 import companyRoutes from './routes/companies.js';
 import bookingRoutes from './routes/bookings.js';
+import savedSearchRoutes from './routes/savedSearches.js';
 import errorHandler from './middleware/errorHandler.js';
 import { reportError } from './utils/errorReporter.js';
 
@@ -131,6 +132,7 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/saved-searches', savedSearchRoutes);
 
 // ── HEALTH CHECK ──────────────────────────────────────────
 app.get('/', (req, res) => {

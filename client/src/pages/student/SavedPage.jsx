@@ -9,7 +9,7 @@ export default function SavedPage() {
 	const { savedListings } = useSaved();
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
 			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">

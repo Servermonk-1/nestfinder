@@ -64,7 +64,7 @@ export default function VerifyEmailPage() {
 	const btn = 'inline-flex w-full items-center justify-center gap-2 rounded-xl bg-brand-gradient px-5 py-3 text-sm font-bold text-white shadow-glow-sm transition hover:shadow-glow disabled:opacity-60';
 
 	return (
-		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-base p-4 text-text">
+		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4 text-text">
 			<div className="pointer-events-none absolute inset-0 overflow-hidden">
 				<div className="absolute inset-0 bg-grid opacity-60" />
 				<div className="absolute -left-40 -top-32 h-[26rem] w-[26rem] rounded-full bg-primary/20 blur-[120px] animate-aurora" />

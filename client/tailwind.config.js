@@ -14,7 +14,11 @@ export default {
         // technological. Smoothness comes from soft rules and gentle shadow,
         // not from rounding the corners.
         ink: '#10131A',            // deepest — headlines and hard edges
-        base: '#FAF9F7',           // page — warm paper, a half-step off white
+        // NOT named `base`. A colour called `base` generates a `text-base`
+        // utility that collides with Tailwind's `text-base` FONT SIZE, and the
+        // colour wins — so every `text-base` heading rendered in #FAF9F7, which
+        // is invisible on a white card. Renamed rather than worked around.
+        paper: '#FAF9F7',          // page — warm paper, a half-step off white
         surface: '#FFFFFF',        // cards — true white, lifted by warmth beneath
         'surface-alt': '#F4F2EF',  // inputs / nested / hover
         line: '#E7E3DE',           // soft warm hairline — the main structural tool

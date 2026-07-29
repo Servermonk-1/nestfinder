@@ -74,7 +74,7 @@ export default function LandlordLanding() {
 	];
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			{/* ══ NAVBAR ══ */}
 			<nav className="fixed inset-x-0 top-0 z-50 border-b border-line/70 glass-strong">
 				<div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">

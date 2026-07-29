@@ -67,7 +67,7 @@ export default function CompaniesPage() {
 	const title = (s) => s.replace(/\b\w/g, (c) => c.toUpperCase());
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
 			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">

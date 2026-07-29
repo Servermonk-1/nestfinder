@@ -32,7 +32,7 @@ export default function AdminLogin() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-base via-surface-alt to-base flex items-center justify-center p-4">
+		<div className="min-h-screen bg-gradient-to-br from-paper via-surface-alt to-paper flex items-center justify-center p-4">
 
 			{/* Animated background blobs */}
 			<motion.div

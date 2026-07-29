@@ -83,7 +83,7 @@ export default function BookingDetailPage() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-base">
+			<div className="min-h-screen bg-paper">
 				{isLandlord ? <LandlordNavbar /> : <StudentNavbar />}
 				<div className="flex justify-center pt-40"><Loader2 className="h-6 w-6 animate-spin text-muted" /></div>
 			</div>
@@ -92,7 +92,7 @@ export default function BookingDetailPage() {
 
 	if (!booking) {
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				{isLandlord ? <LandlordNavbar /> : <StudentNavbar />}
 				<div className="mx-auto max-w-2xl px-6 pt-40 text-center">
 					<h1 className="font-serif text-2xl font-bold">Booking not found</h1>
@@ -108,7 +108,7 @@ export default function BookingDetailPage() {
 	const escrowHeld = booking.escrow?.state === 'held';
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			{isLandlord ? <LandlordNavbar /> : <StudentNavbar />}
 
 			<div className="mx-auto max-w-3xl px-6 pb-16 pt-28">

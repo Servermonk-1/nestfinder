@@ -153,6 +153,11 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 						</Field>
 					</div>
 					<Field label="Rent (₦)" error={errors.price}>
+						{/* `inputClass` includes w-full. On this row that made the select
+						    ask for 100% AND 144px AND the gap — and `shrink-0` stopped it
+						    giving any of that back, so a 393px phone scrolled sideways by
+						    3px. The select gets an explicit width instead, and the input
+						    gets min-w-0 so it is the one that yields. */}
 						<div className="flex gap-2">
 							<input
 								type="number"
@@ -160,13 +165,13 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 								placeholder="e.g. 180000"
 								value={form.price}
 								onChange={(e) => setField('price', e.target.value)}
-								className={`${inputClass(errors.price)} flex-1`}
+								className={`${inputClass(errors.price)} min-w-0 flex-1`}
 							/>
 							<select
 								value={form.priceUnit}
 								onChange={(e) => setField('priceUnit', e.target.value)}
 								aria-label="Rent period"
-								className={`${inputClass(false)} w-36 shrink-0 cursor-pointer`}
+								className={`${inputClass(false).replace('w-full', '')} w-32 shrink-0 cursor-pointer sm:w-36`}
 							>
 								<option value="annual">per year</option>
 								<option value="monthly">per month</option>
@@ -307,7 +312,7 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 							<button
 								type="button"
 								onClick={() => removeFile(i)}
-								className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-base/80 text-text opacity-0 transition group-hover:opacity-100"
+								className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-paper/80 text-text opacity-0 transition group-hover:opacity-100"
 							>
 								<X className="h-3 w-3" />
 							</button>

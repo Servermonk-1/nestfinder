@@ -185,6 +185,30 @@ export const sendPlacementRemovedEmail = async (email, name, companyName, accoun
 	});
 };
 
+// ── SAVED-SEARCH ALERT ────────────────────────────────────
+// Rooms near the big placement centres go within days of the SIWES intake, so
+// a student who searched on Monday has no way of knowing what appeared on
+// Tuesday. Throttled hard in the caller — this is a nudge, not a newsletter.
+export const sendSavedSearchAlertEmail = async (email, name, m) => {
+	return send({
+		to: email,
+		kind: 'saved-search-alert',
+		subject: `New home matching “${m.searchName}” on NestFinder`,
+		demoData: { searchName: m.searchName, listing: m.title, url: m.url },
+		html: shell(`
+      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
+      <p style="color:#9C9FC7;line-height:1.6;">A new home matches your saved search <strong style="color:#F4F3FC;">${m.searchName}</strong>.</p>
+      <div style="color:#F4F3FC;line-height:1.6;padding:16px 18px;background:#2E3269;border-left:3px solid #C0903F;border-radius:8px;margin:16px 0;">
+        <strong>${m.title}</strong><br/>
+        <span style="color:#9C9FC7;">${m.area}</span>
+      </div>
+      <p style="color:#9C9FC7;font-size:13px;">You saved: ${m.criteria}</p>
+      <a href="${m.url}" style="display:inline-block;margin:8px 0 4px;background:#C0903F;color:#181B3D;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;">View this home</a>
+      <p style="color:#9C9FC7;font-size:12px;margin-top:16px;">We'll only email you about this search once every few hours, however many homes appear. You can turn alerts off on your saved searches page.</p>
+    `),
+	});
+};
+
 // ── 6. FRAUD ALERT TO ADMIN (used by a later slice) ───────
 export const sendFraudAlertToAdmin = async (listingId, flags) => {
 	const to = process.env.ADMIN_EMAIL || 'admin@nestfinder.com';

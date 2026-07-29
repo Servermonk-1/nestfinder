@@ -56,12 +56,12 @@ export default function AvatarUpload({ size = 'md' }) {
 				type="button"
 				onClick={() => inputRef.current?.click()}
 				title="Change profile photo"
-				className={`group relative ${SIZES[size]} overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-highlight font-serif font-bold text-base flex items-center justify-center`}
+				className={`group relative ${SIZES[size]} overflow-hidden rounded-2xl bg-gradient-to-br from-primary to-highlight font-serif font-bold text-white flex items-center justify-center`}
 			>
 				{pic
 					? <img src={getImageUrl(pic)} alt="Profile" className="h-full w-full object-cover" />
 					: <span>{user?.fullName?.charAt(0).toUpperCase() || '?'}</span>}
-				<span className="absolute inset-0 flex items-center justify-center bg-base/55 opacity-0 transition group-hover:opacity-100">
+				<span className="absolute inset-0 flex items-center justify-center bg-paper/55 opacity-0 transition group-hover:opacity-100">
 					{uploading ? <Loader2 className="h-5 w-5 animate-spin text-text" /> : <Camera className="h-5 w-5 text-text" />}
 				</span>
 			</button>

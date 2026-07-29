@@ -5,6 +5,7 @@ import { SlidersHorizontal, X, TrendingUp, ChevronDown, Search, Map, LayoutGrid,
 import FilterPanel from '../../components/search/FilterPanel';
 import ListingGrid from '../../components/listing/ListingGrid';
 import ListingsMap from '../../components/map/ListingsMap';
+import SaveSearchButton from '../../components/search/SaveSearchButton';
 import CompareBar from '../../components/listing/CompareBar';
 import StudentNavbar from '../../components/common/StudentNavbar';
 import CompareGuideBanner from '../../components/common/CompareGuideBanner';
@@ -145,7 +146,7 @@ export default function Dashboard() {
 	};
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar onRestartTour={tour.start} />
 
 			{/* ── Page Header ── */}
@@ -323,6 +324,8 @@ export default function Dashboard() {
 								<Briefcase className="h-4 w-4" />
 								{nearPlacement ? 'Showing homes near my placement' : 'Show homes near my placement'}
 							</button>
+
+							<SaveSearchButton filters={filters} nearPlacement={nearPlacement} radiusKm={radiusKm} />
 
 							{/* Only useful once a search is actually anchored. */}
 							{anchor && (

@@ -46,8 +46,8 @@ export default function Navbar() {
 			<div
 				className={`max-w-7xl mx-auto h-16 flex items-center justify-between rounded-2xl border px-5 md:px-6 transition-all duration-300 ${
 					scrolled
-						? 'bg-surface/95 border-primary/20 shadow-xl shadow-base/40 backdrop-blur-xl'
-						: 'bg-surface/80 border-primary/10 shadow-lg shadow-base/20 backdrop-blur-md'
+						? 'bg-surface/95 border-primary/20 shadow-xl shadow-paper/40 backdrop-blur-xl'
+						: 'bg-surface/80 border-primary/10 shadow-lg shadow-paper/20 backdrop-blur-md'
 				}`}
 			>
 
@@ -101,7 +101,7 @@ export default function Navbar() {
 								className="flex items-center gap-2 rounded-full border border-muted/15 bg-surface px-4 py-2 shadow-sm transition-all hover:border-muted/25 hover:bg-surface"
 							>
 								<div className="w-6 h-6 bg-gradient-to-r from-primary to-highlight rounded-full flex items-center justify-center">
-									<span className="text-base text-xs font-bold">
+									<span className="text-white text-xs font-bold">
 										{user.fullName?.charAt(0).toUpperCase()}
 									</span>
 								</div>
@@ -148,7 +148,7 @@ export default function Navbar() {
 							</Link>
 							<Link
 								to="/student/register"
-								className="rounded-xl bg-gradient-to-r from-primary to-highlight px-5 py-2.5 text-sm font-bold text-base shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-primary/30"
+								className="rounded-xl bg-gradient-to-r from-primary to-highlight px-5 py-2.5 text-sm font-bold text-white shadow-lg shadow-primary/20 transition-all hover:-translate-y-0.5 hover:shadow-primary/30"
 							>
 								Sign Up
 							</Link>
@@ -195,7 +195,7 @@ export default function Navbar() {
 							) : (
 								<>
 									<Link to="/student/login" onClick={() => setMobileOpen(false)} className="block rounded-xl px-3 py-2 text-sm font-semibold text-muted hover:bg-surface-alt">Sign In</Link>
-									<Link to="/student/register" onClick={() => setMobileOpen(false)} className="block rounded-xl bg-gradient-to-r from-primary to-highlight px-3 py-2 text-center text-sm font-bold text-base">Sign Up</Link>
+									<Link to="/student/register" onClick={() => setMobileOpen(false)} className="block rounded-xl bg-gradient-to-r from-primary to-highlight px-3 py-2 text-center text-sm font-bold text-white">Sign Up</Link>
 								</>
 							)}
 						</div>

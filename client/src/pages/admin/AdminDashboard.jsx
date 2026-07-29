@@ -28,7 +28,7 @@ export default function AdminDashboard() {
 	const pendingVerifs = stats?.pendingStudentVerifications || 0;
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<AdminNavbar />
 			<div className="mx-auto max-w-6xl px-4 pb-16 pt-24 md:px-8">
 				<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>

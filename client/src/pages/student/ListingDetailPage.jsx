@@ -267,7 +267,7 @@ export default function ListingDetailPage() {
 
 	if (loading) {
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
 				<div className="flex min-h-screen items-center justify-center pt-20">
 					<div className="h-10 w-10 animate-spin rounded-full border-4 border-primary border-t-transparent" />
@@ -278,7 +278,7 @@ export default function ListingDetailPage() {
 
 	if (needsVerify) {
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
 				<div className="flex min-h-screen flex-col items-center justify-center px-4 pt-20 text-center">
 					<div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">
@@ -303,7 +303,7 @@ export default function ListingDetailPage() {
 
 	if (notFound || !listing) {
 		return (
-			<div className="min-h-screen bg-base text-text">
+			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
 				<div className="flex min-h-screen flex-col items-center justify-center px-4 pt-20 text-center">
 					<Home className="mb-4 h-12 w-12 text-muted" />
@@ -355,7 +355,7 @@ export default function ListingDetailPage() {
 	];
 
 	return (
-		<div className="min-h-screen bg-base text-text">
+		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
 			<Seo

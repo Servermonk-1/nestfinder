@@ -17,6 +17,7 @@ export default function AdminNavbar() {
 		{ to: '/admin/landlords', label: 'Landlords' },
 		{ to: '/admin/companies', label: 'SIWES' },
 		{ to: '/admin/bookings', label: 'Bookings' },
+		{ to: '/admin/health', label: 'Health' },
 	];
 
 	return (
