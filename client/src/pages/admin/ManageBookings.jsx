@@ -126,7 +126,7 @@ export default function ManageBookings() {
 												<Link to={`/bookings/${b._id}`} className="font-serif text-base font-bold text-text hover:text-primary-ink hover:underline">
 													{b.listing?.title}
 												</Link>
-												<span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${TONE_CLASS[meta.tone]}`}>
+												<span className={`rounded-full px-2 py-0.5 text-[13px] font-bold ${TONE_CLASS[meta.tone]}`}>
 													{meta.label}
 												</span>
 											</div>
@@ -135,7 +135,7 @@ export default function ManageBookings() {
 												{' · '}{format(new Date(b.moveInDate), 'd MMM yyyy')} for {b.months} month{b.months === 1 ? '' : 's'}
 											</p>
 											{b.payment?.reference && (
-												<p className="mt-1 font-mono text-[11px] text-muted">{b.payment.reference}</p>
+												<p className="mt-1 font-mono text-[13px] text-muted">{b.payment.reference}</p>
 											)}
 											{b.escrow?.refundReason && (
 												<p className="mt-1 text-xs text-danger-ink">Refunded — {b.escrow.refundReason}</p>
@@ -147,7 +147,7 @@ export default function ManageBookings() {
 												<span className="block font-serif text-lg font-bold tabular-nums text-primary-ink font-mono">
 													{naira(b.cost?.total)}
 												</span>
-												<span className="text-[11px] text-muted">
+												<span className="text-[13px] text-muted">
 													landlord {naira(b.cost?.landlordShare)} · us {naira(b.cost?.platformShare)}
 												</span>
 											</span>

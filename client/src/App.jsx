@@ -25,6 +25,7 @@ const CompaniesPage = lazy(() => import('./pages/student/CompaniesPage'));
 const BookingsPage = lazy(() => import('./pages/student/BookingsPage'));
 const SavedSearchesPage = lazy(() => import('./pages/student/SavedSearchesPage'));
 const BookingDetailPage = lazy(() => import('./pages/student/BookingDetailPage'));
+const CheckoutPage = lazy(() => import('./pages/student/CheckoutPage'));
 const ManageBookings = lazy(() => import('./pages/admin/ManageBookings'));
 const SystemHealth = lazy(() => import('./pages/admin/SystemHealth'));
 const AccountPage = lazy(() => import('./pages/student/AccountPage'));
@@ -88,6 +89,10 @@ function App() {
               } />
               <Route path="/bookings/:id" element={
                 <StudentOrLandlordRoute><BookingDetailPage /></StudentOrLandlordRoute>
+              } />
+              {/* Checkout is the student's alone — a landlord has nothing to pay. */}
+              <Route path="/bookings/:id/pay" element={
+                <StudentRoute><CheckoutPage /></StudentRoute>
               } />
               <Route path="/landlord/bookings" element={
                 <StudentOrLandlordRoute><BookingsPage /></StudentOrLandlordRoute>

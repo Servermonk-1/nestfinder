@@ -18,7 +18,7 @@ function Pill({ tone = 'muted', children }) {
 		success: 'bg-success/10 text-success-ink border-success/30',
 		warn: 'bg-highlight/15 text-highlight-ink border-highlight/40',
 	};
-	return <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${tones[tone]}`}>{children}</span>;
+	return <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[12px] font-bold ${tones[tone]}`}>{children}</span>;
 }
 
 export default function ManageLandlords() {

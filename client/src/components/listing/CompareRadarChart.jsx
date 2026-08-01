@@ -4,9 +4,9 @@ import {
 } from 'recharts';
 import { getDimensionScores } from '../../utils/compareScore';
 
-const SERIES_COLORS = ['#C0903F', '#5F8567', '#D9A54C'];
-const GRID_COLOR = 'rgba(156, 159, 199, 0.25)';
-const AXIS_COLOR = '#9C9FC7';
+const SERIES_COLORS = ['#2A6F97', '#D9A441', '#0A8046'];
+const GRID_COLOR = 'rgba(85, 103, 125, 0.22)';
+const AXIS_COLOR = '#55677D';
 
 const AXES = [
 	{ key: 'affordability', label: 'Affordability' },
@@ -66,7 +66,7 @@ export default function CompareRadarChart({ listings }) {
 						<div className="mt-2 grid grid-cols-5 gap-1 text-center">
 							{AXES.map(({ key, label }) => (
 								<div key={key}>
-									<p className="text-[9px] uppercase text-muted">{label.slice(0, 4)}</p>
+									<p className="text-[11px] uppercase text-muted">{label.slice(0, 4)}</p>
 									<p className="text-xs font-bold text-text">{l.values[key]}</p>
 								</div>
 							))}

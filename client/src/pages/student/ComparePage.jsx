@@ -128,10 +128,10 @@ function MatchScore({ score, rank, isWinner, tier, TierIcon }) {
 			</div>
 
 			<div className="mt-3 flex flex-wrap items-center gap-2">
-				<div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold ${tier.chip}`}>
+				<div className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[13px] font-bold ${tier.chip}`}>
 					<TierIcon className="h-3 w-3" /> {tier.label}
 				</div>
-				<span className="text-[11px] font-bold text-muted">{RANK_LABELS[rank] || `#${rank + 1}`}</span>
+				<span className="text-[13px] font-bold text-muted">{RANK_LABELS[rank] || `#${rank + 1}`}</span>
 			</div>
 			<p className="mt-2 text-xs leading-relaxed text-muted">{tier.caption}</p>
 		</div>
@@ -426,18 +426,18 @@ export default function ComparePage() {
 
 											<div className="mt-3 flex flex-wrap gap-1.5">
 												{hasMostAmenities && (
-													<span className="inline-block rounded-full border border-highlight/30 bg-highlight/10 px-2.5 py-1 text-[11px] font-bold text-highlight-ink">
+													<span className="inline-block rounded-full border border-highlight/30 bg-highlight/10 px-2.5 py-1 text-[13px] font-bold text-highlight-ink">
 														Most Equipped
 													</span>
 												)}
 												{isTopLandlord && (
-													<span className="inline-block rounded-full border border-primary-dark/40 bg-primary-dark/10 px-2.5 py-1 text-[11px] font-bold text-primary-dark">
+													<span className="inline-block rounded-full border border-primary-dark/40 bg-primary-dark/10 px-2.5 py-1 text-[13px] font-bold text-primary-dark">
 														Top Landlord
 													</span>
 												)}
 											</div>
 											{amenitiesLead > 0 && !tiedForMostAmenities && (
-												<p className="mt-1.5 text-[11px] text-muted">+{amenitiesLead} more amenities than the rest</p>
+												<p className="mt-1.5 text-[13px] text-muted">+{amenitiesLead} more amenities than the rest</p>
 											)}
 										</div>
 
@@ -449,10 +449,10 @@ export default function ComparePage() {
 											</div>
 											{isLowestPrice && (
 												<>
-													<span className="mt-2 inline-block rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success-ink">
+													<span className="mt-2 inline-block rounded-full border border-success/30 bg-success/10 px-2.5 py-1 text-[13px] font-bold text-success-ink">
 														Best Price
 													</span>
-													<p className="mt-1.5 text-[11px] text-muted">You save ₦{(maxPrice - minPrice).toLocaleString()}/month vs the priciest option</p>
+													<p className="mt-1.5 text-[13px] text-muted">You save ₦{(maxPrice - minPrice).toLocaleString()}/month vs the priciest option</p>
 												</>
 											)}
 										</div>
@@ -474,7 +474,7 @@ export default function ComparePage() {
 											<div className="mb-3 flex items-center justify-between">
 												<p className="text-xs font-bold uppercase tracking-widest text-primary-ink">What's Included</p>
 												{amenityDifferentiators.size > 0 && (
-													<span className="text-[10px] font-semibold text-highlight-ink">Highlighted = key difference</span>
+													<span className="text-[12px] font-semibold text-highlight-ink">Highlighted = key difference</span>
 												)}
 											</div>
 											<div className="grid grid-cols-2 gap-2">
@@ -510,9 +510,9 @@ export default function ComparePage() {
 											<div className="flex items-center justify-between gap-2">
 												<p className="text-xs font-bold uppercase tracking-widest text-primary-ink">Landlord</p>
 												{verified ? (
-													<span className="flex items-center gap-1 text-[11px] font-bold text-success-ink"><ShieldCheck className="h-3.5 w-3.5" /> Verified</span>
+													<span className="flex items-center gap-1 text-[13px] font-bold text-success-ink"><ShieldCheck className="h-3.5 w-3.5" /> Verified</span>
 												) : (
-													<span className="flex items-center gap-1 text-[11px] font-bold text-highlight-ink"><ShieldAlert className="h-3.5 w-3.5" /> Unverified</span>
+													<span className="flex items-center gap-1 text-[13px] font-bold text-highlight-ink"><ShieldAlert className="h-3.5 w-3.5" /> Unverified</span>
 												)}
 											</div>
 											<p className="mt-2 text-sm font-semibold text-text">{listing.landlord?.name || listing.landlord?.fullName || 'Not provided'}</p>
@@ -564,7 +564,7 @@ export default function ComparePage() {
 											)}
 											<button
 												onClick={() => removeFromCompare(id)}
-												className="block w-full py-1 text-center text-[11px] font-semibold text-danger-ink/80 transition hover:text-danger-ink"
+												className="block w-full py-1 text-center text-[13px] font-semibold text-danger-ink/80 transition hover:text-danger-ink"
 											>
 												Remove from compare
 											</button>
@@ -616,7 +616,7 @@ export default function ComparePage() {
 								>
 									<p className="truncate font-serif text-base font-bold text-text">{listing.title}</p>
 									<p className="mt-1 text-sm text-muted">{formatPrice(listing)}</p>
-									<div className={`mt-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[11px] font-bold ${tier.chip}`}>
+									<div className={`mt-3 inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[13px] font-bold ${tier.chip}`}>
 										<TierIcon className="h-3 w-3" /> {listing.score} · {tier.label}
 									</div>
 									<Link

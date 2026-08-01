@@ -216,7 +216,7 @@ export default function CompaniesPage() {
 									transition={{ delay: Math.min(i * 0.04, 0.3) }}
 									className="flex flex-col rounded-2xl border border-muted/15 bg-surface p-5 transition hover:border-primary/25"
 								>
-									<span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-surface-alt/70 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-muted">
+									<span className="mb-2 inline-flex w-fit items-center gap-1.5 rounded-full bg-surface-alt/70 px-2.5 py-1 text-[13px] font-bold uppercase tracking-wide text-muted">
 										<Building2 className="h-3 w-3" /> {c.industry}
 									</span>
 									<Link to={`/companies/${c._id}`} className="font-serif text-base font-bold leading-snug text-text hover:text-primary-ink hover:underline">{c.name}</Link>
@@ -228,12 +228,12 @@ export default function CompaniesPage() {
 
 									<div className="mt-3 flex flex-wrap gap-1.5">
 										{(c.acceptedDepartments || []).slice(0, 4).map((d) => (
-											<span key={d} className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold capitalize text-primary-ink">
+											<span key={d} className="rounded-full bg-primary/10 px-2 py-0.5 text-[13px] font-semibold capitalize text-primary-ink">
 												{d}
 											</span>
 										))}
 										{(c.acceptedDepartments || []).length > 4 && (
-											<span className="rounded-full bg-surface-alt px-2 py-0.5 text-[11px] font-semibold text-muted">
+											<span className="rounded-full bg-surface-alt px-2 py-0.5 text-[13px] font-semibold text-muted">
 												+{c.acceptedDepartments.length - 4} more
 											</span>
 										)}

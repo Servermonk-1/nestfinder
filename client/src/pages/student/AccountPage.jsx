@@ -50,7 +50,7 @@ export default function AccountPage() {
 						<div className="min-w-0">
 							<p className="truncate font-serif text-lg font-bold text-text">{user?.fullName || 'Student'}</p>
 							<p className="text-xs uppercase tracking-widest text-primary-ink font-bold">{user?.role || 'student'}</p>
-							<p className="mt-1 text-[11px] text-muted">Tap your photo to upload — it helps confirm your ID.</p>
+							<p className="mt-1 text-[13px] text-muted">Tap your photo to upload — it helps confirm your ID.</p>
 						</div>
 					</div>
 

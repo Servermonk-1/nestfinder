@@ -120,7 +120,7 @@ export default function SystemHealth() {
 												<summary className="cursor-pointer text-xs font-semibold text-muted hover:text-text">
 													Stack trace
 												</summary>
-												<pre className="mt-2 overflow-x-auto bg-surface-alt p-3 font-mono text-[11px] leading-relaxed text-muted">
+												<pre className="mt-2 overflow-x-auto bg-surface-alt p-3 font-mono text-[13px] leading-relaxed text-muted">
 													{e.stack}
 												</pre>
 											</details>

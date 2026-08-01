@@ -93,11 +93,11 @@ export default function BookingsPage() {
 											<div className="min-w-0">
 												<div className="flex flex-wrap items-center gap-2">
 													<h2 className="font-serif text-base font-bold text-text">{b.listing?.title}</h2>
-													<span className={`rounded-full px-2 py-0.5 text-[11px] font-bold ${TONE_CLASS[meta.tone]}`}>
+													<span className={`rounded-full px-2 py-0.5 text-[13px] font-bold ${TONE_CLASS[meta.tone]}`}>
 														{meta.label}
 													</span>
 													{b.escrow?.state === 'held' && (
-														<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
+														<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[13px] font-bold text-success-ink">
 															<ShieldCheck className="h-3 w-3" /> In escrow
 														</span>
 													)}
@@ -116,7 +116,7 @@ export default function BookingsPage() {
 												<span className="block font-serif text-lg font-bold tabular-nums text-primary-ink font-mono">
 													{naira(isLandlord ? b.cost?.landlordReceives : b.cost?.total)}
 												</span>
-												<span className="text-[11px] text-muted">{isLandlord ? 'your payout' : 'total'}</span>
+												<span className="text-[13px] text-muted">{isLandlord ? 'your payout' : 'total'}</span>
 											</span>
 										</div>
 									</Link>

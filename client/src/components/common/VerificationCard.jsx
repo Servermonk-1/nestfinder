@@ -173,7 +173,7 @@ export default function VerificationCard({ role = 'student' }) {
 				{submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <UploadCloud className="h-4 w-4" />}
 				{rejected ? 'Re-submit for review' : 'Submit for verification'}
 			</button>
-			<p className="mt-2 text-center text-[11px] text-muted">Your ID is only used to confirm your identity and is reviewed by an admin.</p>
+			<p className="mt-2 text-center text-[13px] text-muted">Your ID is only used to confirm your identity and is reviewed by an admin.</p>
 		</motion.div>
 	);
 }

@@ -70,12 +70,12 @@ function ReviewCard({ person, role, onDone }) {
 						</p>
 					</div>
 				</div>
-				<span className="rounded-full bg-highlight/15 px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-highlight-ink">
+				<span className="rounded-full bg-highlight/15 px-3 py-1 text-[13px] font-bold uppercase tracking-wide text-highlight-ink">
 					{doc.documentType || 'ID'}
 				</span>
 			</div>
 
-			<p className="mt-4 text-[11px] font-semibold uppercase tracking-wide text-muted">Compare the face on the ID with the profile photo</p>
+			<p className="mt-4 text-[13px] font-semibold uppercase tracking-wide text-muted">Compare the face on the ID with the profile photo</p>
 			<div className="mt-2 grid grid-cols-2 gap-3 sm:grid-cols-3">
 				{/* Profile photo (for face-matching) */}
 				<div className="relative overflow-hidden rounded-xl border-2 border-primary/40">
@@ -84,16 +84,16 @@ function ReviewCard({ person, role, onDone }) {
 							<img src={getImageUrl(person.profilePicture)} alt="profile" className="h-40 w-full object-cover transition group-hover:scale-105" />
 						</a>
 					) : (
-						<div className="flex h-40 w-full items-center justify-center bg-surface-alt text-center text-[11px] text-muted">No profile photo</div>
+						<div className="flex h-40 w-full items-center justify-center bg-surface-alt text-center text-[13px] text-muted">No profile photo</div>
 					)}
-					<span className="absolute bottom-1 left-1 rounded bg-brand-gradient px-1.5 py-0.5 text-[10px] font-bold text-white">Profile</span>
+					<span className="absolute bottom-1 left-1 rounded bg-brand-gradient px-1.5 py-0.5 text-[12px] font-bold text-white">Profile</span>
 				</div>
 				{/* ID images */}
 				{['frontImage', 'backImage'].map((k) =>
 					doc[k] ? (
 						<a key={k} href={getImageUrl(doc[k])} target="_blank" rel="noreferrer" className="group relative block overflow-hidden rounded-xl border border-line">
 							<img src={getImageUrl(doc[k])} alt={k} className="h-40 w-full object-cover transition group-hover:scale-105" />
-							<span className="absolute bottom-1 left-1 rounded bg-ink/60 px-1.5 py-0.5 text-[10px] text-white">{k === 'frontImage' ? 'ID Front' : 'ID Back'}</span>
+							<span className="absolute bottom-1 left-1 rounded bg-ink/60 px-1.5 py-0.5 text-[12px] text-white">{k === 'frontImage' ? 'ID Front' : 'ID Back'}</span>
 						</a>
 					) : null
 				)}

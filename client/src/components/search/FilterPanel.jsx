@@ -100,7 +100,7 @@ export default function FilterPanel({ filters, onChange, onReset, totalResults, 
 						<ChevronDown className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted" />
 					</div>
 					{!cities.length && (
-						<p className="mt-1.5 text-[11px] text-muted">Searching an area? Use the search bar above.</p>
+						<p className="mt-1.5 text-[13px] text-muted">Searching an area? Use the search bar above.</p>
 					)}
 				</div>
 

@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Home, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import BrandMark from '../components/common/Logo';
 
 export default function NotFound() {
 	return (
@@ -17,9 +18,7 @@ export default function NotFound() {
 				className="relative text-center"
 			>
 				<Link to="/" className="mb-8 inline-flex items-center gap-2.5">
-					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
-						<Home className="h-5 w-5 text-white" />
-					</span>
+					<BrandMark size={38} className="text-primary" />
 					<span className="font-serif text-xl font-extrabold text-text">NestFinder</span>
 				</Link>
 

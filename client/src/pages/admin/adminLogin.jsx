@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Mail, Lock, Eye, EyeOff, Shield } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import BrandMark from '../../components/common/Logo';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
@@ -55,14 +56,16 @@ export default function AdminLogin() {
 				{/* Card */}
 				<div className="rounded-3xl border border-line bg-surface p-10 shadow-card-lg">
 
-					{/* Shield icon */}
+					{/* The full badge, not the mark — at 72px the arched lettering reads,
+					    and a login screen is one of the few places with room for it. */}
 					<div className="flex flex-col items-center mb-8">
 						<motion.div
-							animate={{ y: [0, -8, 0] }}
-							transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-							className="w-16 h-16 bg-brand-gradient rounded-2xl flex items-center justify-center shadow-glow mb-4"
+							initial={{ opacity: 0, scale: 0.94 }}
+							animate={{ opacity: 1, scale: 1 }}
+							transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+							className="mb-4"
 						>
-							<Shield className="w-8 h-8 text-white" />
+							<BrandMark variant="full" size={72} className="text-primary" />
 						</motion.div>
 						<h1 className="font-serif text-2xl font-semibold text-text mb-1">Admin Portal</h1>
 						<p className="text-muted text-sm text-center">

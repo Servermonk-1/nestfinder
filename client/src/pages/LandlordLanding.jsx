@@ -6,6 +6,7 @@ import {
 	Menu, MessageCircle, ShieldCheck, Sparkles, UploadCloud, Users, Wallet, X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import BrandMark from '../components/common/Logo';
 
 const HERO_IMG = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1100&q=85';
 
@@ -79,7 +80,7 @@ export default function LandlordLanding() {
 			<nav className="fixed inset-x-0 top-0 z-50 border-b border-line/70 glass-strong">
 				<div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">
 					<button onClick={() => navigate('/for-landlords')} className="flex items-center gap-2.5">
-						<span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm"><Home className="h-5 w-5 text-white" /></span>
+						<BrandMark size={36} className="text-primary" />
 						<span className="font-serif text-xl font-extrabold text-text">NestFinder <span className="text-primary-ink">Landlords</span></span>
 					</button>
 
@@ -167,7 +168,7 @@ export default function LandlordLanding() {
 								<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient"><Users className="h-4 w-4 text-white" /></div>
 								<div>
 									<p className="font-serif text-lg font-extrabold leading-none text-text">1,000+</p>
-									<p className="text-[10px] font-bold uppercase tracking-wide text-muted">Students searching</p>
+									<p className="text-[12px] font-bold uppercase tracking-wide text-muted">Students searching</p>
 								</div>
 							</div>
 						</motion.div>

@@ -33,14 +33,14 @@ export default function TrustSignal({ score, verified }) {
 	return (
 		<div className="mt-4 rounded-xl border border-line bg-surface-alt/50 p-3.5">
 			<div className="flex items-center justify-between gap-2">
-				<span className="flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-muted">
+				<span className="flex items-center gap-1.5 text-[13px] font-bold uppercase tracking-wide text-muted">
 					Landlord trust
 					<HelpTip
 						title="How trust is calculated"
 						description="Based on identity verification, how long they've been on NestFinder, student reviews, and whether any of their listings have been flagged or reported. It is not a guarantee — always view a property in person before paying."
 					/>
 				</span>
-				<span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${tone.pill}`}>
+				<span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[12px] font-bold ${tone.pill}`}>
 					<Icon className="h-3 w-3" /> {band.label}
 				</span>
 			</div>
@@ -52,10 +52,10 @@ export default function TrustSignal({ score, verified }) {
 				<span className="shrink-0 text-xs font-bold text-text">{score}<span className="text-muted">/100</span></span>
 			</div>
 
-			<p className="mt-2 text-[11px] leading-relaxed text-muted">{band.blurb}</p>
+			<p className="mt-2 text-[13px] leading-relaxed text-muted">{band.blurb}</p>
 
 			{!verified && (
-				<p className="mt-1.5 flex items-start gap-1.5 text-[11px] font-medium leading-relaxed text-highlight-ink">
+				<p className="mt-1.5 flex items-start gap-1.5 text-[13px] font-medium leading-relaxed text-highlight-ink">
 					<ShieldAlert className="mt-0.5 h-3 w-3 shrink-0" />
 					This landlord hasn't completed identity verification.
 				</p>

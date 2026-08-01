@@ -43,7 +43,7 @@ function ListingRow({ listing, onToggle, onDelete }) {
 				)}
 				{!listing.available && (
 					<div className="absolute inset-0 flex items-center justify-center bg-ink/60">
-						<span className="rounded-full bg-danger px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-white">Taken</span>
+						<span className="rounded-full bg-danger px-2 py-0.5 text-[12px] font-black uppercase tracking-widest text-white">Taken</span>
 					</div>
 				)}
 			</div>
@@ -58,7 +58,7 @@ function ListingRow({ listing, onToggle, onDelete }) {
 				<div className="mt-2 flex flex-wrap items-center gap-3 text-xs text-muted">
 					<span className="font-bold text-primary-ink">{formatPrice(listing)}</span>
 					<span className="flex items-center gap-1"><Eye className="h-3 w-3" /> {listing.views || 0} views</span>
-					<span className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${listing.available ? 'bg-success/15 text-success-ink' : 'bg-danger/15 text-danger-ink'}`}>
+					<span className={`rounded-full px-2 py-0.5 text-[12px] font-bold uppercase tracking-wide ${listing.available ? 'bg-success/15 text-success-ink' : 'bg-danger/15 text-danger-ink'}`}>
 						{listing.available ? 'Available' : 'Taken'}
 					</span>
 				</div>

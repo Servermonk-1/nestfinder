@@ -27,7 +27,7 @@ function FraudPanel({ listing }) {
 	const level = listing.fraudLevel;
 	if (!level || level === 'clear') {
 		return listing.fraudCheckedAt ? (
-			<span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success-ink">
+			<span className="inline-flex items-center gap-1 rounded-full border border-success/30 bg-success/10 px-2 py-0.5 text-[12px] font-bold text-success-ink">
 				<ShieldCheck className="h-3 w-3" /> screened · clear
 			</span>
 		) : null;
@@ -36,7 +36,7 @@ function FraudPanel({ listing }) {
 	return (
 		<div className="mt-2">
 			<button onClick={() => setOpen((v) => !v)} aria-expanded={open}
-				className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[10px] font-bold transition ${tone.cls}`}>
+				className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-[12px] font-bold transition ${tone.cls}`}>
 				<AlertTriangle className="h-3 w-3" />
 				{tone.label} · {listing.fraudScore}/100
 				<ChevronDown className={`h-3 w-3 transition-transform ${open ? 'rotate-180' : ''}`} />
@@ -46,7 +46,7 @@ function FraudPanel({ listing }) {
 					<motion.ul initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}
 						className="mt-2 space-y-1.5 overflow-hidden rounded-xl border border-line bg-surface-alt/60 p-3">
 						{(listing.fraudFlags || []).map((f) => (
-							<li key={f.rule} className="text-[11px] leading-relaxed text-text">
+							<li key={f.rule} className="text-[13px] leading-relaxed text-text">
 								<span className="font-bold text-danger-ink">{f.rule}</span>
 								<span className="text-muted"> (+{f.severity})</span> — {f.detail}
 							</li>
@@ -183,8 +183,8 @@ export default function ManageListings() {
 										<div className="min-w-0 flex-1">
 											<div className="flex flex-wrap items-center gap-2">
 												<p className="font-serif text-base font-bold text-text">{l.title}</p>
-												{l.flagged && <span className="inline-flex items-center gap-1 rounded-full border border-danger/30 bg-danger/10 px-2 py-0.5 text-[10px] font-bold text-danger-ink"><Flag className="h-3 w-3" /> flagged</span>}
-												{l.reportCount > 0 && <span className="rounded-full border border-highlight/40 bg-highlight/15 px-2 py-0.5 text-[10px] font-bold text-highlight-ink">{l.reportCount} report{l.reportCount !== 1 ? 's' : ''}</span>}
+												{l.flagged && <span className="inline-flex items-center gap-1 rounded-full border border-danger/30 bg-danger/10 px-2 py-0.5 text-[12px] font-bold text-danger-ink"><Flag className="h-3 w-3" /> flagged</span>}
+												{l.reportCount > 0 && <span className="rounded-full border border-highlight/40 bg-highlight/15 px-2 py-0.5 text-[12px] font-bold text-highlight-ink">{l.reportCount} report{l.reportCount !== 1 ? 's' : ''}</span>}
 											</div>
 											<p className="mt-1 flex flex-wrap items-center gap-x-3 text-xs text-muted">
 												<span className="inline-flex items-center gap-1"><MapPin className="h-3 w-3" /> {l.area}, {l.city}</span>

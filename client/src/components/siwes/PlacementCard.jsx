@@ -162,11 +162,11 @@ export default function PlacementCard({ onChange }) {
 						<div className="flex flex-wrap items-center gap-2">
 							<p className="font-serif text-base font-bold text-text">{placement.company?.name}</p>
 							{placement.status === 'confirmed' ? (
-								<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
+								<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[13px] font-bold text-success-ink">
 									<Check className="h-3 w-3" /> Confirmed
 								</span>
 							) : (
-								<span className="rounded-full bg-highlight/15 px-2 py-0.5 text-[11px] font-bold text-primary-ink">
+								<span className="rounded-full bg-highlight/15 px-2 py-0.5 text-[13px] font-bold text-primary-ink">
 									Applied — not confirmed
 								</span>
 							)}

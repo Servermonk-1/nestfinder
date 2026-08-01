@@ -142,15 +142,15 @@ export default function LandlordMessagesPage() {
 										<div className="min-w-0 flex-1">
 											<div className="flex items-center justify-between gap-2">
 												<p className="truncate text-sm font-bold text-text">{c.student?.fullName || 'Student'}</p>
-												<span className="shrink-0 text-[11px] text-muted">{timeAgo(c.lastMessageAt)}</span>
+												<span className="shrink-0 text-[13px] text-muted">{timeAgo(c.lastMessageAt)}</span>
 											</div>
 											{c.listing?.title && (
-												<p className="truncate text-[11px] text-primary-ink">{c.listing.title}</p>
+												<p className="truncate text-[13px] text-primary-ink">{c.listing.title}</p>
 											)}
 											<p className="mt-0.5 truncate text-xs text-muted">{c.lastMessage || 'No messages yet'}</p>
 										</div>
 										{c.unreadCount > 0 && (
-											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-[10px] font-bold text-white">
+											<span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-gradient text-[12px] font-bold text-white">
 												{c.unreadCount}
 											</span>
 										)}
@@ -217,7 +217,7 @@ export default function LandlordMessagesPage() {
 												>
 													<div className={`max-w-[75%] px-4 py-2.5 text-sm ${isMine ? 'rounded-2xl rounded-br-md bg-brand-gradient text-white shadow-glow-sm' : 'rounded-2xl rounded-bl-md border border-line bg-surface text-text'}`}>
 														{m.text}
-														<div className={`mt-1 text-[10px] ${isMine ? 'text-white/70' : 'text-muted'}`}>{timeAgo(m.createdAt)}</div>
+														<div className={`mt-1 text-[12px] ${isMine ? 'text-white/70' : 'text-muted'}`}>{timeAgo(m.createdAt)}</div>
 													</div>
 													<RedFlagWarning warnings={flags} />
 												</motion.div>

@@ -1,4 +1,15 @@
-# NestFinder
+<p align="center">
+  <img src="docs/logo.png" alt="NestFinder" width="150" />
+</p>
+
+<h1 align="center">NestFinder</h1>
+
+<p align="center">
+  <em>Command your space.</em><br />
+  Off-campus accommodation for Nigerian students on SIWES industrial training.
+</p>
+
+---
 
 A web platform that helps Nigerian students find off-campus accommodation for their SIWES placement.
 

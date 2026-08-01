@@ -100,7 +100,7 @@ export default function ShareViewing({ listing }) {
 								className="mt-1.5 w-full rounded-xl border border-line bg-surface-alt px-4 py-2.5 text-sm text-text outline-none transition focus:border-primary/60"
 							/>
 
-							<pre className="mt-4 max-h-40 overflow-y-auto whitespace-pre-wrap rounded-xl border border-line bg-surface-alt/60 p-3 text-[11px] leading-relaxed text-muted">
+							<pre className="mt-4 max-h-40 overflow-y-auto whitespace-pre-wrap rounded-xl border border-line bg-surface-alt/60 p-3 text-[13px] leading-relaxed text-muted">
 								{message}
 							</pre>
 

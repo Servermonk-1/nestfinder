@@ -58,6 +58,14 @@ const apply = (over = {}, token = sToken) =>
 		listingId: listing._id, moveIn: iso(7), moveOut: iso(7 + 182), ...over,
 	});
 
+// Paystack's own published test cards — the sandbox matches on these, so a
+// test pays with exactly what a person would type into the checkout.
+const CARD_OK = '4084084084084081';
+const CARD_DECLINED = '4084080000005408';
+const CARD_INSUFFICIENT = '4084080000670037';
+const CARD_PIN = '507850785078507812';
+const CARD_PIN_OTP = '5060666666666666666';
+
 /** Walk a booking to a given point in its life. */
 const advance = async (to) => {
 	const { body } = await apply();
@@ -66,7 +74,7 @@ const advance = async (to) => {
 	await as(request(app).patch(`/api/bookings/${id}/respond`), lToken).send({ accept: true });
 	if (to === 'accepted') return id;
 	await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
-	await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({});
+	await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ card: CARD_OK });
 	if (to === 'paid') return id;
 	await as(request(app).patch(`/api/bookings/${id}/moved-in`), sToken);
 	return id;
@@ -202,7 +210,7 @@ describe('payment and escrow', () => {
 	it('records a failed payment WITHOUT holding anything', async () => {
 		const id = await advance('accepted');
 		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
-		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ simulate: 'fail' });
+		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ card: CARD_DECLINED });
 
 		expect(res.status).toBe(400);
 		const b = await Booking.findById(id).lean();
@@ -212,8 +220,73 @@ describe('payment and escrow', () => {
 
 	it('is idempotent — verifying twice does not double-record', async () => {
 		const id = await advance('paid');
-		const again = await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({});
+		const again = await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ card: CARD_OK });
 		expect(again.body.alreadyPaid).toBe(true);
+	});
+
+	it('declines a card it does not recognise instead of quietly accepting it', async () => {
+		const id = await advance('accepted');
+		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
+		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: '1234123412341234' });
+
+		expect(res.status).toBe(400);
+		expect(res.body.message).toMatch(/declined/i);
+		const b = await Booking.findById(id).lean();
+		expect(b.status).toBe('accepted');
+		expect(b.escrow.state).toBe('none');
+	});
+
+	it('reports insufficient funds distinctly from a decline', async () => {
+		const id = await advance('accepted');
+		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
+		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_INSUFFICIENT });
+
+		expect(res.status).toBe(400);
+		expect(res.body.message).toMatch(/insufficient/i);
+	});
+
+	// A challenge is the provider asking for another factor, NOT a refusal — it
+	// must not be reported as a failure or the checkout would show an error and
+	// strand a payment that is still perfectly good.
+	it('asks for a PIN rather than failing, and completes once it is given', async () => {
+		const id = await advance('accepted');
+		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
+
+		const challenge = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_PIN });
+		expect(challenge.status).toBe(200);
+		expect(challenge.body.challenge).toBe('pin');
+		expect((await Booking.findById(id).lean()).status).toBe('accepted');
+
+		const wrong = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_PIN, pin: '9999' });
+		expect(wrong.status).toBe(400);
+
+		const done = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_PIN, pin: '1111' });
+		expect(done.status).toBe(200);
+		expect((await Booking.findById(id).lean()).escrow.state).toBe('held');
+	});
+
+	it('walks PIN then OTP for a card that requires both', async () => {
+		const id = await advance('accepted');
+		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
+
+		const c1 = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_PIN_OTP });
+		expect(c1.body.challenge).toBe('pin');
+
+		const c2 = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_PIN_OTP, pin: '1234' });
+		expect(c2.body.challenge).toBe('otp');
+		expect((await Booking.findById(id).lean()).escrow.state).toBe('none');
+
+		const done = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
+			.send({ card: CARD_PIN_OTP, pin: '1234', otp: '123456' });
+		expect(done.status).toBe(200);
+		expect((await Booking.findById(id).lean()).escrow.state).toBe('held');
 	});
 
 	it('will not let another student pay for someone else\'s booking', async () => {
@@ -302,5 +375,31 @@ describe('reviews are re-gated on a real stay', () => {
 		await advance('movedIn');
 		const res = await review(sToken);
 		expect(res.status).toBe(201);
+	});
+});
+
+// ── Does a paid room actually leave the market? ──
+describe('a room that has been paid for', () => {
+	it('is taken off the market so students stop seeing it', async () => {
+		const id = await advance('paid');
+		const b = await Booking.findById(id).lean();
+		const row = await Listing.findById(b.listing).lean();
+		expect(row.available).toBe(false);
+	});
+
+	// The unique index is on { listing, student } — it stops ONE student
+	// double-applying, and does nothing about a DIFFERENT student.
+	it('cannot be applied for by a second student', async () => {
+		await advance('paid');
+		const second = await apply({}, oToken);
+		expect(second.status).toBe(400);
+	});
+
+	it('goes back on the market if the booking is refunded', async () => {
+		const id = await advance('paid');
+		await as(request(app).patch(`/api/bookings/${id}/refund`), aToken).send({ reason: 'Room not as advertised' });
+		const b = await Booking.findById(id).lean();
+		const row = await Listing.findById(b.listing).lean();
+		expect(row.available).toBe(true);
 	});
 });

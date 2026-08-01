@@ -2,7 +2,7 @@ import Booking from '../models/Booking.js';
 import Listing from '../models/Listing.js';
 import Student from '../models/Student.js';
 import { calculateBookingCost, monthsBetween } from '../utils/bookingCost.js';
-import { initialisePayment, verifyPayment, activeProvider, paymentsAreLive } from '../services/payments.js';
+import { initialisePayment, verifyPayment, activeProvider, paymentsAreLive, sandboxTestCards } from '../services/payments.js';
 
 const POPULATE = [
 	{ path: 'listing', select: 'title area city images price priceUnit monthlyPrice landlord' },
@@ -193,6 +193,10 @@ export const startPayment = async (req, res) => {
 			amount: booking.cost.total,
 			provider: init.provider,
 			sandbox: !paymentsAreLive(),
+			// The checkout screen lists these so nobody has to leave the app to
+			// find a working card. Empty once real keys are configured, because
+			// then the card is entered on Paystack's page, not ours.
+			testCards: paymentsAreLive() ? [] : sandboxTestCards(),
 		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
@@ -219,8 +223,25 @@ export const confirmPayment = async (req, res) => {
 		const reference = req.body.reference || booking.payment?.reference;
 		if (!reference) return res.status(400).json({ message: 'No payment reference to verify.' });
 
-		// `simulate` only reaches the sandbox provider; the live one ignores it.
-		const result = await verifyPayment(reference, { simulate: req.body.simulate });
+		// Card details only ever reach the SANDBOX provider, which compares the
+		// number against Paystack's published test cards. The live provider
+		// ignores them entirely — real cards are entered on Paystack's own hosted
+		// page and never touch this server.
+		const result = await verifyPayment(reference, {
+			card: req.body.card,
+			pin: req.body.pin,
+			otp: req.body.otp,
+		});
+
+		// A challenge is the provider asking for more, not a refusal. 200, so the
+		// checkout can prompt for it without rendering an error state.
+		if (!result.success && result.challenge) {
+			return res.status(200).json({
+				challenge: result.challenge,
+				message: result.reason,
+				reference,
+			});
+		}
 		if (!result.success) {
 			return res.status(400).json({ message: result.reason || 'Payment was not successful.', failed: true });
 		}
@@ -243,6 +264,13 @@ export const confirmPayment = async (req, res) => {
 		// THE POINT OF ALL THIS: the landlord does not have the money yet.
 		booking.escrow = { state: 'held', heldAt: new Date() };
 		await booking.save();
+
+		// Take the room off the market. Nothing else did this: the unique index is
+		// on { listing, student }, which only stops the SAME student applying
+		// twice — a different student could apply for, and pay for, a room that
+		// was already sold. Search filters on `available`, so clearing it here is
+		// what makes the listing disappear for everyone else.
+		await Listing.findByIdAndUpdate(booking.listing, { available: false });
 
 		res.status(200).json({
 			message: 'Payment received and held safely until you confirm you have moved in.',
@@ -302,6 +330,11 @@ export const refundBooking = async (req, res) => {
 		booking.escrow.refundedAt = new Date();
 		booking.escrow.refundReason = String(req.body.reason || '').trim().slice(0, 300) || 'Refunded by an administrator';
 		await booking.save();
+
+		// The sale fell through, so the room goes back on the market. Without this
+		// a refunded listing would stay invisible forever and the landlord would
+		// have to notice and re-list it by hand.
+		await Listing.findByIdAndUpdate(booking.listing, { available: true });
 
 		res.status(200).json({ message: 'Payment refunded to the student', booking });
 	} catch (error) {

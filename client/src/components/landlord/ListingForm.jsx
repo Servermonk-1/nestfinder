@@ -321,7 +321,7 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 					{existingImages.length + files.length < MAX_IMAGES && (
 						<label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-muted/25 text-muted transition hover:border-primary/50 hover:text-primary-ink">
 							<Upload className="h-5 w-5" />
-							<span className="text-[10px] font-semibold">Add Photo</span>
+							<span className="text-[12px] font-semibold">Add Photo</span>
 							<input type="file" accept="image/jpeg,image/jpg,image/png,image/webp" multiple onChange={handleFiles} className="hidden" />
 						</label>
 					)}

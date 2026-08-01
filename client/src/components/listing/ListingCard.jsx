@@ -78,12 +78,12 @@ export default function ListingCard({ listing, isFirst = false }) {
 				{/* Top-left badges */}
 				<div className="absolute left-3 top-3 flex items-center gap-2">
 					{listing.landlord?.verified && (
-						<span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-success-ink shadow-sm">
+						<span className="flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[13px] font-bold text-success-ink shadow-sm">
 							<BadgeCheck className="h-3.5 w-3.5" /> Verified
 						</span>
 					)}
 					{listing.flagged && (
-						<span className="rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-highlight-ink shadow-sm">Under review</span>
+						<span className="rounded-full bg-white/95 px-2.5 py-1 text-[13px] font-bold text-highlight-ink shadow-sm">Under review</span>
 					)}
 				</div>
 
@@ -97,7 +97,7 @@ export default function ListingCard({ listing, isFirst = false }) {
 				</motion.button>
 
 				{/* Price */}
-				<span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[13px] font-semibold tabular-nums text-ink shadow-sm">
+				<span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 font-mono text-[14px] font-semibold tabular-nums text-ink shadow-sm">
 					{formatPrice(listing)}
 				</span>
 			</div>
@@ -105,7 +105,7 @@ export default function ListingCard({ listing, isFirst = false }) {
 			{/* ── Content ── */}
 			<div className="p-4">
 				<div className="mb-1.5 flex items-center gap-2">
-					<span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-bold text-primary-ink">{roomLabel[listing.roomType] || listing.roomType}</span>
+					<span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[13px] font-bold text-primary-ink">{roomLabel[listing.roomType] || listing.roomType}</span>
 					<span className="text-xs text-muted">· {listing.rooms} {listing.rooms > 1 ? 'rooms' : 'room'}</span>
 				</div>
 
@@ -116,7 +116,7 @@ export default function ListingCard({ listing, isFirst = false }) {
 					{/* Present only on an anchored "near my placement" search. */}
 					{listing.distanceKm !== undefined && listing.distanceKm !== null && (
 						<span
-							className="ml-0.5 inline-flex shrink-0 items-center gap-0.5 rounded-full bg-primary/12 px-1.5 py-0.5 text-[10px] font-bold text-primary-ink"
+							className="ml-0.5 inline-flex shrink-0 items-center gap-0.5 rounded-full bg-primary/12 px-1.5 py-0.5 text-[12px] font-bold text-primary-ink"
 							title="Estimated commute to your SIWES placement"
 						>
 							<Briefcase className="h-3 w-3" /> {commuteSummary(listing.distanceKm)}
@@ -126,7 +126,7 @@ export default function ListingCard({ listing, isFirst = false }) {
 					    automatic guess must never wear a confirmation badge. */}
 					{listing.locationSource === 'landlord' && (
 						<span
-							className="ml-0.5 inline-flex shrink-0 items-center gap-0.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-bold text-success-ink"
+							className="ml-0.5 inline-flex shrink-0 items-center gap-0.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[12px] font-bold text-success-ink"
 							title="The landlord placed this property's pin on the map themselves"
 						>
 							<BadgeCheck className="h-3 w-3" /> Pinned
@@ -139,12 +139,12 @@ export default function ListingCard({ listing, isFirst = false }) {
 					{listing.amenities?.slice(0, 3).map((amenity) => {
 						const Icon = amenityIcons[amenity.toLowerCase()];
 						return (
-							<span key={amenity} className="flex items-center gap-1 rounded-full border border-line bg-surface-alt px-2 py-1 text-[11px] font-medium text-muted">
+							<span key={amenity} className="flex items-center gap-1 rounded-full border border-line bg-surface-alt px-2 py-1 text-[13px] font-medium text-muted">
 								{Icon && <Icon className="h-3 w-3 text-primary-ink" />} {amenity}
 							</span>
 						);
 					})}
-					{listing.amenities?.length > 3 && <span className="text-[11px] text-muted">+{listing.amenities.length - 3}</span>}
+					{listing.amenities?.length > 3 && <span className="text-[13px] text-muted">+{listing.amenities.length - 3}</span>}
 				</div>
 
 				{/* Actions */}

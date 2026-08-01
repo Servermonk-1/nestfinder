@@ -41,7 +41,7 @@ export default function CompareCostBreakdown({ listing, placementCompany = null 
 			</div>
 
 			{commute && (
-				<p className="mt-2 rounded-lg bg-primary/8 px-2 py-1.5 text-[10px] font-bold text-primary-ink">
+				<p className="mt-2 rounded-lg bg-primary/8 px-2 py-1.5 text-[12px] font-bold text-primary-ink">
 					~{commute.minutes} min to {placementCompany?.name} · {commute.roadKm}km by road
 				</p>
 			)}
@@ -50,7 +50,7 @@ export default function CompareCostBreakdown({ listing, placementCompany = null 
 				<span className="text-xs font-bold text-text">Total</span>
 				<span className="font-serif text-sm font-bold text-primary-ink">₦{total.toLocaleString()}</span>
 			</div>
-			<p className="mt-2 text-[10px] leading-relaxed text-muted/70">
+			<p className="mt-2 text-[12px] leading-relaxed text-muted/70">
 				{commute
 					? 'Estimate only — electricity, water and internet vary by usage. Transport is priced from your SIWES placement.'
 					: 'Estimate only — electricity, water, and internet vary by usage; transport depends on your training placement.'}

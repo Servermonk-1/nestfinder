@@ -54,7 +54,7 @@ export default function ProfileEditCard() {
 			<div className="flex items-center gap-3 rounded-xl border border-line bg-surface-alt px-4 py-3">
 				<Icon className="h-4 w-4 shrink-0 text-primary-ink" />
 				<div className="min-w-0">
-					<p className="text-[10px] font-bold uppercase tracking-wide text-muted">{label}</p>
+					<p className="text-[12px] font-bold uppercase tracking-wide text-muted">{label}</p>
 					<p className="truncate text-sm text-text">{value || '—'}</p>
 				</div>
 			</div>
@@ -104,7 +104,7 @@ export default function ProfileEditCard() {
 					{input(Phone, form.phone, (v) => setForm((f) => ({ ...f, phone: v })), 'Phone number')}
 					{isStudent && input(Building2, form.institution, (v) => setForm((f) => ({ ...f, institution: v })), 'Institution')}
 					{isStudent && input(GraduationCap, form.department, (v) => setForm((f) => ({ ...f, department: v })), 'Department (e.g. Computer Science)')}
-					<p className="flex items-center gap-2 text-[11px] text-muted">
+					<p className="flex items-center gap-2 text-[13px] text-muted">
 						<Mail className="h-3 w-3" /> Your email ({user?.email}) can't be changed here.
 					</p>
 					<div className="flex gap-2 pt-1">

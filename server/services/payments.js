@@ -22,6 +22,25 @@ export const activeProvider = () => (paymentsAreLive() ? 'paystack' : 'sandbox')
 
 const reference = () => `NF-${Date.now().toString(36).toUpperCase()}-${crypto.randomBytes(4).toString('hex').toUpperCase()}`;
 
+/**
+ * Paystack's OWN published test cards, and their real outcomes.
+ *
+ * Using the same numbers the live test mode uses is the whole point: what a
+ * student types here is what they would type against `sk_test_`, and the same
+ * card produces the same result. Nothing about the demo has to be relearned if
+ * a real test key is added later — the checkout screen simply hands off to
+ * Paystack's hosted page instead of ours.
+ *
+ * Source: paystack.com/docs/payments/test-payments
+ */
+const TEST_CARDS = {
+	'4084084084084081': { ok: true, auth: 'none' },
+	'507850785078507812': { ok: true, auth: 'pin', pin: '1111' },
+	'5060666666666666666': { ok: true, auth: 'pin_otp', pin: '1234', otp: '123456' },
+	'4084080000005408': { ok: false, reason: 'Your card was declined by the issuing bank.' },
+	'4084080000670037': { ok: false, reason: 'Insufficient funds in the account.' },
+};
+
 // ── SANDBOX ───────────────────────────────────────────────
 const sandbox = {
 	async initialise({ amount, email, bookingId }) {
@@ -30,7 +49,7 @@ const sandbox = {
 			reference: reference(),
 			amount,
 			// A real provider returns a hosted checkout URL. Ours points at our own
-			// confirmation screen so the flow is complete and clickable end to end.
+			// checkout screen so the flow is complete and clickable end to end.
 			authorizationUrl: `/bookings/${bookingId}/pay`,
 			email,
 			sandbox: true,
@@ -38,23 +57,55 @@ const sandbox = {
 	},
 
 	/**
-	 * Deterministic on purpose: a reference ending in an odd digit is treated as
-	 * a FAILED payment. That gives the failure path something real to exercise
-	 * instead of only ever testing the happy case.
+	 * Outcome comes from the CARD, exactly as it does in Paystack test mode —
+	 * not from a debug flag. `challenge` is not a failure: it is the provider
+	 * asking for a PIN or an OTP, and the checkout re-submits with it.
 	 */
-	async verify(ref, { simulate } = {}) {
-		if (simulate === 'fail') {
-			return { success: false, reference: ref, reason: 'Simulated failure', sandbox: true };
+	async verify(ref, { card, pin, otp } = {}) {
+		const digits = String(card || '').replace(/\D/g, '');
+		if (!digits) return { success: false, reference: ref, reason: 'Enter a card number.', sandbox: true };
+
+		const t = TEST_CARDS[digits];
+		// An unknown number is declined rather than quietly accepted — otherwise
+		// the screen would teach that any card works, which is the opposite of
+		// what a payment form should demonstrate.
+		if (!t) {
+			return { success: false, reference: ref, sandbox: true,
+				reason: 'Card declined. Use one of the test cards listed on this page.' };
 		}
+		if (!t.ok) return { success: false, reference: ref, reason: t.reason, sandbox: true };
+
+		if (t.auth === 'pin' || t.auth === 'pin_otp') {
+			if (!pin) return { success: false, challenge: 'pin', reference: ref, sandbox: true,
+				reason: 'Enter the 4-digit PIN for this card.' };
+			if (pin !== t.pin) return { success: false, reference: ref, reason: 'Incorrect PIN.', sandbox: true };
+		}
+		if (t.auth === 'pin_otp') {
+			if (!otp) return { success: false, challenge: 'otp', reference: ref, sandbox: true,
+				reason: 'Enter the OTP sent to the phone on this account.' };
+			if (otp !== t.otp) return { success: false, reference: ref, reason: 'Incorrect OTP.', sandbox: true };
+		}
+
 		return {
 			success: true,
 			reference: ref,
 			paidAt: new Date(),
-			channel: 'sandbox',
+			channel: 'card',
+			last4: digits.slice(-4),
 			sandbox: true,
 		};
 	},
 };
+
+// Shown on the checkout screen so the tester does not have to leave the app to
+// find them. Never includes a card that would be mistaken for a real one.
+export const sandboxTestCards = () => ([
+	{ number: '4084 0840 8408 4081', cvv: '408', label: 'Succeeds immediately' },
+	{ number: '5078 5078 5078 5078 12', cvv: '081', pin: '1111', label: 'Succeeds after PIN' },
+	{ number: '5060 6666 6666 6666 666', cvv: '123', pin: '1234', otp: '123456', label: 'Succeeds after PIN + OTP' },
+	{ number: '4084 0800 0000 5408', cvv: '001', label: 'Declined by issuer' },
+	{ number: '4084 0800 0067 0037', cvv: '787', label: 'Insufficient funds' },
+]);
 
 // ── PAYSTACK (used automatically once a secret key exists) ─
 const paystack = {

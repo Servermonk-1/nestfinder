@@ -115,7 +115,7 @@ export default function SavedSearchesPage() {
 											<div className="flex flex-wrap items-center gap-2">
 												<h2 className="font-serif text-base font-bold">{s.name}</h2>
 												{s.newMatchCount > 0 && (
-													<span className="bg-primary px-2 py-0.5 font-mono text-[10px] font-semibold text-white">
+													<span className="bg-primary px-2 py-0.5 font-mono text-[12px] font-semibold text-white">
 														{s.newMatchCount} NEW
 													</span>
 												)}

@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" alt="NestFinder" width="110" /></p>
+
 # NestFinder — Technical Documentation
 
 System design, data model, API reference and the reasoning behind the significant decisions.

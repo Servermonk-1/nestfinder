@@ -107,7 +107,7 @@ function ScoreRing({ value, size = 156, stroke = 12 }) {
 			</svg>
 			<div className="absolute inset-0 flex flex-col items-center justify-center">
 				<span className="font-serif text-5xl font-bold tracking-tight text-text">{value}</span>
-				<span className="text-[11px] font-semibold uppercase tracking-widest text-muted">/ 100</span>
+				<span className="text-[13px] font-semibold uppercase tracking-widest text-muted">/ 100</span>
 			</div>
 		</div>
 	);

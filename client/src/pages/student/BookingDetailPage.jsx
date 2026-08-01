@@ -60,27 +60,6 @@ export default function BookingDetailPage() {
 		}
 	};
 
-	// Sandbox pay: initialise, then verify. With Paystack keys present, the
-	// initialise step would hand back a hosted checkout URL to redirect to.
-	const pay = async (simulate) => {
-		setBusy(true);
-		try {
-			const { data: init } = await api.post(`/bookings/${id}/pay`);
-			if (!init.sandbox && init.authorizationUrl?.startsWith('http')) {
-				window.location.href = init.authorizationUrl;
-				return;
-			}
-			const { data } = await api.post(`/bookings/${id}/verify`, { reference: init.reference, simulate });
-			toast.success(data.message);
-			load();
-		} catch (err) {
-			toast.error(err.response?.data?.message || 'Payment could not be completed');
-			load();
-		} finally {
-			setBusy(false);
-		}
-	};
-
 	if (loading) {
 		return (
 			<div className="min-h-screen bg-paper">
@@ -190,26 +169,18 @@ export default function BookingDetailPage() {
 					)}
 
 					{isStudent && booking.status === 'accepted' && (
-						<>
-							<button
-								disabled={busy}
-								onClick={() => pay()}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
-							>
-								{busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <CreditCard className="h-4 w-4" />}
-								Pay {naira(booking.cost.total)}
-							</button>
-							{sandbox && (
-								<button
-									disabled={busy}
-									onClick={() => pay('fail')}
-									className="inline-flex items-center gap-2 rounded-xl border border-muted/20 px-4 py-2.5 text-sm font-bold text-muted disabled:opacity-60"
-									title="Sandbox only — exercises the failed-payment path"
-								>
-									Simulate a failed payment
-								</button>
-							)}
-						</>
+						// Goes to a real checkout rather than paying in place. Paying used
+						// to be one click that initialised and verified in the same breath,
+						// which meant nothing on screen ever looked like a payment. The
+						// failure path lives there too now — as a declined test card,
+						// which is how the provider actually reports it, instead of a
+						// "simulate a failure" button sitting in the product.
+						<Link
+							to={`/bookings/${id}/pay`}
+							className="inline-flex items-center gap-2 bg-primary px-4 py-2.5 text-sm font-bold text-white transition hover:bg-primary-dark"
+						>
+							<CreditCard className="h-4 w-4" /> Pay {naira(booking.cost.total)}
+						</Link>
 					)}
 
 					{isStudent && ['pending', 'accepted'].includes(booking.status) && (

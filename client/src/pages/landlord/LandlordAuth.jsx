@@ -2,11 +2,12 @@ import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Building2, Eye, EyeOff, Home, Lock, Mail, MapPin, Phone, User, KeyRound, ArrowLeft, ShieldCheck, BadgeCheck } from 'lucide-react';
+import { Building2, Eye, EyeOff, Lock, Mail, MapPin, Phone, User, KeyRound, ArrowLeft, ShieldCheck, BadgeCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { getDeviceToken, saveDeviceToken } from '../../utils/deviceTrust';
 import Turnstile, { captchaEnabled } from '../../components/common/Turnstile';
+import BrandMark from '../../components/common/Logo';
 
 function AuthBackdrop() {
 	return (
@@ -14,7 +15,7 @@ function AuthBackdrop() {
 			<div className="absolute inset-0 bg-grid opacity-70" />
 			<div className="absolute -left-52 -top-44 h-[34rem] w-[34rem] rounded-full bg-primary/25 blur-[130px] animate-aurora" />
 			<div className="absolute -right-52 top-4 h-[32rem] w-[32rem] rounded-full bg-accent/25 blur-[140px] animate-float-slow" />
-			<div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-highlight/20 blur-[130px] animate-aurora" />
+			<div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-primary/22 blur-[130px] animate-aurora" />
 		</div>
 	);
 }
@@ -43,16 +44,11 @@ const InputField = ({ icon: Icon, error, showToggle, onToggle, show, ...props })
 // Module scope, not inside the component — see StudentLogin. A component
 // created during render remounts its subtree on every parent render.
 const Logo = () => (
-	<div className="mb-8 flex items-center gap-2.5">
-		<div className="relative">
-			<div className="absolute inset-0 rounded-xl bg-primary/40 blur-md" />
-			<div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
-				<Home className="h-5 w-5 text-white" />
-			</div>
-		</div>
+	<div className="mb-8 flex items-center gap-3">
+		<BrandMark size={40} className="text-primary" />
 		<div>
 			<p className="font-serif text-base font-extrabold leading-tight text-text">NestFinder</p>
-			<p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">Landlord Portal</p>
+			<p className="text-[13px] font-bold uppercase tracking-wider text-primary-ink">Landlord Portal</p>
 		</div>
 	</div>
 );
@@ -179,7 +175,7 @@ export default function LandlordAuth() {
 					<button onClick={resendLoginOtp} disabled={otpLoading} className="mt-4 block w-full text-center text-xs font-semibold text-primary-ink transition hover:underline disabled:opacity-60">Didn't get it? Resend code</button>
 					{otpStage.devOtp && (
 						<div className="mt-5 rounded-2xl border border-highlight/40 bg-highlight/10 p-3 text-center">
-							<p className="text-[11px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
+							<p className="text-[13px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
 							<p className="mt-1 text-xs text-muted">No email configured — your code is</p>
 							<p className="mt-1 font-serif text-2xl font-extrabold tracking-widest text-highlight-ink">{otpStage.devOtp}</p>
 						</div>
@@ -261,11 +257,11 @@ export default function LandlordAuth() {
 								{(isSignIn ? [{ v: 'Fast', l: 'Approval' }, { v: 'Free', l: 'To list' }] : [{ v: 'Live', l: 'Rooms' }, { v: 'Direct', l: 'Leads' }]).map(s => (
 									<div key={s.l} className="glass-tint rounded-2xl p-3.5">
 										<div className="font-serif text-xl font-extrabold text-white">{s.v}</div>
-										<div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-white/75">{s.l}</div>
+										<div className="mt-0.5 text-[12px] font-bold uppercase tracking-wider text-white/75">{s.l}</div>
 									</div>
 								))}
 							</div>
-							<div className="mt-8 flex items-center gap-2 text-[11px] font-semibold text-white/85">
+							<div className="mt-8 flex items-center gap-2 text-[13px] font-semibold text-white/85">
 								<BadgeCheck className="h-3.5 w-3.5" /> Verified students
 								<span className="mx-1 opacity-50">·</span>
 								<ShieldCheck className="h-3.5 w-3.5" /> Secure login

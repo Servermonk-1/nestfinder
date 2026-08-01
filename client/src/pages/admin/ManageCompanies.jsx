@@ -240,16 +240,16 @@ export default function ManageCompanies() {
 										<div className="flex flex-wrap items-center gap-2">
 											<h2 className="font-serif text-base font-bold text-text">{c.name}</h2>
 											{c.verified ? (
-												<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
+												<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[13px] font-bold text-success-ink">
 													<Check className="h-3 w-3" /> Published
 												</span>
 											) : (
-												<span className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2 py-0.5 text-[11px] font-bold text-primary-ink">
+												<span className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2 py-0.5 text-[13px] font-bold text-primary-ink">
 													<AlertTriangle className="h-3 w-3" /> Awaiting review
 												</span>
 											)}
 											{c.suggestedBy && (
-												<span className="rounded-full bg-surface-alt px-2 py-0.5 text-[11px] font-bold text-muted">
+												<span className="rounded-full bg-surface-alt px-2 py-0.5 text-[13px] font-bold text-muted">
 													Added by a student
 												</span>
 											)}
@@ -260,20 +260,20 @@ export default function ManageCompanies() {
 											<MapPin className="h-3.5 w-3.5 shrink-0 text-primary-ink" />
 											{[c.address, c.area, c.city].filter(Boolean).join(', ')}
 											{c.location?.coordinates ? (
-												<span className="ml-1 text-[11px]">· on the map ({c.geocodePrecision || 'area'})</span>
+												<span className="ml-1 text-[13px]">· on the map ({c.geocodePrecision || 'area'})</span>
 											) : (
-												<span className="ml-1 text-[11px] font-bold text-danger-ink">· NOT on the map</span>
+												<span className="ml-1 text-[13px] font-bold text-danger-ink">· NOT on the map</span>
 											)}
 										</p>
 
 										<div className="mt-2 flex flex-wrap gap-1.5">
 											{(c.faculties || []).map((f) => (
-												<span key={f} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary-ink">
+												<span key={f} className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[13px] font-semibold text-primary-ink">
 													<GraduationCap className="h-3 w-3" /> {f}
 												</span>
 											))}
 											{c.siwesSlots ? (
-												<span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-[11px] font-semibold text-muted">
+												<span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-[13px] font-semibold text-muted">
 													<Users className="h-3 w-3" /> ~{c.siwesSlots} places
 												</span>
 											) : null}

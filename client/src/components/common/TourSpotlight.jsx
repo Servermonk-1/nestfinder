@@ -127,7 +127,7 @@ export default function TourSpotlight({ step, stepIndex, totalSteps, onNext, onP
 					>
 						<span className={`absolute h-3 w-3 rotate-45 bg-surface ${ARROW_CLASSES[arrowPlacement]}`} />
 
-						<p className="text-[11px] font-bold uppercase tracking-widest text-primary-ink">
+						<p className="text-[13px] font-bold uppercase tracking-widest text-primary-ink">
 							Step {stepIndex + 1} of {totalSteps}
 						</p>
 						<h3 id="tour-step-title" className="mt-1.5 font-serif text-lg font-bold text-text">{step.title}</h3>
@@ -159,7 +159,7 @@ export default function TourSpotlight({ step, stepIndex, totalSteps, onNext, onP
 						</div>
 						<button
 							onClick={onSkip}
-							className="mt-3 block w-full text-center text-[11px] font-semibold text-muted/70 transition hover:text-muted"
+							className="mt-3 block w-full text-center text-[13px] font-semibold text-muted/70 transition hover:text-muted"
 						>
 							Skip Tour
 						</button>

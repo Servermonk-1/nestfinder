@@ -72,7 +72,7 @@ export default function ForgotPasswordPage() {
 
 						{devResetUrl && (
 							<div className="mt-6 rounded-2xl border border-highlight/40 bg-highlight/10 p-4 text-center">
-								<p className="text-[11px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
+								<p className="text-[13px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
 								<p className="mt-1 text-xs text-muted">No email configured — use this link to reset:</p>
 								<a href={devResetUrl} className="mt-2 block break-all text-xs font-semibold text-primary-ink hover:underline">
 									{devResetUrl}

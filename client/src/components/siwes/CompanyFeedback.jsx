@@ -229,12 +229,12 @@ export default function CompanyFeedback({ companyId, companyName }) {
 								<Stars value={f.rating} />
 								<span className="text-sm font-bold text-text">{f.reviewer}</span>
 								{f.verified && (
-									<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[11px] font-bold text-success-ink">
+									<span className="inline-flex items-center gap-1 rounded-full bg-success/12 px-2 py-0.5 text-[13px] font-bold text-success-ink">
 										<BadgeCheck className="h-3 w-3" /> Verified student
 									</span>
 								)}
 								{f.department && (
-									<span className="rounded-full bg-surface-alt px-2 py-0.5 text-[11px] font-semibold capitalize text-muted">
+									<span className="rounded-full bg-surface-alt px-2 py-0.5 text-[13px] font-semibold capitalize text-muted">
 										{f.department}
 									</span>
 								)}

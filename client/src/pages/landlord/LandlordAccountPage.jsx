@@ -58,7 +58,7 @@ export default function LandlordAccountPage() {
 						<div className="min-w-0">
 							<p className="truncate font-serif text-lg font-bold text-text">{user?.fullName || 'Landlord'}</p>
 							<p className="text-xs font-bold uppercase tracking-widest text-primary-ink">Landlord</p>
-							<p className="mt-1 text-[11px] text-muted">Tap your photo to upload — students see it on your listings.</p>
+							<p className="mt-1 text-[13px] text-muted">Tap your photo to upload — students see it on your listings.</p>
 						</div>
 					</div>
 

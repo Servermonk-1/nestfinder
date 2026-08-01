@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
+import Logo from './Logo';
 
 /**
  * The floating navigation pill.
@@ -39,13 +40,14 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 				transition={{ type: 'spring', stiffness: 380, damping: 34 }}
 				className="nav-pill pointer-events-auto flex w-full max-w-6xl items-center gap-2 rounded-full py-2 pl-5 pr-2"
 			>
-				{/* Wordmark — no mark, no icon. The name, set wide and tight. */}
+				{/* Mark plus name. The mark alone at this size — the arched lettering in
+				    the full badge is unreadable below about 96px. */}
 				<Link
 					to={wordmarkTo}
-					className="group mr-1 shrink-0 font-display text-[15px] font-extrabold tracking-tight text-ink"
+					className="group mr-1 flex shrink-0 items-center gap-2 font-display text-[16px] font-extrabold tracking-tight text-ink"
 				>
+					<Logo size={24} className="transition-transform duration-300 group-hover:rotate-45" />
 					{wordmark}
-					<span className="ml-1 inline-block h-1.5 w-1.5 translate-y-[-1px] rounded-full bg-primary transition-transform duration-300 group-hover:scale-125" />
 				</Link>
 
 				{/* Desktop links */}
@@ -57,7 +59,7 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 								key={link.to}
 								id={link.id}
 								to={link.to}
-								className={`relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold transition-colors duration-200 ${
+								className={`relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[14px] font-semibold transition-colors duration-200 ${
 									active ? 'text-ink' : 'text-muted hover:text-ink'
 								}`}
 							>

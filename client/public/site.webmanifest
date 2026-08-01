@@ -1,0 +1,14 @@
+{
+  "name": "NestFinder — Off-Campus Housing for SIWES Students",
+  "short_name": "NestFinder",
+  "description": "Verified off-campus accommodation for students on industrial training (SIWES). Search, compare, and secure housing near your placement.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FAF9F7",
+  "theme_color": "#1B2A41",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

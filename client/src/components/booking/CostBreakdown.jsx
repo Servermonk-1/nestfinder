@@ -32,7 +32,7 @@ export default function CostBreakdown({ cost, showSplit = false }) {
 						<span className="text-muted">
 							{r.label(cost)}
 							{r.note && (
-								<span className="ml-1.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[10px] font-bold text-success-ink">
+								<span className="ml-1.5 rounded-full bg-success/12 px-1.5 py-0.5 text-[12px] font-bold text-success-ink">
 									{r.note}
 								</span>
 							)}

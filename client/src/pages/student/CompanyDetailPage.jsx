@@ -153,7 +153,7 @@ export default function CompanyDetailPage() {
 
 				{/* ── Header ── */}
 				<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-					<span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-surface-alt/70 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wide text-muted">
+					<span className="mb-2 inline-flex items-center gap-1.5 rounded-full bg-surface-alt/70 px-2.5 py-1 text-[13px] font-bold uppercase tracking-wide text-muted">
 						<Building2 className="h-3 w-3" /> {company.industry}
 					</span>
 					<h1 className="font-serif text-3xl font-extrabold text-text md:text-4xl">{company.name}</h1>

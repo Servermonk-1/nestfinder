@@ -1,3 +1,5 @@
+<p align="center"><img src="docs/logo.png" alt="NestFinder" width="110" /></p>
+
 # NestFinder — User Guide
 
 How to use NestFinder, for each of the three kinds of account: **student**, **landlord** and **administrator**.

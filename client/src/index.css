@@ -31,10 +31,10 @@
 
   body {
     font-family: 'Archivo', system-ui, sans-serif;
-    color: #1A1D24;
-    background-color: #FAF9F7;
-    /* A half-step off white — warm enough that true-white cards lift off it,
-       clean enough that it never reads as cream. No grid, no wash: the calm is
+    color: #1D2A44;
+    background-color: #F4F7F6;
+    /* Soft ice — bright and cool, tinted just enough
+       that pure-white cards lift off it without a harsh shadow. The light is
        the point. */
 
     -webkit-font-smoothing: antialiased;
@@ -62,14 +62,14 @@
   }
 
   ::selection {
-    background: rgba(27, 42, 65, 0.14);
-    color: #1A1D24;
+    background: rgba(42, 111, 151, 0.18);
+    color: #1D2A44;
   }
 
   /* Keyboard focus must always be visible — it was easy to lose against the
      old soft palette. */
   :focus-visible {
-    outline: 2px solid #1B2A41;
+    outline: 2px solid #2A6F97;
     outline-offset: 2px;
   }
 
@@ -78,14 +78,14 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #F0EEEA;
+    background: #E6EEF1;
   }
   ::-webkit-scrollbar-thumb {
-    background: #CFCAC3;
-    border: 3px solid #F0EEEA;
+    background: #BFD2D9;
+    border: 3px solid #E6EEF1;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #A9A39A;
+    background: #93AFBA;
   }
 }
 
@@ -161,27 +161,27 @@
   }
   .input-field:focus {
     @apply border-primary;
-    box-shadow: inset 2px 0 0 0 #1B2A41;
+    box-shadow: inset 2px 0 0 0 #2A6F97;
   }
 
   /* Annotation label — the small uppercase caption that names a value, the way
      a field is annotated on a drawing. */
   .label-meta {
-    @apply font-mono text-[10px] font-medium uppercase text-muted;
+    @apply font-mono text-[12px] font-medium uppercase text-muted;
     letter-spacing: 0.14em;
   }
 
   .badge-available {
-    @apply bg-success/12 text-success-ink text-[11px] font-semibold px-2 py-0.5;
+    @apply bg-success/12 text-success-ink text-[13px] font-semibold px-2 py-0.5;
   }
   .badge-unavailable {
-    @apply bg-danger/12 text-danger-ink text-[11px] font-semibold px-2 py-0.5;
+    @apply bg-danger/12 text-danger-ink text-[13px] font-semibold px-2 py-0.5;
   }
   .badge-verified {
-    @apply bg-primary/10 text-primary-ink text-[11px] font-semibold px-2 py-0.5;
+    @apply bg-primary/10 text-primary-ink text-[13px] font-semibold px-2 py-0.5;
   }
   .badge-flagged {
-    @apply bg-highlight/15 text-highlight-ink text-[11px] font-semibold px-2 py-0.5;
+    @apply bg-highlight/15 text-highlight-ink text-[13px] font-semibold px-2 py-0.5;
   }
 }
 
@@ -192,14 +192,14 @@
   }
 
   .text-gradient {
-    background: linear-gradient(100deg, #1B2A41 0%, #3A4560 100%);
+    background: linear-gradient(100deg, #1F5474 0%, #2A6F97 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .text-shimmer {
-    background: linear-gradient(100deg, #1B2A41 20%, #3A4560 45%, #7B88A5 52%, #3A4560 60%, #1B2A41 84%);
+    background: linear-gradient(100deg, #1F5474 20%, #2A6F97 45%, #A9D6E5 52%, #2A6F97 60%, #1F5474 84%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;

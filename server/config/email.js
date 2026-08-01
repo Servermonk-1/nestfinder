@@ -39,16 +39,27 @@ export const isEmailLive = () => {
 };
 
 // ── SHARED HTML SHELL ─────────────────────────────────────
+//
+// Matches the application's palette — warm paper, deep ink navy, square corners.
+// It previously carried the pre-redesign purple-and-gold scheme, so a NestFinder
+// email looked like it came from a different product than the one it links to.
+//
+// The mark is a hosted PNG, not the SVG used in the app: Gmail and Outlook strip
+// inline SVG. Most clients also block remote images by default, so the wordmark
+// stays live text beside it and the <img> carries alt text — the header still
+// reads as NestFinder with every image blocked.
 const shell = (inner) => `
-  <div style="font-family:-apple-system,Segoe UI,Roboto,sans-serif;background:#181B3D;padding:32px;">
-    <div style="max-width:480px;margin:0 auto;background:#232755;border-radius:20px;overflow:hidden;border:1px solid rgba(192,144,63,0.25);">
-      <div style="background:linear-gradient(135deg,#C0903F,#D9A54C);padding:24px 32px;">
-        <span style="font-size:20px;font-weight:800;color:#181B3D;">🏠 NestFinder</span>
+  <div style="font-family:-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#F4F2EF;padding:32px 16px;">
+    <div style="max-width:520px;margin:0 auto;background:#FFFFFF;border:1px solid #E7E3DE;">
+      <div style="background:#1B2A41;padding:22px 32px;">
+        <img src="${clientUrl()}/icon-192.png" width="30" height="30" alt=""
+             style="vertical-align:middle;border:0;display:inline-block;" />
+        <span style="font-size:19px;font-weight:800;color:#FAF9F7;letter-spacing:-0.2px;vertical-align:middle;padding-left:10px;">NestFinder</span>
       </div>
-      <div style="padding:32px;color:#F4F3FC;">
+      <div style="padding:32px;color:#1A1D24;font-size:15px;">
         ${inner}
       </div>
-      <div style="padding:16px 32px;border-top:1px solid rgba(255,255,255,0.08);color:#9C9FC7;font-size:12px;">
+      <div style="padding:16px 32px;border-top:1px solid #E7E3DE;color:#5E636C;font-size:12px;background:#FAF9F7;">
         NestFinder · SIWES Off-Campus Housing · This is an automated message.
       </div>
     </div>
@@ -92,10 +103,10 @@ export const sendVerificationEmail = async (email, name, rawToken) => {
 		subject: 'Verify your NestFinder account',
 		demoData: { verifyUrl },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
-      <p style="color:#9C9FC7;line-height:1.6;">Welcome to NestFinder! Confirm your email address to unlock messaging landlords, saving listings, and reporting fraud.</p>
-      <a href="${verifyUrl}" style="display:inline-block;margin:20px 0;background:#C0903F;color:#181B3D;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;">Verify My Email</a>
-      <p style="color:#9C9FC7;font-size:13px;">This link expires in 24 hours. If you didn't create this account, you can ignore this email.</p>
+      <h2 style="margin:0 0 8px;color:#1A1D24;">Hi ${name || 'there'},</h2>
+      <p style="color:#5E636C;line-height:1.6;">Welcome to NestFinder! Confirm your email address to unlock messaging landlords, saving listings, and reporting fraud.</p>
+      <a href="${verifyUrl}" style="display:inline-block;margin:20px 0;background:#1B2A41;color:#FFFFFF;padding:14px 28px;text-decoration:none;font-weight:700;">Verify My Email</a>
+      <p style="color:#5E636C;font-size:13px;">This link expires in 24 hours. If you didn't create this account, you can ignore this email.</p>
     `),
 	});
 };
@@ -108,11 +119,11 @@ export const sendOTPEmail = async (email, name, otp) => {
 		subject: `${otp} is your NestFinder login code`,
 		demoData: { otp },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
-      <p style="color:#9C9FC7;line-height:1.6;">Your one-time login code is:</p>
-      <div style="font-size:38px;font-weight:800;letter-spacing:10px;color:#D9A54C;text-align:center;padding:24px;background:#2E3269;border-radius:14px;margin:20px 0;">${otp}</div>
-      <p style="color:#9C9FC7;">This code expires in <strong style="color:#F4F3FC;">10 minutes</strong>.</p>
-      <p style="color:#C1503A;font-weight:600;font-size:13px;">Never share this code — NestFinder will never ask you for it.</p>
+      <h2 style="margin:0 0 8px;color:#1A1D24;">Hi ${name || 'there'},</h2>
+      <p style="color:#5E636C;line-height:1.6;">Your one-time login code is:</p>
+      <div style="font-size:38px;font-weight:800;letter-spacing:10px;color:#1B2A41;text-align:center;padding:24px;background:#F4F2EF;margin:20px 0;">${otp}</div>
+      <p style="color:#5E636C;">This code expires in <strong style="color:#1A1D24;">10 minutes</strong>.</p>
+      <p style="color:#B23B2E;font-weight:600;font-size:13px;">Never share this code — NestFinder will never ask you for it.</p>
     `),
 	});
 };
@@ -125,9 +136,9 @@ export const sendLoginAlertEmail = async (email, name, ip) => {
 		subject: 'Security alert: unusual login activity',
 		demoData: { ip: ip || 'unknown' },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#C1503A;">Security Alert</h2>
-      <p style="color:#9C9FC7;line-height:1.6;">Hi ${name || 'there'}, we detected repeated failed login attempts on your account${ip ? ` from IP <strong style="color:#F4F3FC;">${ip}</strong>` : ''}. Your account has been temporarily locked for 30 minutes.</p>
-      <p style="color:#9C9FC7;">If this was you, just wait and try again. If not, change your password as soon as you can.</p>
+      <h2 style="margin:0 0 8px;color:#B23B2E;">Security Alert</h2>
+      <p style="color:#5E636C;line-height:1.6;">Hi ${name || 'there'}, we detected repeated failed login attempts on your account${ip ? ` from IP <strong style="color:#1A1D24;">${ip}</strong>` : ''}. Your account has been temporarily locked for 30 minutes.</p>
+      <p style="color:#5E636C;">If this was you, just wait and try again. If not, change your password as soon as you can.</p>
     `),
 	});
 };
@@ -141,10 +152,10 @@ export const sendPasswordResetEmail = async (email, name, rawToken) => {
 		subject: 'Reset your NestFinder password',
 		demoData: { resetUrl },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
-      <p style="color:#9C9FC7;line-height:1.6;">We received a request to reset your NestFinder password. Click the button below to choose a new one.</p>
-      <a href="${resetUrl}" style="display:inline-block;margin:20px 0;background:#C0903F;color:#181B3D;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;">Reset My Password</a>
-      <p style="color:#9C9FC7;font-size:13px;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email — your password won't change.</p>
+      <h2 style="margin:0 0 8px;color:#1A1D24;">Hi ${name || 'there'},</h2>
+      <p style="color:#5E636C;line-height:1.6;">We received a request to reset your NestFinder password. Click the button below to choose a new one.</p>
+      <a href="${resetUrl}" style="display:inline-block;margin:20px 0;background:#1B2A41;color:#FFFFFF;padding:14px 28px;text-decoration:none;font-weight:700;">Reset My Password</a>
+      <p style="color:#5E636C;font-size:13px;">This link expires in 1 hour. If you didn't request this, you can safely ignore this email — your password won't change.</p>
     `),
 	});
 };
@@ -157,11 +168,11 @@ export const sendNewMessageEmail = async (email, name, senderName, snippet, conv
 		subject: `New message from ${senderName} on NestFinder`,
 		demoData: { conversationUrl },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
-      <p style="color:#9C9FC7;line-height:1.6;"><strong style="color:#F4F3FC;">${senderName}</strong> sent you a message:</p>
-      <div style="color:#F4F3FC;line-height:1.6;padding:16px 18px;background:#2E3269;border-left:3px solid #C0903F;border-radius:8px;margin:16px 0;">${snippet}</div>
-      <a href="${conversationUrl}" style="display:inline-block;margin:8px 0 4px;background:#C0903F;color:#181B3D;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;">Open Conversation</a>
-      <p style="color:#9C9FC7;font-size:12px;margin-top:16px;">You're getting this because you weren't online. We won't email you again about this chat for a little while.</p>
+      <h2 style="margin:0 0 8px;color:#1A1D24;">Hi ${name || 'there'},</h2>
+      <p style="color:#5E636C;line-height:1.6;"><strong style="color:#1A1D24;">${senderName}</strong> sent you a message:</p>
+      <div style="color:#1A1D24;line-height:1.6;padding:16px 18px;background:#F4F2EF;border-left:3px solid #A87C3E;margin:16px 0;">${snippet}</div>
+      <a href="${conversationUrl}" style="display:inline-block;margin:8px 0 4px;background:#1B2A41;color:#FFFFFF;padding:14px 28px;text-decoration:none;font-weight:700;">Open Conversation</a>
+      <p style="color:#5E636C;font-size:12px;margin-top:16px;">You're getting this because you weren't online. We won't email you again about this chat for a little while.</p>
     `),
 	});
 };
@@ -177,10 +188,10 @@ export const sendPlacementRemovedEmail = async (email, name, companyName, accoun
 		subject: 'Your SIWES placement centre was removed from NestFinder',
 		demoData: { companyName, accountUrl },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
-      <p style="color:#9C9FC7;line-height:1.6;">We've removed <strong style="color:#F4F3FC;">${companyName}</strong> from our SIWES directory, so it is no longer set as your placement.</p>
-      <p style="color:#9C9FC7;line-height:1.6;">This does not affect your actual industrial training — it only means we can no longer measure your commute from that address. Pick another centre (or add your own) to get distance and transport estimates again.</p>
-      <a href="${accountUrl}" style="display:inline-block;margin:8px 0 4px;background:#C0903F;color:#181B3D;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;">Update my placement</a>
+      <h2 style="margin:0 0 8px;color:#1A1D24;">Hi ${name || 'there'},</h2>
+      <p style="color:#5E636C;line-height:1.6;">We've removed <strong style="color:#1A1D24;">${companyName}</strong> from our SIWES directory, so it is no longer set as your placement.</p>
+      <p style="color:#5E636C;line-height:1.6;">This does not affect your actual industrial training — it only means we can no longer measure your commute from that address. Pick another centre (or add your own) to get distance and transport estimates again.</p>
+      <a href="${accountUrl}" style="display:inline-block;margin:8px 0 4px;background:#1B2A41;color:#FFFFFF;padding:14px 28px;text-decoration:none;font-weight:700;">Update my placement</a>
     `),
 	});
 };
@@ -196,15 +207,15 @@ export const sendSavedSearchAlertEmail = async (email, name, m) => {
 		subject: `New home matching “${m.searchName}” on NestFinder`,
 		demoData: { searchName: m.searchName, listing: m.title, url: m.url },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#F4F3FC;">Hi ${name || 'there'},</h2>
-      <p style="color:#9C9FC7;line-height:1.6;">A new home matches your saved search <strong style="color:#F4F3FC;">${m.searchName}</strong>.</p>
-      <div style="color:#F4F3FC;line-height:1.6;padding:16px 18px;background:#2E3269;border-left:3px solid #C0903F;border-radius:8px;margin:16px 0;">
+      <h2 style="margin:0 0 8px;color:#1A1D24;">Hi ${name || 'there'},</h2>
+      <p style="color:#5E636C;line-height:1.6;">A new home matches your saved search <strong style="color:#1A1D24;">${m.searchName}</strong>.</p>
+      <div style="color:#1A1D24;line-height:1.6;padding:16px 18px;background:#F4F2EF;border-left:3px solid #A87C3E;margin:16px 0;">
         <strong>${m.title}</strong><br/>
-        <span style="color:#9C9FC7;">${m.area}</span>
+        <span style="color:#5E636C;">${m.area}</span>
       </div>
-      <p style="color:#9C9FC7;font-size:13px;">You saved: ${m.criteria}</p>
-      <a href="${m.url}" style="display:inline-block;margin:8px 0 4px;background:#C0903F;color:#181B3D;padding:14px 28px;border-radius:12px;text-decoration:none;font-weight:700;">View this home</a>
-      <p style="color:#9C9FC7;font-size:12px;margin-top:16px;">We'll only email you about this search once every few hours, however many homes appear. You can turn alerts off on your saved searches page.</p>
+      <p style="color:#5E636C;font-size:13px;">You saved: ${m.criteria}</p>
+      <a href="${m.url}" style="display:inline-block;margin:8px 0 4px;background:#1B2A41;color:#FFFFFF;padding:14px 28px;text-decoration:none;font-weight:700;">View this home</a>
+      <p style="color:#5E636C;font-size:12px;margin-top:16px;">We'll only email you about this search once every few hours, however many homes appear. You can turn alerts off on your saved searches page.</p>
     `),
 	});
 };
@@ -218,10 +229,10 @@ export const sendFraudAlertToAdmin = async (listingId, flags) => {
 		subject: `Fraud alert: listing ${listingId} flagged`,
 		demoData: { listingId, rules: flags.map((f) => f.rule).join(', ') },
 		html: shell(`
-      <h2 style="margin:0 0 8px;color:#C1503A;">Listing Fraud Alert</h2>
-      <p style="color:#9C9FC7;">Listing <strong style="color:#F4F3FC;">${listingId}</strong> triggered these checks:</p>
-      <ul style="color:#9C9FC7;line-height:1.7;">
-        ${flags.map((f) => `<li><strong style="color:#F4F3FC;">${f.rule}</strong>: ${f.detail}</li>`).join('')}
+      <h2 style="margin:0 0 8px;color:#B23B2E;">Listing Fraud Alert</h2>
+      <p style="color:#5E636C;">Listing <strong style="color:#1A1D24;">${listingId}</strong> triggered these checks:</p>
+      <ul style="color:#5E636C;line-height:1.7;">
+        ${flags.map((f) => `<li><strong style="color:#1A1D24;">${f.rule}</strong>: ${f.detail}</li>`).join('')}
       </ul>
     `),
 	});

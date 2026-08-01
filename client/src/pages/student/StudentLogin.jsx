@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 import { getDeviceToken, saveDeviceToken } from '../../utils/deviceTrust';
 import Turnstile, { captchaEnabled } from '../../components/common/Turnstile';
+import BrandMark from '../../components/common/Logo';
 
 /* Bright ambient backdrop — soft colour washes + fine grid */
 function AuthBackdrop() {
@@ -15,7 +16,7 @@ function AuthBackdrop() {
 			<div className="absolute inset-0 bg-grid opacity-70" />
 			<div className="absolute -left-52 -top-44 h-[34rem] w-[34rem] rounded-full bg-primary/25 blur-[130px] animate-aurora" />
 			<div className="absolute -right-52 top-4 h-[32rem] w-[32rem] rounded-full bg-accent/25 blur-[140px] animate-float-slow" />
-			<div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-highlight/20 blur-[130px] animate-aurora" />
+			<div className="absolute bottom-[-12rem] left-1/3 h-[28rem] w-[28rem] rounded-full bg-primary/22 blur-[130px] animate-aurora" />
 		</div>
 	);
 }
@@ -45,19 +46,11 @@ const InputField = ({ icon: Icon, error, showToggle, onToggle, show, ...props })
 // during render is a NEW type on every render, so React unmounts and remounts
 // the whole subtree — which drops focus mid-typing on a form like this one.
 const Logo = () => (
-	<div className="mb-8 flex items-center gap-2.5">
-		<div className="relative">
-			<div className="absolute inset-0 rounded-xl bg-primary/40 blur-md" />
-			<div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-brand-gradient shadow-glow-sm">
-				<svg viewBox="0 0 24 24" fill="none" className="h-5 w-5">
-					<path d="M3 12L12 3L21 12" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-					<path d="M5 10V20C5 20.55 5.45 21 6 21H10V16H14V21H18C18.55 21 19 20.55 19 20V10" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-				</svg>
-			</div>
-		</div>
+	<div className="mb-8 flex items-center gap-3">
+		<BrandMark size={40} className="text-primary" />
 		<div>
 			<p className="font-serif text-base font-extrabold leading-tight text-text">NestFinder</p>
-			<p className="text-[11px] font-bold uppercase tracking-wider text-primary-ink">SIWES Housing</p>
+			<p className="text-[13px] font-bold uppercase tracking-wider text-primary-ink">SIWES Housing</p>
 		</div>
 	</div>
 );
@@ -223,7 +216,7 @@ export default function StudentAuth() {
 
 					{otpStage.devOtp && (
 						<div className="mt-5 rounded-2xl border border-highlight/40 bg-highlight/10 p-3 text-center">
-							<p className="text-[11px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
+							<p className="text-[13px] font-bold uppercase tracking-wide text-highlight-ink">Demo mode</p>
 							<p className="mt-1 text-xs text-muted">No email configured — your code is</p>
 							<p className="mt-1 font-serif text-2xl font-extrabold tracking-widest text-highlight-ink">{otpStage.devOtp}</p>
 						</div>
@@ -379,13 +372,12 @@ export default function StudentAuth() {
 						>
 							<motion.div animate={{ y: [0, -14, 0] }} transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
 								className="relative mb-8">
-								<div className="absolute inset-0 rounded-3xl bg-white/30 blur-2xl" />
-								<div className="glass-tint relative flex h-24 w-24 items-center justify-center rounded-3xl">
-									<svg viewBox="0 0 24 24" fill="none" className="h-11 w-11">
-										<path d="M3 12L12 3L21 12" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-										<path d="M5 10V20C5 20.55 5.45 21 6 21H10V16H14V21H18C18.55 21 19 20.55 19 20V10" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-									</svg>
-								</div>
+								{/* The badge, not a generic house — with the mark now beside the
+								    wordmark on the left, a second unrelated icon read as two competing
+								    logos on one screen. It stands on its own rather than in a glass
+								    tile: a round badge framed in a square box fights its own shape. */}
+									<div className="absolute inset-0 scale-90 rounded-full bg-white/20 blur-2xl" />
+									<BrandMark variant="full" size={104} className="relative text-white" />
 							</motion.div>
 
 							<h2 className="font-serif text-4xl font-extrabold text-white">
@@ -410,12 +402,12 @@ export default function StudentAuth() {
 								{(isSignIn ? [{ v: '500+', l: 'Listings' }, { v: '1K+', l: 'Students' }] : [{ v: '20+', l: 'Cities' }, { v: 'Free', l: 'Always' }]).map(s => (
 									<div key={s.l} className="glass-tint rounded-2xl p-3.5">
 										<div className="font-serif text-xl font-extrabold text-white">{s.v}</div>
-										<div className="mt-0.5 text-[10px] font-bold uppercase tracking-wider text-white/75">{s.l}</div>
+										<div className="mt-0.5 text-[12px] font-bold uppercase tracking-wider text-white/75">{s.l}</div>
 									</div>
 								))}
 							</div>
 
-							<div className="mt-8 flex items-center gap-2 text-[11px] font-semibold text-white/85">
+							<div className="mt-8 flex items-center gap-2 text-[13px] font-semibold text-white/85">
 								<BadgeCheck className="h-3.5 w-3.5" /> ID-verified landlords
 								<span className="mx-1 opacity-50">·</span>
 								<ShieldCheck className="h-3.5 w-3.5" /> Secure 2-step login

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NavPill from '../components/common/NavPill';
+import BrandMark from '../components/common/Logo';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
 	ArrowRight, ArrowUpRight, BadgeCheck, Bed, ChevronDown, Home, LayoutDashboard,
@@ -75,7 +76,7 @@ function HeroSearch({ onSearch }) {
 		>
 			<div className="flex flex-1 items-center gap-3 rounded-xl px-4 py-3 sm:border-r sm:border-line">
 				<MapPin className="h-4 w-4 shrink-0 text-primary-ink" />
-				<input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City or area — e.g. Bodija, Lekki" className="w-full bg-transparent text-sm text-text placeholder-muted outline-none" />
+				<input value={city} onChange={(e) => setCity(e.target.value)} placeholder="City or area — e.g. Bodija" className="w-full bg-transparent text-sm text-text placeholder-muted outline-none" />
 			</div>
 			<div className="flex flex-1 items-center gap-3 px-4 py-3">
 				<Home className="h-4 w-4 shrink-0 text-primary-ink" />
@@ -108,12 +109,12 @@ function PropertyCard({ listing, onClick, index }) {
 				<img src={getImageUrl(listing.images?.[0]) || HERO_IMG} alt={listing.title} className="h-full w-full object-cover transition duration-700 group-hover:scale-105" />
 				<div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
 				{verified && (
-					<span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[11px] font-bold text-success-ink shadow-sm">
+					<span className="absolute left-3 top-3 flex items-center gap-1 rounded-full bg-white/95 px-2.5 py-1 text-[13px] font-bold text-success-ink shadow-sm">
 						<BadgeCheck className="h-3.5 w-3.5" /> Verified
 					</span>
 				)}
 				<span className="absolute bottom-3 left-3 rounded-full bg-white/95 px-3 py-1 font-serif text-sm font-bold text-primary-ink shadow-sm">
-					₦{Number(listing.price).toLocaleString()}<span className="text-[11px] font-semibold text-muted">/yr</span>
+					₦{Number(listing.price).toLocaleString()}<span className="text-[13px] font-semibold text-muted">/yr</span>
 				</span>
 			</div>
 			<div className="p-5">
@@ -187,17 +188,17 @@ export default function LandingPageV2() {
 				right={
 					user ? (
 						<>
-							<button onClick={() => navigate(dashLink())} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-primary-dark">
+							<button onClick={() => navigate(dashLink())} className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-white transition hover:bg-primary-dark">
 								<LayoutDashboard className="h-4 w-4" strokeWidth={1.75} /> Dashboard
 							</button>
-							<button onClick={() => { logout(); navigate('/'); }} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] font-semibold text-muted transition hover:text-danger-ink">
+							<button onClick={() => { logout(); navigate('/'); }} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[14px] font-semibold text-muted transition hover:text-danger-ink">
 								<LogOut className="h-4 w-4" strokeWidth={1.75} /> Sign out
 							</button>
 						</>
 					) : (
 						<>
-							<button onClick={() => navigate('/student/login')} className="rounded-full px-3.5 py-2 text-[13px] font-semibold text-ink transition hover:bg-ink/[0.06]">Sign in</button>
-							<button onClick={() => navigate('/student/register')} className="rounded-full bg-primary px-4 py-2 text-[13px] font-semibold text-white transition hover:bg-primary-dark">Get started</button>
+							<button onClick={() => navigate('/student/login')} className="rounded-full px-3.5 py-2 text-[14px] font-semibold text-ink transition hover:bg-ink/[0.06]">Sign in</button>
+							<button onClick={() => navigate('/student/register')} className="rounded-full bg-primary px-4 py-2 text-[14px] font-semibold text-white transition hover:bg-primary-dark">Get started</button>
 						</>
 					)
 				}
@@ -266,7 +267,7 @@ export default function LandingPageV2() {
 								<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient"><Home className="h-4 w-4 text-white" /></div>
 								<div>
 									<p className="font-serif text-lg font-extrabold leading-none text-text">1,200+</p>
-									<p className="text-[10px] font-bold uppercase tracking-wide text-muted">Verified homes</p>
+									<p className="text-[12px] font-bold uppercase tracking-wide text-muted">Verified homes</p>
 								</div>
 							</div>
 						</motion.div>
@@ -453,7 +454,7 @@ export default function LandingPageV2() {
 					<div className="mb-12 grid gap-10 md:grid-cols-4">
 						<div>
 							<div className="mb-5 flex items-center gap-2.5">
-								<span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient"><Home className="h-5 w-5 text-white" /></span>
+								<BrandMark size={38} className="text-primary" />
 								<span className="font-serif text-xl font-extrabold text-text">NestFinder</span>
 							</div>
 							<p className="max-w-xs text-sm leading-relaxed text-muted">Verified off-campus accommodation for students on industrial training. Real homes. Real landlords. Real clarity.</p>

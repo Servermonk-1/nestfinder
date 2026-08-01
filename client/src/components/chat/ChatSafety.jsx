@@ -17,11 +17,11 @@ const REASONS = [
 /** Small "Verified"/"Unverified" pill for the other party in the chat header. */
 export function VerifiedPill({ verified }) {
 	return verified ? (
-		<span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success-ink">
+		<span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[12px] font-bold text-success-ink">
 			<ShieldCheck className="h-3 w-3" /> Verified
 		</span>
 	) : (
-		<span className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2 py-0.5 text-[10px] font-bold text-highlight-ink">
+		<span className="inline-flex items-center gap-1 rounded-full bg-highlight/15 px-2 py-0.5 text-[12px] font-bold text-highlight-ink">
 			<ShieldAlert className="h-3 w-3" /> Unverified
 		</span>
 	);
@@ -50,7 +50,7 @@ export function SafetyTipsBanner() {
 						className="overflow-hidden"
 					>
 						{SAFETY_TIPS.map((t) => (
-							<li key={t} className="mt-1.5 flex gap-2 text-[11px] leading-relaxed text-muted">
+							<li key={t} className="mt-1.5 flex gap-2 text-[13px] leading-relaxed text-muted">
 								<span className="mt-1 h-1 w-1 shrink-0 rounded-full bg-highlight" /> {t}
 							</li>
 						))}
@@ -67,7 +67,7 @@ export function RedFlagWarning({ warnings }) {
 	return (
 		<div className="mt-1.5 max-w-[75%] rounded-xl border border-highlight/40 bg-highlight/10 px-3 py-2">
 			{warnings.map((w) => (
-				<p key={w.id} className="flex gap-1.5 text-[11px] font-medium leading-relaxed text-text">
+				<p key={w.id} className="flex gap-1.5 text-[13px] font-medium leading-relaxed text-text">
 					<ShieldAlert className="mt-0.5 h-3 w-3 shrink-0 text-highlight-ink" /> {w.warning}
 				</p>
 			))}

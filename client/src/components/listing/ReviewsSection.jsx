@@ -14,11 +14,11 @@ function ReviewCard({ r, onEdit, onDelete }) {
 				<div className="flex items-center gap-2">
 					<span className="text-sm font-bold text-text">{r.reviewer}</span>
 					{r.reviewerVerified && (
-						<span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[10px] font-bold text-success-ink">
+						<span className="inline-flex items-center gap-1 rounded-full bg-success/10 px-2 py-0.5 text-[12px] font-bold text-success-ink">
 							<BadgeCheck className="h-3 w-3" /> Verified
 						</span>
 					)}
-					{r.mine && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary-ink">You</span>}
+					{r.mine && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[12px] font-bold text-primary-ink">You</span>}
 				</div>
 				<span className="text-xs text-muted">
 					{formatDistanceToNow(new Date(r.createdAt), { addSuffix: true })}{r.edited ? ' · edited' : ''}

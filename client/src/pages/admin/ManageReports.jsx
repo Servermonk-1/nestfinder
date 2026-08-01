@@ -29,7 +29,7 @@ function Pill({ tone = 'muted', children }) {
 		success: 'bg-success/10 text-success-ink border-success/30',
 		warn: 'bg-highlight/15 text-highlight-ink border-highlight/40',
 	};
-	return <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-bold ${tones[tone]}`}>{children}</span>;
+	return <span className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[12px] font-bold ${tones[tone]}`}>{children}</span>;
 }
 
 /** The recent messages behind a chat report — loaded on demand. */
@@ -62,14 +62,14 @@ function ConversationContext({ reportId }) {
 				{open && (
 					<motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} className="overflow-hidden">
 						<div className="mt-2 max-h-64 space-y-2 overflow-y-auto rounded-xl border border-line bg-surface-alt/50 p-3">
-							<p className="text-[10px] font-bold uppercase tracking-wide text-muted">Shown for moderation · last 20 messages</p>
+							<p className="text-[12px] font-bold uppercase tracking-wide text-muted">Shown for moderation · last 20 messages</p>
 							{loading ? (
 								<p className="text-xs text-muted">Loading…</p>
 							) : !messages?.length ? (
 								<p className="text-xs text-muted">No messages in this conversation.</p>
 							) : messages.map((m, i) => (
 								<div key={i} className={`max-w-[85%] rounded-lg px-3 py-1.5 text-xs ${m.senderRole === 'landlord' ? 'bg-royal/10 text-text' : 'ml-auto bg-primary/10 text-text'}`}>
-									<span className="block text-[10px] font-bold uppercase tracking-wide text-muted">{m.senderRole}</span>
+									<span className="block text-[12px] font-bold uppercase tracking-wide text-muted">{m.senderRole}</span>
 									{m.text}
 								</div>
 							))}

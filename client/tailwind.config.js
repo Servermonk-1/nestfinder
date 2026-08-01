@@ -7,62 +7,66 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── "Survey" — quiet, warm, premium ──
-        // A near-white paper ground (warm, but nowhere near cream — cream is
-        // the giveaway of generic warmth) with a deep ink-navy accent that is
-        // desaturated almost to black, so it reads as considered rather than
-        // technological. Smoothness comes from soft rules and gentle shadow,
-        // not from rounding the corners.
-        ink: '#10131A',            // deepest — headlines and hard edges
+        // ── "Coastal Azure" — soft ice ground, ocean blue, sand accent ──
+        //
+        // Light values carry the atmosphere: a soft ice page, pure-white cards
+        // lifting off it, seafoam and sand used as tints. Light colours cannot
+        // carry white text, so every family also has a deeper cut — DEFAULT for
+        // solid fills, `-ink` for text on light grounds — and foregrounds only
+        // ever use those. Each pairing was checked against all THREE grounds,
+        // not just white: a value can pass on white and still fail on a tinted
+        // panel, which is exactly how the previous palette shipped a failure.
+        ink: '#14243D',            // deepest — headlines and hard edges
         // NOT named `base`. A colour called `base` generates a `text-base`
         // utility that collides with Tailwind's `text-base` FONT SIZE, and the
-        // colour wins — so every `text-base` heading rendered in #FAF9F7, which
-        // is invisible on a white card. Renamed rather than worked around.
-        paper: '#FAF9F7',          // page — warm paper, a half-step off white
-        surface: '#FFFFFF',        // cards — true white, lifted by warmth beneath
-        'surface-alt': '#F4F2EF',  // inputs / nested / hover
-        line: '#E7E3DE',           // soft warm hairline — the main structural tool
-        muted: '#5E636C',          // secondary text — dark enough to clear AA on the
-                                   // TINTED panels too, not just on white. The
-                                   // lighter value passed at 5.6:1 on white and
-                                   // then failed at 4.38:1 on a tinted banner.
-        text: '#1A1D24',           // primary text
+        // colour wins — so every `text-base` heading rendered in the page colour,
+        // invisible on a white card. Renamed rather than worked around.
+        paper: '#F4F7F6',          // page — soft ice, cool and bright
+        surface: '#FFFFFF',        // cards — pure white, natural elevation, no
+                                   // harsh shadow needed against the tinted page
+        'surface-alt': '#E6EEF1',  // inputs / nested / hover
+        line: '#D3E0E5',           // soft cool hairline — the main structural tool
+        muted: '#55677D',          // secondary text — 4.93:1 on the TINTED panel,
+                                   // the worst case, not white (5.80:1)
+        text: '#1D2A44',           // primary text — dark slate
 
-        // Deep ink navy. Almost black, quietly blue — the colour of good
-        // stationery rather than of software.
+        // Ocean blue. `light` is the seafoam wash used for hovers, tag
+        // highlights and focus rings; DEFAULT is what carries white text on a
+        // solid button (5.50:1). `-ink` is a shade deeper for links and labels.
         primary: {
-          DEFAULT: '#1B2A41',
-          light: '#2F4568',
-          dark: '#121C2C',
+          DEFAULT: '#2A6F97',
+          light: '#A9D6E5',
+          dark: '#1F5474',
         },
-        'primary-ink': '#1B2A41',
+        'primary-ink': '#235E80',
         accent: {
-          DEFAULT: '#1B2A41',
-          light: '#2F4568',
-          dark: '#121C2C',
+          DEFAULT: '#2A6F97',
+          light: '#A9D6E5',
+          dark: '#1F5474',
         },
 
-        // Warm bronze for attention — "approximate", "awaiting", "check this".
-        // Distinct from the navy so it never reads as an action.
+        // Warm sand for attention — "approximate", "awaiting", "check this".
+        // Sea and sand: warm against the blue, so it can never be mistaken for
+        // an action. Too light for white text — a solid chip takes `text-ink`.
         highlight: {
-          DEFAULT: '#A87C3E',
-          light: '#D0A96A',
+          DEFAULT: '#D9A441',
+          light: '#EFCB87',
         },
-        'highlight-ink': '#7A5522',
+        'highlight-ink': '#8A6410',
 
         royal: {
-          DEFAULT: '#3A4560',
-          light: '#5A688A',
-          dark: '#232C42',
+          DEFAULT: '#35597A',
+          light: '#5E82A5',
+          dark: '#22405C',
         },
 
-        // Semantic colours stay clearly separate from the navy, so "confirmed"
-        // and "interactive" can never be confused.
-        success: '#2F7A5A',
-        'success-ink': '#1F5C42',
-        danger: '#B23B2E',
-        'danger-ink': '#8E2C21',
-        info: '#3A4560',
+        // Semantic colours stay clearly separate from the blue, so "confirmed"
+        // and "interactive" can never be confused. Both carry white text.
+        success: '#0A8046',
+        'success-ink': '#0A7040',
+        danger: '#C7303F',
+        'danger-ink': '#A81F2C',
+        info: '#2A6F97',
       },
       fontFamily: {
         // Archivo carries the interface — a grotesque with more character than
@@ -74,6 +78,27 @@ export default {
         display: ['Archivo Expanded', 'Archivo', 'system-ui', 'sans-serif'],
         // Every figure, reference and coordinate.
         mono: ['IBM Plex Mono', 'ui-monospace', 'SFMono-Regular', 'monospace'],
+      },
+      // Every step lifted roughly one notch. The interface was built on
+      // text-sm (408 uses) for body and text-xs (337) for labels — 14px and
+      // 12px, which is fine on a desktop mock and genuinely small on a phone.
+      //
+      // Overriding the scale moves all ~990 usages at once; editing the class
+      // names individually would have meant touching hundreds of files and
+      // would drift the first time someone added a new one. Line heights are
+      // raised with the sizes, otherwise larger text just gets more cramped.
+      fontSize: {
+        xs: ['0.8125rem', { lineHeight: '1.125rem' }],   // 13px  (was 12)
+        sm: ['0.9375rem', { lineHeight: '1.375rem' }],   // 15px  (was 14)
+        base: ['1.0625rem', { lineHeight: '1.625rem' }], // 17px  (was 16)
+        lg: ['1.1875rem', { lineHeight: '1.75rem' }],    // 19px  (was 18)
+        xl: ['1.375rem', { lineHeight: '1.875rem' }],    // 22px  (was 20)
+        '2xl': ['1.625rem', { lineHeight: '2.125rem' }], // 26px  (was 24)
+        '3xl': ['2rem', { lineHeight: '2.375rem' }],     // 32px  (was 30)
+        '4xl': ['2.5rem', { lineHeight: '2.75rem' }],    // 40px  (was 36)
+        '5xl': ['3.125rem', { lineHeight: '1.05' }],     // 50px  (was 48)
+        '6xl': ['3.875rem', { lineHeight: '1.03' }],     // 62px  (was 60)
+        '7xl': ['4.75rem', { lineHeight: '1' }],         // 76px  (was 72)
       },
       borderRadius: {
         // Square by default — this is the requested shape language and it suits
@@ -93,17 +118,21 @@ export default {
       boxShadow: {
         // Tight and low-contrast: a drawing sits ON the sheet rather than
         // hovering above it. Depth comes from the hairline, not the blur.
-        glow: '0 20px 48px -22px rgba(27,42,65,0.30)',
-        'glow-sm': '0 10px 28px -16px rgba(27,42,65,0.26)',
-        'glow-ochre': '0 20px 48px -22px rgba(168,124,62,0.26)',
-        card: '0 1px 2px rgba(16,19,26,0.04)',
-        'card-lg': '0 16px 40px -24px rgba(16,19,26,0.22)',
-        lift: '0 24px 56px -28px rgba(16,19,26,0.26)',
+        // Tinted blue rather than neutral grey, so shadows sit in the same
+        // light as the page instead of greying it down.
+        glow: '0 20px 48px -22px rgba(42,111,151,0.30)',
+        'glow-sm': '0 10px 28px -16px rgba(42,111,151,0.26)',
+        'glow-ochre': '0 20px 48px -22px rgba(217,164,65,0.30)',
+        card: '0 1px 2px rgba(20,36,61,0.05)',
+        'card-lg': '0 16px 40px -24px rgba(20,36,61,0.20)',
+        lift: '0 24px 56px -28px rgba(20,36,61,0.24)',
       },
       backgroundImage: {
-        'brand-gradient': 'linear-gradient(135deg, #1B2A41 0%, #3A4560 100%)',
-        'brand-sheen': 'linear-gradient(120deg, #2F4568 0%, #1B2A41 58%, #121C2C 100%)',
-        'warm-deep': 'linear-gradient(140deg, #121C2C 0%, #1B2A41 45%, #3A4560 100%)',
+        // Every stop is dark enough to carry white text — these are used as
+        // button and panel fills, so a light stop would strand the label.
+        'brand-gradient': 'linear-gradient(135deg, #2A6F97 0%, #1F5474 100%)',
+        'brand-sheen': 'linear-gradient(120deg, #3583AF 0%, #2A6F97 58%, #1F5474 100%)',
+        'warm-deep': 'linear-gradient(140deg, #163B52 0%, #1F5474 45%, #2A6F97 100%)',
       },
       letterSpacing: {
         meta: '0.14em',
