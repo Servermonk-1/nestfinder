@@ -41,7 +41,7 @@ export const STATUS_META = {
 		label: 'Moved in',
 		tone: 'success',
 		student: 'You confirmed your move-in and the landlord has been paid.',
-		landlord: 'The student confirmed move-in — your payout has been released.',
+		landlord: 'The student confirmed move-in — your payout is now due and will be transferred to your bank account.',
 	},
 	completed: {
 		label: 'Completed',

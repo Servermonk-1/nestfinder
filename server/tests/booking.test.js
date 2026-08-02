@@ -403,3 +403,67 @@ describe('a room that has been paid for', () => {
 		expect(row.available).toBe(true);
 	});
 });
+
+// ── Releasing escrow settles a debt; it does not move money ──
+describe('payouts', () => {
+	it('opens a DEBT when escrow is released, rather than claiming a transfer', async () => {
+		const id = await advance('movedIn');
+		const b = await Booking.findById(id).lean();
+
+		expect(b.escrow.state).toBe('released');
+		expect(b.payout.state).toBe('due');
+		expect(b.payout.amount).toBe(b.cost.landlordReceives);
+		expect(b.payout.paidAt).toBeUndefined();
+	});
+
+	it('lists what is owed, with the landlord it is owed to', async () => {
+		await advance('movedIn');
+		const res = await as(request(app).get('/api/bookings/admin/payouts'), aToken);
+
+		expect(res.status).toBe(200);
+		expect(res.body.bookings).toHaveLength(1);
+		expect(res.body.totalDue).toBeGreaterThan(0);
+		expect(res.body.manualTransfersRequired).toBe(true);
+	});
+
+	// The whole point: a payout cannot be waved through on someone's word.
+	it('REFUSES to record a payout without a bank reference', async () => {
+		const id = await advance('movedIn');
+		const res = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken).send({});
+
+		expect(res.status).toBe(400);
+		expect((await Booking.findById(id).lean()).payout.state).toBe('due');
+	});
+
+	it('records a payout against a reference, and will not record it twice', async () => {
+		const id = await advance('movedIn');
+		const ok = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken)
+			.send({ reference: 'GTB/TRF/99812' });
+		expect(ok.status).toBe(200);
+
+		const b = await Booking.findById(id).lean();
+		expect(b.payout.state).toBe('paid');
+		expect(b.payout.reference).toBe('GTB/TRF/99812');
+		expect(b.status).toBe('completed');
+
+		const again = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken)
+			.send({ reference: 'GTB/TRF/99812' });
+		expect(again.status).toBe(400);
+	});
+
+	it('will not let a landlord record their own payout', async () => {
+		const id = await advance('movedIn');
+		const res = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), lToken)
+			.send({ reference: 'self-serve' });
+		expect(res.status).toBe(403);
+		expect((await Booking.findById(id).lean()).payout.state).toBe('due');
+	});
+
+	it('owes nothing on a booking that never reached move-in', async () => {
+		const id = await advance('paid');
+		expect((await Booking.findById(id).lean()).payout.state).toBe('none');
+		const res = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken)
+			.send({ reference: 'x' });
+		expect(res.status).toBe(400);
+	});
+});

@@ -138,7 +138,7 @@ export default function BookingDetailPage() {
 						<span>
 							<span className="font-bold">{naira(booking.cost.total)} is being held by NestFinder.</span>{' '}
 							{isLandlord
-								? `${naira(booking.cost.landlordReceives)} will be released to you as soon as the student confirms they have moved in.`
+								? `${naira(booking.cost.landlordReceives)} becomes owed to you as soon as the student confirms they have moved in, and is paid out by bank transfer.`
 								: 'It goes to the landlord only when you confirm you have moved in. If the room is not as advertised, contact support before confirming.'}
 						</span>
 					</p>
@@ -197,7 +197,7 @@ export default function BookingDetailPage() {
 						<button
 							disabled={busy}
 							onClick={() => {
-								if (!window.confirm('Confirm you have moved in? This releases your payment to the landlord and cannot be undone.')) return;
+								if (!window.confirm('Confirm you have moved in? Your payment stops being refundable and becomes owed to the landlord. This cannot be undone.')) return;
 								act(() => api.patch(`/bookings/${id}/moved-in`));
 							}}
 							className="inline-flex items-center gap-2 rounded-xl bg-success px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
@@ -232,7 +232,7 @@ export default function BookingDetailPage() {
 						<Event when={booking.payment?.paidAt} text={`Payment received (${booking.payment?.reference})`} />
 						<Event when={booking.escrow?.heldAt} text="Money held in escrow by NestFinder" />
 						<Event when={booking.movedInConfirmedAt} text="Student confirmed move-in" />
-						<Event when={booking.escrow?.releasedAt} text={`Escrow released — ${naira(booking.cost.landlordReceives)} to the landlord`} />
+						<Event when={booking.escrow?.releasedAt} text={`Escrow released — ${naira(booking.cost.landlordReceives)} now owed to the landlord`} />
 						<Event when={booking.escrow?.refundedAt} text={`Refunded to the student${booking.escrow?.refundReason ? ` — ${booking.escrow.refundReason}` : ''}`} />
 					</ul>
 				</div>

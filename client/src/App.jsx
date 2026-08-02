@@ -28,6 +28,7 @@ const BookingDetailPage = lazy(() => import('./pages/student/BookingDetailPage')
 const CheckoutPage = lazy(() => import('./pages/student/CheckoutPage'));
 const ManageBookings = lazy(() => import('./pages/admin/ManageBookings'));
 const SystemHealth = lazy(() => import('./pages/admin/SystemHealth'));
+const Payouts = lazy(() => import('./pages/admin/Payouts'));
 const AccountPage = lazy(() => import('./pages/student/AccountPage'));
 const MessagesPage = lazy(() => import('./pages/student/MessagesPage'));
 const LandlordMessagesPage = lazy(() => import('./pages/landlord/LandlordMessagesPage'));
@@ -140,6 +141,9 @@ function App() {
               } />
               <Route path="/admin/landlords" element={
                 <AdminRoute><ManageLandlords /></AdminRoute>
+              } />
+              <Route path="/admin/payouts" element={
+                <AdminRoute><Payouts /></AdminRoute>
               } />
               <Route path="/admin/health" element={
                 <AdminRoute><SystemHealth /></AdminRoute>

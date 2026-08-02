@@ -233,7 +233,7 @@ export default function StudentAuth() {
 				initial={{ opacity: 0, y: 24 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-				className="glass-strong relative flex min-h-[640px] w-[1000px] max-w-full overflow-hidden rounded-[28px] shadow-card-lg"
+				className="glass-strong relative flex min-h-[640px] w-[1000px] max-w-full overflow-hidden rounded-none shadow-card-lg"
 			>
 				{/* ══ SIGN IN FORM ══ */}
 				<motion.div

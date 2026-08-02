@@ -6,13 +6,14 @@ import LandlordNavbar from '../../components/landlord/LandlordNavbar';
 import AvatarUpload from '../../components/common/AvatarUpload';
 import ProfileEditCard from '../../components/common/ProfileEditCard';
 import ChangePasswordCard from '../../components/common/ChangePasswordCard';
+import PayoutAccountCard from '../../components/landlord/PayoutAccountCard';
 import DeleteAccountCard from '../../components/common/DeleteAccountCard';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../services/api';
 
 export default function LandlordAccountPage() {
 	const navigate = useNavigate();
-	const { user, logout } = useAuth();
+	const { user, logout, refreshUser } = useAuth();
 	const [stats, setStats] = useState({ listings: 0, views: 0, flagged: 0 });
 
 	// Summarise their own listings — the numbers a landlord actually cares about.
@@ -87,6 +88,10 @@ export default function LandlordAccountPage() {
 
 				{/* Editable details */}
 				<ProfileEditCard />
+
+				{/* Where escrow is paid out to. Sits above the password card because
+				    a landlord with no account on file cannot be paid at all. */}
+				<PayoutAccountCard payout={user?.payout} onSaved={refreshUser} />
 
 				{/* Password */}
 				<ChangePasswordCard />

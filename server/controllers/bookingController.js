@@ -299,10 +299,21 @@ export const confirmMoveIn = async (req, res) => {
 		booking.movedInConfirmedAt = new Date();
 		booking.escrow.state = 'released';
 		booking.escrow.releasedAt = new Date();
+
+		// Releasing escrow settles WHO the money belongs to. It does not move it —
+		// nothing here can make a bank transfer. So the release opens a debt that
+		// stays open until a human pays it and records the reference.
+		booking.payout = {
+			state: 'due',
+			amount: booking.cost.landlordReceives,
+			dueAt: new Date(),
+		};
 		await booking.save();
 
 		res.status(200).json({
-			message: `Move-in confirmed. ₦${booking.cost.landlordReceives.toLocaleString()} has been released to your landlord.`,
+			// Carefully not "has been released to your landlord" — that claimed a
+			// transfer that never happened.
+			message: 'Move-in confirmed. Your payment is no longer refundable and is now owed to the landlord.',
 			booking: await booking.populate(POPULATE),
 		});
 	} catch (error) {
@@ -367,6 +378,83 @@ export const adminListBookings = async (req, res) => {
 			provider: activeProvider(),
 			paymentsAreLive: paymentsAreLive(),
 		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+// ── ADMIN: PAYOUTS ────────────────────────────────────────
+/**
+ * What the platform owes, and to whom.
+ *
+ * This exists because releasing escrow never moved any money. Before it, a
+ * released booking simply said the landlord had been paid and there was no
+ * record anywhere of an actual transfer — the obligation was invisible.
+ */
+export const listPayouts = async (req, res) => {
+	try {
+		const state = ['due', 'paid'].includes(req.query.state) ? req.query.state : 'due';
+
+		const bookings = await Booking.find({ 'payout.state': state })
+			.populate('listing', 'title area city')
+			.populate('student', 'fullName email')
+			.populate('landlord', 'fullName email phone payout')
+			.sort({ 'payout.dueAt': 1 })
+			.limit(200)
+			.lean();
+
+		const [dueAgg, paidAgg] = await Promise.all([
+			Booking.aggregate([{ $match: { 'payout.state': 'due' } }, { $group: { _id: null, t: { $sum: '$payout.amount' } } }]),
+			Booking.aggregate([{ $match: { 'payout.state': 'paid' } }, { $group: { _id: null, t: { $sum: '$payout.amount' } } }]),
+		]);
+
+		res.status(200).json({
+			bookings,
+			totalDue: dueAgg[0]?.t || 0,
+			totalPaid: paidAgg[0]?.t || 0,
+			// Nothing here can make a transfer. Say so, rather than letting the
+			// screen imply the list settles itself.
+			manualTransfersRequired: true,
+		});
+	} catch (error) {
+		res.status(500).json({ message: error.message });
+	}
+};
+
+/**
+ * Record that a landlord was actually paid, by hand, outside this system.
+ *
+ * Deliberately requires a bank reference: without one this would be a button
+ * that marks a debt settled on nothing but an admin's word, which is the same
+ * dishonesty as the message it replaced.
+ */
+export const markPayoutPaid = async (req, res) => {
+	try {
+		const booking = await Booking.findById(req.params.id).catch(() => null);
+		if (!booking) return res.status(404).json({ message: 'Booking not found' });
+
+		if (booking.payout?.state !== 'due') {
+			return res.status(400).json({
+				message: booking.payout?.state === 'paid'
+					? 'This payout has already been recorded as paid.'
+					: 'Nothing is owed on this booking.',
+			});
+		}
+
+		const reference = String(req.body.reference || '').trim();
+		if (!reference) {
+			return res.status(400).json({ message: 'Enter the bank transfer reference so this can be checked against a statement.' });
+		}
+
+		booking.payout.state = 'paid';
+		booking.payout.paidAt = new Date();
+		booking.payout.reference = reference.slice(0, 120);
+		booking.payout.paidBy = req.user.id;
+		booking.payout.note = String(req.body.note || '').trim().slice(0, 300);
+		booking.status = 'completed';
+		await booking.save();
+
+		res.status(200).json({ message: 'Payout recorded', booking });
 	} catch (error) {
 		res.status(500).json({ message: error.message });
 	}

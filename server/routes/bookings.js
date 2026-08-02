@@ -11,6 +11,8 @@ import {
 	confirmMoveIn,
 	refundBooking,
 	adminListBookings,
+	listPayouts,
+	markPayoutPaid,
 } from '../controllers/bookingController.js';
 import protect from '../middleware/auth.js';
 import adminOnly from '../middleware/adminOnly.js';
@@ -23,6 +25,8 @@ const router = express.Router();
 router.get('/quote', quoteBooking);
 router.get('/mine', protect, getMyBookings);
 router.get('/admin/all', protect, adminOnly, adminListBookings);
+router.get('/admin/payouts', protect, adminOnly, listPayouts);
+router.patch('/admin/payouts/:id/paid', protect, adminOnly, markPayoutPaid);
 
 // Applying commits a student to real money, so identity verification applies
 // here exactly as it does to viewing listing details.

@@ -74,6 +74,26 @@ const bookingSchema = new mongoose.Schema({
 		refundReason: { type: String, trim: true },
 	},
 
+	// ── Payout ──
+	// Releasing escrow does NOT move money. It only settles who the money now
+	// belongs to. Nothing in this system can make a bank transfer, so a released
+	// booking becomes a DEBT the platform owes the landlord, and stays that way
+	// until a human pays it and records the reference here.
+	//
+	// Without this the interface was claiming a transfer that never happened —
+	// which is a worse failure than not having the feature at all.
+	payout: {
+		state: { type: String, enum: ['none', 'due', 'paid'], default: 'none' },
+		amount: { type: Number },     // frozen from cost.landlordReceives at release
+		dueAt: { type: Date },
+		paidAt: { type: Date },
+		// The bank's own transfer reference, so the claim "we paid them" is
+		// checkable against a statement rather than taken on trust.
+		reference: { type: String, trim: true },
+		paidBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
+		note: { type: String, trim: true, maxlength: 300 },
+	},
+
 	payment: {
 		provider: { type: String },      // 'sandbox' today; 'paystack' when keys exist
 		reference: { type: String, index: true },

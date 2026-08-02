@@ -248,7 +248,7 @@ export default function LandingPageV2() {
 
 					{/* Right — image collage */}
 					<motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto w-full max-w-lg">
-						<div className="relative overflow-hidden rounded-[28px] border-4 border-surface shadow-card-lg">
+						<div className="relative overflow-hidden rounded-none border-4 border-surface shadow-card-lg">
 							<img src={HERO_IMG} alt="A verified home on NestFinder" className="h-[420px] w-full object-cover md:h-[500px]" />
 							<div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success-ink shadow-sm">
@@ -378,7 +378,7 @@ export default function LandingPageV2() {
 							})}
 						</div>
 					</div>
-					<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative overflow-hidden rounded-[28px] border-4 border-surface shadow-card-lg">
+					<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative overflow-hidden rounded-none border-4 border-surface shadow-card-lg">
 						<img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=85" alt="Verified NestFinder home" className="h-[440px] w-full object-cover" />
 						<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 						<div className="glass-strong absolute inset-x-5 bottom-5 rounded-2xl p-5">
@@ -430,7 +430,7 @@ export default function LandingPageV2() {
 
 			{/* ══ CTA ══ */}
 			<section className="px-4 py-24 md:px-8">
-				<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mx-auto max-w-7xl overflow-hidden rounded-[32px] bg-warm-deep p-10 text-center shadow-card-lg md:p-16">
+				<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mx-auto max-w-7xl overflow-hidden rounded-none bg-warm-deep p-10 text-center shadow-card-lg md:p-16">
 					<div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
 					<div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
 					<div className="relative">

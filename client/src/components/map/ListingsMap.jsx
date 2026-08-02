@@ -121,7 +121,7 @@ export default function ListingsMap({ listings = [], height = 620, anchor = null
 										<img
 											src={getImageUrl(listing.images[0])}
 											alt=""
-											className="h-24 w-full rounded-t-[14px] object-cover"
+											className="h-24 w-full rounded-t-none object-cover"
 										/>
 									)}
 									<div className="space-y-1 p-3">

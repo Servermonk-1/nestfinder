@@ -32,6 +32,17 @@ const publicUser = (account) => ({
 	verified: account.verified,
 	emailVerified: account.emailVerified,
 	tourCompleted: account.tourCompleted,
+	// Landlords only — students are never owed money by the platform.
+	payout: account.payout?.accountNumber
+		? {
+			bankName: account.payout.bankName,
+			accountName: account.payout.accountName,
+			// Last four only. The full number is needed to PAY someone, not to
+			// tell them which account is on file, and this object is returned to
+			// the browser on every profile load.
+			last4: String(account.payout.accountNumber).slice(-4),
+		}
+		: undefined,
 });
 
 // ── UPLOAD / CHANGE PROFILE PICTURE ───────────────────────
@@ -104,6 +115,28 @@ export const updateProfile = async (req, res) => {
 		// "I haven't said", which is different from an empty institution.
 		if (department !== undefined && req.user.role === 'student') {
 			account.department = String(department).trim().toLowerCase();
+		}
+
+		// Where a landlord's payouts go. Landlord-only: a student is never owed
+		// money by the platform, so there is nothing to pay them into.
+		if (req.body.payout !== undefined && req.user.role === 'landlord') {
+			const { bankName, accountNumber, accountName } = req.body.payout || {};
+			const digits = String(accountNumber || '').replace(/\D/g, '');
+			// All three or none — a half-filled account cannot receive a transfer,
+			// and storing it would let the payouts screen show a payable landlord
+			// who is not actually payable.
+			const anyGiven = [bankName, accountName, digits].some((v) => String(v || '').trim());
+			if (anyGiven) {
+				if (!String(bankName || '').trim()) return res.status(400).json({ message: 'Bank name is required' });
+				if (!String(accountName || '').trim()) return res.status(400).json({ message: 'Account name is required' });
+				if (digits.length !== 10) return res.status(400).json({ message: 'Account number must be exactly 10 digits' });
+				account.payout = {
+					bankName: String(bankName).trim(),
+					accountNumber: digits,
+					accountName: String(accountName).trim(),
+					updatedAt: new Date(),
+				};
+			}
 		}
 
 		await account.save();

@@ -52,6 +52,24 @@ const landlordSchema = new mongoose.Schema({
 		},
 		rejectionReason: { type: String },
 	},
+
+	// ── Where the money actually goes ──
+	// Escrow could be "released" while there was nowhere on record to send the
+	// money — the release was settling a debt to an account that did not exist.
+	// Optional, because a landlord can list and be paid later, but a payout
+	// cannot be recorded as made until these are filled in.
+	payout: {
+		bankName: { type: String, trim: true },
+		// Nigerian NUBAN account numbers are exactly 10 digits.
+		accountNumber: { type: String, trim: true, match: [/^\d{10}$/, 'Enter the 10-digit account number'] },
+		accountName: { type: String, trim: true },
+		updatedAt: { type: Date },
+	},
 }, { timestamps: true });
+
+/** Can this landlord actually be paid? */
+landlordSchema.methods.canReceivePayout = function canReceivePayout() {
+	return Boolean(this.payout?.bankName && this.payout?.accountNumber && this.payout?.accountName);
+};
 
 export default mongoose.model('Landlord', landlordSchema);
