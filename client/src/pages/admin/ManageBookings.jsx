@@ -9,7 +9,7 @@ import { statusMeta, TONE_CLASS } from '../../components/booking/bookingStatus';
 import { naira } from '../../utils/price';
 import api from '../../services/api';
 
-const TABS = ['all', 'pending', 'accepted', 'paid', 'movedIn', 'refunded', 'declined', 'cancelled'];
+const TABS = ['all', 'pending', 'pendingPayment', 'confirmed', 'movedIn', 'declined', 'cancelled'];
 
 /**
  * Bookings from the platform's side.
@@ -20,7 +20,7 @@ const TABS = ['all', 'pending', 'accepted', 'paid', 'movedIn', 'refunded', 'decl
 export default function ManageBookings() {
 	const [data, setData] = useState({ bookings: [], counts: {}, escrowHeldTotal: 0 });
 	const [loading, setLoading] = useState(true);
-	const [status, setStatus] = useState('paid'); // held money first — that's the live risk
+	const [status, setStatus] = useState('confirmed'); // held money first — that's the live risk
 	const [busy, setBusy] = useState('');
 
 	const load = useCallback(() => {
@@ -33,28 +33,13 @@ export default function ManageBookings() {
 
 	useEffect(load, [load]);
 
-	const refund = async (b) => {
-		const reason = window.prompt(
-			`Refund ${naira(b.cost.total)} to ${b.student?.fullName}?\n\nReason (shown on the booking):`
-		);
-		if (reason === null) return;
-		setBusy(b._id);
-		try {
-			await api.patch(`/bookings/${b._id}/refund`, { reason });
-			toast.success('Refunded to the student');
-			load();
-		} catch (err) {
-			toast.error(err.response?.data?.message || 'Could not refund');
-		} finally {
-			setBusy('');
-		}
-	};
+	// Refunds are handled manually outside the application. The UI no longer
+	// exposes an admin refund action to avoid calling an endpoint that was
+	// removed during the payment architecture refactor.
 
 	return (
-		<div className="min-h-screen bg-paper text-text">
-			<AdminNavbar />
-
-			<div className="mx-auto max-w-6xl px-6 pb-16 pt-28">
+		<AdminNavbar>
+			<div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
 				<h1 className="font-serif text-3xl font-extrabold text-text">Bookings & escrow</h1>
 				<p className="mt-1 text-sm text-muted">
 					Applications, payments, and money the platform is currently holding for students.
@@ -79,8 +64,7 @@ export default function ManageBookings() {
 				{!data.paymentsAreLive && (
 					<p className="mt-3 flex items-start gap-2 text-xs text-muted">
 						<AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary-ink" />
-						Sandbox mode. Add <span className="font-mono">PAYSTACK_SECRET_KEY</span> to{' '}
-						<span className="font-mono">server/.env</span> to switch to live checkout — no other change is needed.
+						Sandbox mode. Payments are not live — configure bank-transfer and USDT settings in the admin payment settings to enable real transfers.
 					</p>
 				)}
 
@@ -168,6 +152,6 @@ export default function ManageBookings() {
 					</div>
 				)}
 			</div>
-		</div>
+		</AdminNavbar>
 	);
 }

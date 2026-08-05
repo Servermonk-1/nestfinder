@@ -4,9 +4,9 @@ import {
 } from 'recharts';
 import { getDimensionScores } from '../../utils/compareScore';
 
-const SERIES_COLORS = ['#2A6F97', '#D9A441', '#0A8046'];
+const SERIES_COLORS = ['#0B6BD8', '#F5A524', '#0A8046'];
 const GRID_COLOR = 'rgba(85, 103, 125, 0.22)';
-const AXIS_COLOR = '#55677D';
+const AXIS_COLOR = '#4F627C';
 
 const AXES = [
 	{ key: 'affordability', label: 'Affordability' },

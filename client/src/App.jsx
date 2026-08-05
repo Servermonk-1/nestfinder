@@ -28,7 +28,6 @@ const BookingDetailPage = lazy(() => import('./pages/student/BookingDetailPage')
 const CheckoutPage = lazy(() => import('./pages/student/CheckoutPage'));
 const ManageBookings = lazy(() => import('./pages/admin/ManageBookings'));
 const SystemHealth = lazy(() => import('./pages/admin/SystemHealth'));
-const Payouts = lazy(() => import('./pages/admin/Payouts'));
 const AccountPage = lazy(() => import('./pages/student/AccountPage'));
 const MessagesPage = lazy(() => import('./pages/student/MessagesPage'));
 const LandlordMessagesPage = lazy(() => import('./pages/landlord/LandlordMessagesPage'));
@@ -43,6 +42,8 @@ const ManageReports = lazy(() => import('./pages/admin/ManageReports'));
 const ManageLandlords = lazy(() => import('./pages/admin/ManageLandlords'));
 const ManageListings = lazy(() => import('./pages/admin/ManageListings'));
 const ManageCompanies = lazy(() => import('./pages/admin/ManageCompanies'));
+const PaymentSettingsPage = lazy(() => import('./pages/admin/PaymentSettingsPage'));
+const PaymentsPage = lazy(() => import('./pages/admin/PaymentsPage'));
 const CompanyDetailPage = lazy(() => import('./pages/student/CompanyDetailPage'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
@@ -142,8 +143,12 @@ function App() {
               <Route path="/admin/landlords" element={
                 <AdminRoute><ManageLandlords /></AdminRoute>
               } />
-              <Route path="/admin/payouts" element={
-                <AdminRoute><Payouts /></AdminRoute>
+              {/* Payouts are handled manually outside the application; route removed. */}
+              <Route path="/admin/payment-settings" element={
+                <AdminRoute><PaymentSettingsPage /></AdminRoute>
+              } />
+              <Route path="/admin/payments" element={
+                <AdminRoute><PaymentsPage /></AdminRoute>
               } />
               <Route path="/admin/health" element={
                 <AdminRoute><SystemHealth /></AdminRoute>

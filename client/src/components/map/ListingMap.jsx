@@ -35,7 +35,7 @@ export default function ListingMap({ listing, height = 320 }) {
 						<Circle
 							center={center}
 							radius={precision.radiusM}
-							pathOptions={{ color: '#C2603F', fillColor: '#C2603F', fillOpacity: 0.12, weight: 1.5 }}
+							pathOptions={{ color: '#0B6BD8', fillColor: '#0B6BD8', fillOpacity: 0.12, weight: 1.5 }}
 						/>
 					)}
 					<Marker position={center} icon={pinMarker()} />

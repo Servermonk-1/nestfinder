@@ -112,9 +112,8 @@ export default function ManageListings() {
 	};
 
 	return (
-		<div className="min-h-screen bg-paper text-text">
-			<AdminNavbar />
-			<div className="mx-auto max-w-4xl px-4 pb-16 pt-24 md:px-8">
+		<AdminNavbar>
+			<div className="mx-auto max-w-4xl px-4 pb-16 pt-10 md:px-8">
 				<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-3">
 					<div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
 						<Building2 className="h-6 w-6 text-primary-ink" />
@@ -226,6 +225,6 @@ export default function ManageListings() {
 					)}
 				</div>
 			</div>
-		</div>
+		</AdminNavbar>
 	);
 }

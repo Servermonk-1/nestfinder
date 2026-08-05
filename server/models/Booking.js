@@ -1,26 +1,20 @@
 import mongoose from 'mongoose';
 
 /**
- * A student's application to live somewhere, and the money attached to it.
+ * A student's application to live somewhere.
  *
- * ── Why escrow ──
- * The single most damaging thing that happens to Nigerian students looking for
- * accommodation is paying for a room that turns out not to exist, or whose
- * "landlord" disappears. So money paid here is held by the platform and only
- * released once the student confirms they actually moved in. The landlord is
- * paid for a real let; the student is not exposed to a stranger's bank account.
+ * New payment flow: manual bank transfer verification by an administrator.
  *
  * ── Lifecycle ──
- *   pending    student applied, landlord hasn't answered
- *   accepted   landlord said yes; student may now pay
- *   paid       money received and HELD IN ESCROW (not the landlord's yet)
- *   movedIn    student confirmed arrival → escrow released to the landlord
- *   completed  tenancy ended (caution deposit settled)
- *   declined   landlord said no
- *   cancelled  withdrawn before payment
- *   refunded   admin returned the money
+ *   pending        student applied, landlord hasn't answered
+ *   pendingPayment landlord accepted — waiting for student bank transfer
+ *   confirmed      payment approved by admin
+ *   movedIn        student confirmed arrival
+ *   completed      tenancy ended
+ *   declined       landlord said no
+ *   cancelled      withdrawn before payment
  */
-const STATUSES = ['pending', 'accepted', 'declined', 'cancelled', 'paid', 'movedIn', 'completed', 'refunded'];
+const STATUSES = ['pending', 'pendingPayment', 'confirmed', 'movedIn', 'completed', 'declined', 'cancelled'];
 
 // The frozen cost breakdown. Stored rather than recomputed so a landlord can
 // never change the numbers after a student has agreed to them.
@@ -64,44 +58,7 @@ const bookingSchema = new mongoose.Schema({
 	status: { type: String, enum: STATUSES, default: 'pending', index: true },
 	cost: { type: costSchema, required: true },
 
-	// ── Escrow ──
-	// `held` means we have the student's money and the landlord does not.
-	escrow: {
-		state: { type: String, enum: ['none', 'held', 'released', 'refunded'], default: 'none' },
-		heldAt: { type: Date },
-		releasedAt: { type: Date },
-		refundedAt: { type: Date },
-		refundReason: { type: String, trim: true },
-	},
-
-	// ── Payout ──
-	// Releasing escrow does NOT move money. It only settles who the money now
-	// belongs to. Nothing in this system can make a bank transfer, so a released
-	// booking becomes a DEBT the platform owes the landlord, and stays that way
-	// until a human pays it and records the reference here.
-	//
-	// Without this the interface was claiming a transfer that never happened —
-	// which is a worse failure than not having the feature at all.
-	payout: {
-		state: { type: String, enum: ['none', 'due', 'paid'], default: 'none' },
-		amount: { type: Number },     // frozen from cost.landlordReceives at release
-		dueAt: { type: Date },
-		paidAt: { type: Date },
-		// The bank's own transfer reference, so the claim "we paid them" is
-		// checkable against a statement rather than taken on trust.
-		reference: { type: String, trim: true },
-		paidBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Admin' },
-		note: { type: String, trim: true, maxlength: 300 },
-	},
-
-	payment: {
-		provider: { type: String },      // 'sandbox' today; 'paystack' when keys exist
-		reference: { type: String, index: true },
-		amount: { type: Number },
-		paidAt: { type: Date },
-		// Kept for the audit trail an admin needs when settling a dispute.
-		raw: { type: mongoose.Schema.Types.Mixed },
-	},
+	// Timeline, so both sides (and an admin) can see what happened when.
 
 	// Timeline, so both sides (and an admin) can see what happened when.
 	respondedAt: { type: Date },
@@ -115,7 +72,7 @@ const bookingSchema = new mongoose.Schema({
 // a rejected or cancelled application doesn't block them from trying again.
 bookingSchema.index(
 	{ listing: 1, student: 1 },
-	{ unique: true, partialFilterExpression: { status: { $in: ['pending', 'accepted', 'paid', 'movedIn'] } } }
+	{ unique: true, partialFilterExpression: { status: { $in: ['pending', 'pendingPayment', 'confirmed', 'movedIn'] } } }
 );
 
 /** Has this student genuinely stayed here? The review gate depends on it. */

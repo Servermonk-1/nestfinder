@@ -42,10 +42,8 @@ export default function SystemHealth() {
 	const healthy = (stats.lastHour || 0) === 0;
 
 	return (
-		<div className="min-h-screen bg-paper text-text">
-			<AdminNavbar />
-
-			<div className="mx-auto max-w-5xl px-6 pb-16 pt-28">
+		<AdminNavbar>
+			<div className="mx-auto max-w-5xl px-6 pb-16 pt-10">
 				<div className="mb-6 flex flex-wrap items-end justify-between gap-4">
 					<div>
 						<h1 className="font-serif text-3xl font-extrabold">System health</h1>
@@ -132,7 +130,7 @@ export default function SystemHealth() {
 					</>
 				)}
 			</div>
-		</div>
+		</AdminNavbar>
 	);
 }
 

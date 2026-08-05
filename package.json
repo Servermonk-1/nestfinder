@@ -6,5 +6,8 @@
     "test": "npm --prefix server test && npm --prefix client test",
     "test:server": "npm --prefix server test",
     "test:client": "npm --prefix client test"
+  },
+  "dependencies": {
+    "opencode-ai": "^1.18.13"
   }
 }

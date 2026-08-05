@@ -88,7 +88,7 @@ export default function ListingsMap({ listings = [], height = 620, anchor = null
 							<Circle
 								center={[anchor.lat, anchor.lng]}
 								radius={(anchor.radiusKm || 15) * 1000}
-								pathOptions={{ color: '#C2603F', fillColor: '#C2603F', fillOpacity: 0.05, weight: 1.5, dashArray: '6 6' }}
+								pathOptions={{ color: '#0B6BD8', fillColor: '#0B6BD8', fillOpacity: 0.05, weight: 1.5, dashArray: '6 6' }}
 							/>
 							<Marker
 								position={[anchor.lat, anchor.lng]}

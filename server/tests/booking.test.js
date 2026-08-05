@@ -1,20 +1,29 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import axios from 'axios';
 import bookingRoutes from '../routes/bookings.js';
+import paymentRoutes from '../routes/payments.js';
+import paymentSettingsRoutes from '../routes/paymentSettings.js';
 import reviewRoutes from '../routes/reviews.js';
 import Admin from '../models/Admin.js';
 import Student from '../models/Student.js';
 import Landlord from '../models/Landlord.js';
 import Listing from '../models/Listing.js';
 import Booking from '../models/Booking.js';
+import Payment from '../models/Payment.js';
+import PaymentSettings from '../models/PaymentSettings.js';
 import { calculateBookingCost, SPLIT } from '../utils/bookingCost.js';
+
+vi.mock('axios', () => ({ get: vi.fn() }));
 
 const app = express();
 app.use(express.json());
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/payments-settings', paymentSettingsRoutes);
 app.use('/api/reviews', reviewRoutes);
 
 const SECRET = process.env.JWT_SECRET || 'testsecret';
@@ -58,13 +67,6 @@ const apply = (over = {}, token = sToken) =>
 		listingId: listing._id, moveIn: iso(7), moveOut: iso(7 + 182), ...over,
 	});
 
-// Paystack's own published test cards — the sandbox matches on these, so a
-// test pays with exactly what a person would type into the checkout.
-const CARD_OK = '4084084084084081';
-const CARD_DECLINED = '4084080000005408';
-const CARD_INSUFFICIENT = '4084080000670037';
-const CARD_PIN = '507850785078507812';
-const CARD_PIN_OTP = '5060666666666666666';
 
 /** Walk a booking to a given point in its life. */
 const advance = async (to) => {
@@ -72,11 +74,34 @@ const advance = async (to) => {
 	const id = body.booking._id;
 	if (to === 'pending') return id;
 	await as(request(app).patch(`/api/bookings/${id}/respond`), lToken).send({ accept: true });
-	if (to === 'accepted') return id;
-	await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
-	await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ card: CARD_OK });
-	if (to === 'paid') return id;
-	await as(request(app).patch(`/api/bookings/${id}/moved-in`), sToken);
+	if (to === 'pendingPayment') return id;
+	if (to === 'confirmed') {
+		const payment = await Payment.create({
+			booking: id,
+			student: student._id,
+			amount: body.booking.cost.total,
+			paymentMethod: 'bank_transfer',
+			senderName: 'Test User',
+			transactionReference: 'REF123',
+			status: 'pending',
+		});
+		await as(request(app).patch(`/api/payments/${payment._id}/approve`), aToken);
+		return id;
+	}
+	if (to === 'movedIn') {
+		const payment = await Payment.create({
+			booking: id,
+			student: student._id,
+			amount: body.booking.cost.total,
+			paymentMethod: 'bank_transfer',
+			senderName: 'Test User',
+			transactionReference: 'REF123',
+			status: 'pending',
+		});
+		await as(request(app).patch(`/api/payments/${payment._id}/approve`), aToken);
+		await as(request(app).patch(`/api/bookings/${id}/moved-in`), sToken);
+		return id;
+	}
 	return id;
 };
 
@@ -168,7 +193,7 @@ describe('the landlord responding', () => {
 	it('accepts, which opens payment', async () => {
 		const id = await advance('pending');
 		const res = await as(request(app).patch(`/api/bookings/${id}/respond`), lToken).send({ accept: true });
-		expect(res.body.booking.status).toBe('accepted');
+		expect(res.body.booking.status).toBe('pendingPayment');
 	});
 
 	it('declines with a reason', async () => {
@@ -188,170 +213,199 @@ describe('the landlord responding', () => {
 	});
 });
 
-describe('payment and escrow', () => {
-	it('will not take payment before the landlord accepts', async () => {
+describe('manual payments', () => {
+	it('will not accept a payment before the landlord accepts', async () => {
 		const id = await advance('pending');
-		expect((await as(request(app).post(`/api/bookings/${id}/pay`), sToken)).status).toBe(400);
+		const res = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+		}), sToken);
+		expect(res.status).toBe(400);
+		expect(res.body.message).toMatch(/awaiting payment/i);
 	});
 
-	it('holds the money in escrow rather than paying the landlord', async () => {
-		// This is the whole point: a student who pays for a room that turns out
-		// not to exist must not be chasing a stranger's bank account.
-		const id = await advance('paid');
-		const b = await Booking.findById(id).lean();
+	it('accepts a student bank transfer submission', async () => {
+		const id = await advance('pendingPayment');
+		const res = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+			senderName: 'Test Student',
+			transactionReference: 'REF123',
+			paymentDate: iso(1),
+		}), sToken);
 
-		expect(b.status).toBe('paid');
-		expect(b.escrow.state).toBe('held');
-		expect(b.escrow.heldAt).toBeTruthy();
-		expect(b.escrow.releasedAt).toBeUndefined();
-		expect(b.payment.reference).toMatch(/^NF-/);
+		expect(res.status).toBe(201);
+		expect(res.body.payment.status).toBe('pending');
+		expect(res.body.payment.paymentMethod).toBe('bank_transfer');
+		expect(res.body.payment.senderName).toBe('Test Student');
 	});
 
-	it('records a failed payment WITHOUT holding anything', async () => {
-		const id = await advance('accepted');
-		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
-		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ card: CARD_DECLINED });
+	it('requires sender name and reference for bank transfer', async () => {
+		const id = await advance('pendingPayment');
+		const res = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+		}), sToken);
 
 		expect(res.status).toBe(400);
-		const b = await Booking.findById(id).lean();
-		expect(b.status).toBe('accepted');
-		expect(b.escrow.state).toBe('none');
+		expect(res.body.message).toMatch(/sender name/i);
 	});
 
-	it('is idempotent — verifying twice does not double-record', async () => {
-		const id = await advance('paid');
-		const again = await as(request(app).post(`/api/bookings/${id}/verify`), sToken).send({ card: CARD_OK });
-		expect(again.body.alreadyPaid).toBe(true);
+	it('accepts a student USDT submission and calculates expected amount', async () => {
+		await PaymentSettings.create({
+			accountName: 'NestFinder', bankName: 'GTB', accountNumber: '123', manualOverrideRate: 500,
+		});
+		const id = await advance('pendingPayment');
+		const res = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'usdt',
+			amount: 200000,
+			transactionHash: '0xdeadbeef',
+			network: 'TRC20',
+			walletAddress: 'TXaddr',
+			paymentDate: iso(1),
+		}), sToken);
+
+		expect(res.status).toBe(201);
+		expect(res.body.payment.paymentMethod).toBe('usdt');
+		expect(res.body.payment.expectedUsdtAmount).toBeCloseTo(400, 3);
 	});
 
-	it('declines a card it does not recognise instead of quietly accepting it', async () => {
-		const id = await advance('accepted');
-		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
-		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: '1234123412341234' });
+	it('requires transaction hash for USDT payments', async () => {
+		const id = await advance('pendingPayment');
+		const res = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'usdt',
+			amount: 200000,
+			network: 'TRC20',
+			walletAddress: 'TXaddr',
+		}), sToken);
 
 		expect(res.status).toBe(400);
-		expect(res.body.message).toMatch(/declined/i);
-		const b = await Booking.findById(id).lean();
-		expect(b.status).toBe('accepted');
-		expect(b.escrow.state).toBe('none');
+		expect(res.body.message).toMatch(/transactionHash is required/i);
 	});
 
-	it('reports insufficient funds distinctly from a decline', async () => {
-		const id = await advance('accepted');
-		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
-		const res = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_INSUFFICIENT });
+	it('allows admin approval and confirms booking + hides listing', async () => {
+		const id = await advance('pendingPayment');
+		const paymentResponse = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+			senderName: 'Test Student',
+			transactionReference: 'REF123',
+		}), sToken);
+		const paymentId = paymentResponse.body.payment._id;
 
-		expect(res.status).toBe(400);
-		expect(res.body.message).toMatch(/insufficient/i);
+		const res = await as(request(app).patch(`/api/payments/${paymentId}/approve`), aToken);
+		expect(res.status).toBe(200);
+		expect(res.body.payment.status).toBe('approved');
+
+		const booking = await Booking.findById(id).lean();
+		expect(booking.status).toBe('confirmed');
+
+		const listingRow = await Listing.findById(listing._id).lean();
+		expect(listingRow.available).toBe(false);
 	});
 
-	// A challenge is the provider asking for another factor, NOT a refusal — it
-	// must not be reported as a failure or the checkout would show an error and
-	// strand a payment that is still perfectly good.
-	it('asks for a PIN rather than failing, and completes once it is given', async () => {
-		const id = await advance('accepted');
-		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
+	it('allows admin rejection and keeps booking awaiting payment', async () => {
+		const id = await advance('pendingPayment');
+		const paymentResponse = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+			senderName: 'Test Student',
+			transactionReference: 'REF123',
+		}), sToken);
+		const paymentId = paymentResponse.body.payment._id;
 
-		const challenge = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_PIN });
-		expect(challenge.status).toBe(200);
-		expect(challenge.body.challenge).toBe('pin');
-		expect((await Booking.findById(id).lean()).status).toBe('accepted');
+		const res = await as(request(app).patch(`/api/payments/${paymentId}/reject`), aToken)
+			.send({ reason: 'Invalid receipt' });
+		expect(res.status).toBe(200);
+		expect(res.body.payment.status).toBe('rejected');
 
-		const wrong = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_PIN, pin: '9999' });
-		expect(wrong.status).toBe(400);
-
-		const done = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_PIN, pin: '1111' });
-		expect(done.status).toBe(200);
-		expect((await Booking.findById(id).lean()).escrow.state).toBe('held');
+		const booking = await Booking.findById(id).lean();
+		expect(booking.status).toBe('pendingPayment');
 	});
 
-	it('walks PIN then OTP for a card that requires both', async () => {
-		const id = await advance('accepted');
-		await as(request(app).post(`/api/bookings/${id}/pay`), sToken);
+	it('allows a student to re-submit after rejection', async () => {
+		const id = await advance('pendingPayment');
+		const first = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+			senderName: 'Test Student',
+			transactionReference: 'REF123',
+		}), sToken);
+		const paymentId = first.body.payment._id;
+		await as(request(app).patch(`/api/payments/${paymentId}/reject`), aToken).send({ reason: 'Please retake photo' });
 
-		const c1 = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_PIN_OTP });
-		expect(c1.body.challenge).toBe('pin');
+		const second = await as(request(app).post('/api/payments').send({
+			bookingId: id,
+			paymentMethod: 'bank_transfer',
+			amount: 200000,
+			senderName: 'Test Student',
+			transactionReference: 'REF456',
+		}), sToken);
 
-		const c2 = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_PIN_OTP, pin: '1234' });
-		expect(c2.body.challenge).toBe('otp');
-		expect((await Booking.findById(id).lean()).escrow.state).toBe('none');
-
-		const done = await as(request(app).post(`/api/bookings/${id}/verify`), sToken)
-			.send({ card: CARD_PIN_OTP, pin: '1234', otp: '123456' });
-		expect(done.status).toBe(200);
-		expect((await Booking.findById(id).lean()).escrow.state).toBe('held');
-	});
-
-	it('will not let another student pay for someone else\'s booking', async () => {
-		const id = await advance('accepted');
-		expect((await as(request(app).post(`/api/bookings/${id}/pay`), oToken)).status).toBe(403);
+		expect(second.status).toBe(201);
+		expect(second.body.payment.transactionReference).toBe('REF456');
 	});
 });
 
-describe('releasing the escrow', () => {
-	it('pays the landlord only when the STUDENT confirms move-in', async () => {
-		const id = await advance('paid');
-		const res = await as(request(app).patch(`/api/bookings/${id}/moved-in`), sToken);
+const quoteSettings = async (override = {}) => {
+	return await PaymentSettings.create({
+		accountName: 'NestFinder', bankName: 'GTB', accountNumber: '123', ...override,
+	});
+};
 
+describe('payment settings and exchange rates', () => {
+	it('creates and reads payment settings via admin routes', async () => {
+		const res = await as(request(app).post('/api/payments-settings/admin'), aToken).send({
+			accountName: 'NestFinder', bankName: 'GTB', accountNumber: '123456', instructions: 'Pay to this account',
+		});
+		expect(res.status).toBe(201);
+		expect(res.body.settings.accountName).toBe('NestFinder');
+
+		const list = await as(request(app).get('/api/payments-settings/admin/all'), aToken);
+		expect(list.status).toBe(200);
+		expect(list.body.settings).toHaveLength(1);
+	});
+
+	it('retrieves a live quote from Coingecko', async () => {
+		await quoteSettings({ exchangeRateSource: 'coingecko' });
+		axios.get.mockResolvedValueOnce({ data: { tether: { ngn: 250 } } });
+		const bookingId = (await apply()).body.booking._id;
+		await as(request(app).patch(`/api/bookings/${bookingId}/respond`), lToken).send({ accept: true });
+
+		const res = await request(app).get('/api/payments-settings/quote').query({ bookingId });
 		expect(res.status).toBe(200);
-		const b = await Booking.findById(id).lean();
-		expect(b.status).toBe('movedIn');
-		expect(b.escrow.state).toBe('released');
-		expect(b.escrow.releasedAt).toBeTruthy();
+		expect(res.body.rate).toBe(250);
+		expect(res.body.usdtAmount).toBeCloseTo(800, 3);
 	});
 
-	it('REFUSES to let the landlord confirm on the student\'s behalf', async () => {
-		// If a landlord could release their own escrow, escrow would protect
-		// nobody at all.
-		const id = await advance('paid');
-		const res = await as(request(app).patch(`/api/bookings/${id}/moved-in`), lToken);
+	it('falls back to manual override when API fails', async () => {
+		await quoteSettings({ exchangeRateSource: 'https://api.example.com/rate', manualOverrideRate: 500 });
+		axios.get.mockRejectedValueOnce(new Error('network fail'));
+		const bookingId = (await apply()).body.booking._id;
+		await as(request(app).patch(`/api/bookings/${bookingId}/respond`), lToken).send({ accept: true });
 
-		expect(res.status).toBe(403);
-		expect((await Booking.findById(id).lean()).escrow.state).toBe('held');
-	});
-
-	it('cannot release money that was never held', async () => {
-		const id = await advance('accepted');
-		expect((await as(request(app).patch(`/api/bookings/${id}/moved-in`), sToken)).status).toBe(400);
-	});
-});
-
-describe('refunds', () => {
-	it('lets an admin return a held payment', async () => {
-		const id = await advance('paid');
-		const res = await as(request(app).patch(`/api/bookings/${id}/refund`), aToken).send({ reason: 'Room did not exist' });
-
+		const res = await request(app).get('/api/payments-settings/quote').query({ bookingId });
 		expect(res.status).toBe(200);
-		const b = await Booking.findById(id).lean();
-		expect(b.status).toBe('refunded');
-		expect(b.escrow.state).toBe('refunded');
-		expect(b.escrow.refundReason).toBe('Room did not exist');
+		expect(res.body.rate).toBe(500);
+		expect(res.body.usdtAmount).toBeCloseTo(400, 3);
 	});
 
-	it('will NOT refund money already released to the landlord', async () => {
-		const id = await advance('movedIn');
-		const res = await as(request(app).patch(`/api/bookings/${id}/refund`), aToken).send({ reason: 'too late' });
-		expect(res.status).toBe(400);
-	});
+	it('returns 503 when exchange rate is unavailable', async () => {
+		await quoteSettings({ exchangeRateSource: 'https://api.example.com/rate' });
+		axios.get.mockRejectedValueOnce(new Error('network fail'));
+		const bookingId = (await apply()).body.booking._id;
+		await as(request(app).patch(`/api/bookings/${bookingId}/respond`), lToken).send({ accept: true });
 
-	it('is closed to students and landlords', async () => {
-		const id = await advance('paid');
-		expect([401, 403]).toContain((await as(request(app).patch(`/api/bookings/${id}/refund`), sToken)).status);
-		expect([401, 403]).toContain((await as(request(app).patch(`/api/bookings/${id}/refund`), lToken)).status);
-	});
-
-	it('stops a student cancelling once they have paid', async () => {
-		const id = await advance('paid');
-		const res = await as(request(app).patch(`/api/bookings/${id}/cancel`), sToken);
-		expect(res.status).toBe(400);
-		expect(res.body.message).toMatch(/refund/i);
+		const res = await request(app).get('/api/payments-settings/quote').query({ bookingId });
+		expect(res.status).toBe(503);
 	});
 });
 
@@ -366,7 +420,7 @@ describe('reviews are re-gated on a real stay', () => {
 	});
 
 	it('refuses a student who booked but has not moved in', async () => {
-		await advance('paid');
+		await advance('confirmed');
 		const res = await review(sToken);
 		expect(res.status).toBe(403);
 	});
@@ -378,10 +432,10 @@ describe('reviews are re-gated on a real stay', () => {
 	});
 });
 
-// ── Does a paid room actually leave the market? ──
+// ── Does a confirmed room actually leave the market? ──
 describe('a room that has been paid for', () => {
 	it('is taken off the market so students stop seeing it', async () => {
-		const id = await advance('paid');
+		const id = await advance('confirmed');
 		const b = await Booking.findById(id).lean();
 		const row = await Listing.findById(b.listing).lean();
 		expect(row.available).toBe(false);
@@ -390,80 +444,8 @@ describe('a room that has been paid for', () => {
 	// The unique index is on { listing, student } — it stops ONE student
 	// double-applying, and does nothing about a DIFFERENT student.
 	it('cannot be applied for by a second student', async () => {
-		await advance('paid');
+		await advance('pendingPayment');
 		const second = await apply({}, oToken);
 		expect(second.status).toBe(400);
-	});
-
-	it('goes back on the market if the booking is refunded', async () => {
-		const id = await advance('paid');
-		await as(request(app).patch(`/api/bookings/${id}/refund`), aToken).send({ reason: 'Room not as advertised' });
-		const b = await Booking.findById(id).lean();
-		const row = await Listing.findById(b.listing).lean();
-		expect(row.available).toBe(true);
-	});
-});
-
-// ── Releasing escrow settles a debt; it does not move money ──
-describe('payouts', () => {
-	it('opens a DEBT when escrow is released, rather than claiming a transfer', async () => {
-		const id = await advance('movedIn');
-		const b = await Booking.findById(id).lean();
-
-		expect(b.escrow.state).toBe('released');
-		expect(b.payout.state).toBe('due');
-		expect(b.payout.amount).toBe(b.cost.landlordReceives);
-		expect(b.payout.paidAt).toBeUndefined();
-	});
-
-	it('lists what is owed, with the landlord it is owed to', async () => {
-		await advance('movedIn');
-		const res = await as(request(app).get('/api/bookings/admin/payouts'), aToken);
-
-		expect(res.status).toBe(200);
-		expect(res.body.bookings).toHaveLength(1);
-		expect(res.body.totalDue).toBeGreaterThan(0);
-		expect(res.body.manualTransfersRequired).toBe(true);
-	});
-
-	// The whole point: a payout cannot be waved through on someone's word.
-	it('REFUSES to record a payout without a bank reference', async () => {
-		const id = await advance('movedIn');
-		const res = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken).send({});
-
-		expect(res.status).toBe(400);
-		expect((await Booking.findById(id).lean()).payout.state).toBe('due');
-	});
-
-	it('records a payout against a reference, and will not record it twice', async () => {
-		const id = await advance('movedIn');
-		const ok = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken)
-			.send({ reference: 'GTB/TRF/99812' });
-		expect(ok.status).toBe(200);
-
-		const b = await Booking.findById(id).lean();
-		expect(b.payout.state).toBe('paid');
-		expect(b.payout.reference).toBe('GTB/TRF/99812');
-		expect(b.status).toBe('completed');
-
-		const again = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken)
-			.send({ reference: 'GTB/TRF/99812' });
-		expect(again.status).toBe(400);
-	});
-
-	it('will not let a landlord record their own payout', async () => {
-		const id = await advance('movedIn');
-		const res = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), lToken)
-			.send({ reference: 'self-serve' });
-		expect(res.status).toBe(403);
-		expect((await Booking.findById(id).lean()).payout.state).toBe('due');
-	});
-
-	it('owes nothing on a booking that never reached move-in', async () => {
-		const id = await advance('paid');
-		expect((await Booking.findById(id).lean()).payout.state).toBe('none');
-		const res = await as(request(app).patch(`/api/bookings/admin/payouts/${id}/paid`), aToken)
-			.send({ reference: 'x' });
-		expect(res.status).toBe(400);
 	});
 });

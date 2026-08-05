@@ -49,7 +49,7 @@ GMAIL_USER=…
 GMAIL_APP_PASSWORD=…
 TURNSTILE_SECRET_KEY=…      # optional — CAPTCHA is a no-op without it
 SENTRY_DSN=…                # optional — errors are logged locally regardless
-PAYSTACK_SECRET_KEY=…       # optional — payments stay in sandbox without it
+
 ```
 
 > **`CLIENT_URL` is not optional in production.** It is the CORS allowlist and

@@ -5,11 +5,19 @@ import Student from '../models/Student.js';
 import Report from '../models/Report.js';
 import UserReport from '../models/UserReport.js';
 import Message from '../models/Message.js';
+import Booking from '../models/Booking.js';
+import Payment from '../models/Payment.js';
 import { runFraudShield, computeTrustScore } from '../services/fraudShield.js';
 
 // ── DASHBOARD STATS ───────────────────────────────────────
 export const getDashboardStats = async (req, res) => {
 	try {
+		const now = new Date();
+		const startOfToday = new Date(now);
+		startOfToday.setHours(0, 0, 0, 0);
+
+		const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+
 		const [
 			totalListings,
 			flaggedListings,
@@ -19,6 +27,12 @@ export const getDashboardStats = async (req, res) => {
 			unresolvedReports,
 			pendingStudentVerifications,
 			pendingLandlordVerifications,
+			// Revenue & payments
+			revenueToday,
+			revenueThisMonth,
+			platformFeesEarned,
+			pendingPaymentsCount,
+			completedBookingsCount,
 		] = await Promise.all([
 			Listing.countDocuments(),
 			Listing.countDocuments({ flagged: true }),
@@ -28,6 +42,34 @@ export const getDashboardStats = async (req, res) => {
 			Report.countDocuments({ status: 'open' }),
 			Student.countDocuments({ 'idDocument.status': 'pending' }),
 			Landlord.countDocuments({ 'idDocument.status': 'pending' }),
+
+			// Revenue today: sum booking cost.total for approved payments created today
+			Payment.aggregate([
+				{ $match: { status: 'approved', createdAt: { $gte: startOfToday } } },
+				{ $lookup: { from: 'bookings', localField: 'booking', foreignField: '_id', as: 'bookingDoc' } },
+				{ $unwind: '$bookingDoc' },
+				{ $group: { _id: null, total: { $sum: '$bookingDoc.cost.total' } } },
+			]).then((r) => r[0]?.total || 0),
+
+			// Revenue this month
+			Payment.aggregate([
+				{ $match: { status: 'approved', createdAt: { $gte: startOfMonth } } },
+				{ $lookup: { from: 'bookings', localField: 'booking', foreignField: '_id', as: 'bookingDoc' } },
+				{ $unwind: '$bookingDoc' },
+				{ $group: { _id: null, total: { $sum: '$bookingDoc.cost.total' } } },
+			]).then((r) => r[0]?.total || 0),
+
+			// Platform fees earned: sum of platformShare from confirmed bookings
+			Booking.aggregate([
+				{ $match: { status: { $in: ['confirmed', 'movedIn', 'completed'] } } },
+				{ $group: { _id: null, total: { $sum: '$cost.platformShare' } } },
+			]).then((r) => r[0]?.total || 0),
+
+			// Pending payments
+			Payment.countDocuments({ status: 'pending' }),
+
+			// Completed bookings
+			Booking.countDocuments({ status: { $in: ['movedIn', 'completed'] } }),
 		]);
 
 		res.status(200).json({
@@ -39,6 +81,12 @@ export const getDashboardStats = async (req, res) => {
 			unresolvedReports,
 			pendingStudentVerifications,
 			pendingLandlordVerifications,
+			// Analytics
+			revenueToday,
+			revenueThisMonth,
+			platformFeesEarned,
+			pendingPaymentsCount,
+			completedBookingsCount,
 		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });

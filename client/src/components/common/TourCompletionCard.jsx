@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CheckCircle2 } from 'lucide-react';
 
-const CONFETTI_COLORS = ['#C2603F', '#C79A3E', '#8A5A44', '#6E8B5E', '#F5F1EA'];
+const CONFETTI_COLORS = ['#0B6BD8', '#F5A524', '#0A8046', '#A9CEFA', '#FBCF7A'];
 const CONFETTI = Array.from({ length: 18 }, (_, i) => ({
 	id: i,
 	left: `${(i * 53) % 100}%`,

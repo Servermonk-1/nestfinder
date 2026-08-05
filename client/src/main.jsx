@@ -15,9 +15,9 @@ createRoot(document.getElementById('root')).render(
       toastOptions={{
         duration: 4000,
         style: {
-          background: '#14243D',
+          background: '#0A1526',
           color: '#FFFFFF',
-          border: '1px solid rgba(42, 111, 151, 0.40)',
+          border: '1px solid rgba(11, 107, 216, 0.40)',
           borderRadius: '0',
           padding: '16px',
           fontSize: '14px',
@@ -31,7 +31,7 @@ createRoot(document.getElementById('root')).render(
         },
         error: {
           iconTheme: {
-            primary: '#C7303F',
+            primary: '#D62839',
             secondary: '#FFFFFF',
           },
         },

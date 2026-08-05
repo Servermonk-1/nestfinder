@@ -31,9 +31,9 @@
 
   body {
     font-family: 'Archivo', system-ui, sans-serif;
-    color: #1D2A44;
-    background-color: #F4F7F6;
-    /* Soft ice — bright and cool, tinted just enough
+    color: #141F33;
+    background-color: #F5F8FC;
+    /* Clean cool white — bright and neutral, tinted just enough
        that pure-white cards lift off it without a harsh shadow. The light is
        the point. */
 
@@ -62,14 +62,14 @@
   }
 
   ::selection {
-    background: rgba(42, 111, 151, 0.18);
-    color: #1D2A44;
+    background: rgba(11, 107, 216, 0.18);
+    color: #141F33;
   }
 
   /* Keyboard focus must always be visible — it was easy to lose against the
      old soft palette. */
   :focus-visible {
-    outline: 2px solid #2A6F97;
+    outline: 2px solid #0B6BD8;
     outline-offset: 2px;
   }
 
@@ -78,14 +78,14 @@
     height: 10px;
   }
   ::-webkit-scrollbar-track {
-    background: #E6EEF1;
+    background: #EAF1F9;
   }
   ::-webkit-scrollbar-thumb {
-    background: #BFD2D9;
-    border: 3px solid #E6EEF1;
+    background: #B9CEE6;
+    border: 3px solid #EAF1F9;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: #93AFBA;
+    background: #8CAAC9;
   }
 }
 
@@ -161,7 +161,7 @@
   }
   .input-field:focus {
     @apply border-primary;
-    box-shadow: inset 2px 0 0 0 #2A6F97;
+    box-shadow: inset 2px 0 0 0 #0B6BD8;
   }
 
   /* Annotation label — the small uppercase caption that names a value, the way
@@ -192,14 +192,14 @@
   }
 
   .text-gradient {
-    background: linear-gradient(100deg, #1F5474 0%, #2A6F97 100%);
+    background: linear-gradient(100deg, #0854B0 0%, #0B6BD8 100%);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
   .text-shimmer {
-    background: linear-gradient(100deg, #1F5474 20%, #2A6F97 45%, #A9D6E5 52%, #2A6F97 60%, #1F5474 84%);
+    background: linear-gradient(100deg, #0854B0 20%, #0B6BD8 45%, #A9CEFA 52%, #0B6BD8 60%, #0854B0 84%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;

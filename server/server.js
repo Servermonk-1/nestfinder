@@ -24,6 +24,8 @@ import feedbackRoutes from './routes/feedback.js';
 import reviewRoutes from './routes/reviews.js';
 import companyRoutes from './routes/companies.js';
 import bookingRoutes from './routes/bookings.js';
+import paymentRoutes from './routes/payments.js';
+import paymentSettingsRoutes from './routes/paymentSettings.js';
 import savedSearchRoutes from './routes/savedSearches.js';
 import errorHandler from './middleware/errorHandler.js';
 import { reportError } from './utils/errorReporter.js';
@@ -83,6 +85,33 @@ app.use(helmet());
 //    `credentials` lets the browser send/receive the httpOnly session cookie.
 app.use(cors({ origin: corsOrigin, credentials: true }));
 
+// TEMP DEBUG: log every incoming request to help diagnose 404s and routing issues.
+app.use((req, res, next) => {
+	try {
+		console.log('[REQ]', req.method, req.originalUrl);
+	} catch (e) { /* ignore logging failures */ }
+	next();
+});
+
+// TEMP DEBUG: utility to print all registered routes at startup
+function printRegisteredRoutes(router, prefix = '') {
+    if (router.stack) {
+        router.stack.forEach((middleware) => {
+            if (middleware.route) {
+                // This middleware is a route
+                const methods = Object.keys(middleware.route.methods);
+                methods.forEach((m) => {
+                    console.log(`[ROUTE] ${m.toUpperCase().padEnd(6)} ${prefix}${middleware.route.path}`);
+                });
+            } else if (middleware.name === 'router' && middleware.handle.stack) {
+                // This middleware is a nested router (e.g., app.use('/api/payments', router))
+                const routerPrefix = middleware.regexp.source
+                    .replace(/^\^/, '').replace(/\$.*/, '').replace(/\\\//g, '/');
+                printRegisteredRoutes(middleware.handle, routerPrefix);
+            }
+        });
+    }
+}
 // 2b. Parse cookies so the auth middleware can read the httpOnly session cookie.
 app.use(cookieParser());
 
@@ -132,6 +161,14 @@ app.use('/api/feedback', feedbackRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/bookings', bookingRoutes);
+app.use('/api/payments', paymentRoutes);
+app.use('/api/payments-settings', paymentSettingsRoutes);
+console.log('✓ Mounted paymentSettingsRoutes at /api/payments-settings');
+
+// TEMP DEBUG: print all registered routes before starting the server
+console.log('\n=== REGISTERED EXPRESS ROUTES ===');
+printRegisteredRoutes(app);
+console.log('=== END ROUTE LIST ===\n');
 app.use('/api/saved-searches', savedSearchRoutes);
 
 // ── HEALTH CHECK ──────────────────────────────────────────

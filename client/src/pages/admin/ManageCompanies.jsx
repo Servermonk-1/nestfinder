@@ -154,10 +154,8 @@ export default function ManageCompanies() {
 	];
 
 	return (
-		<div className="min-h-screen bg-paper text-text">
-			<AdminNavbar />
-
-			<div className="mx-auto max-w-6xl px-6 pb-16 pt-28">
+		<AdminNavbar>
+			<div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
 				<div className="mb-6 flex flex-wrap items-end justify-between gap-4">
 					<div>
 						<h1 className="font-serif text-3xl font-extrabold text-text">SIWES directory</h1>
@@ -389,130 +387,128 @@ export default function ManageCompanies() {
 				</div>
 			)}
 
-			{/* ── Editor ── */}
-			{editing && (
-				<div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/50 p-4 py-10">
-					<form onSubmit={save} className="w-full max-w-2xl space-y-4 rounded-2xl border border-muted/15 bg-surface p-6">
-						<div className="flex items-center justify-between">
-							<h2 className="font-serif text-xl font-bold text-text">
-								{editing === 'new' ? 'Add a placement centre' : 'Edit placement centre'}
-							</h2>
-							<button type="button" onClick={() => setEditing(null)} aria-label="Close">
-								<X className="h-5 w-5 text-muted" />
-							</button>
-						</div>
 
-						<Field label="Name" required>
-							<input value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} className={inputCls} />
+		{/* ── Editor ── */}
+		{editing && (
+			<div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-ink/50 p-4 py-10">
+				<form onSubmit={save} className="w-full max-w-2xl space-y-4 rounded-2xl border border-muted/15 bg-surface p-6">
+					<div className="flex items-center justify-between">
+						<h2 className="font-serif text-xl font-bold text-text">
+							{editing === 'new' ? 'Add a placement centre' : 'Edit placement centre'}
+						</h2>
+						<button type="button" onClick={() => setEditing(null)} aria-label="Close">
+							<X className="h-5 w-5 text-muted" />
+						</button>
+					</div>
+
+					<Field label="Name" required>
+						<input value={form.name} onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))} className={inputCls} />
+					</Field>
+					<div className="grid gap-3 sm:grid-cols-2">
+						<Field label="Industry">
+							<input value={form.industry} onChange={(e) => setForm((s) => ({ ...s, industry: e.target.value }))} className={inputCls} />
 						</Field>
-						<div className="grid gap-3 sm:grid-cols-2">
-							<Field label="Industry">
-								<input value={form.industry} onChange={(e) => setForm((s) => ({ ...s, industry: e.target.value }))} className={inputCls} />
-							</Field>
-							<Field label="Approx. SIWES places">
-								<input type="number" min="0" value={form.siwesSlots} onChange={(e) => setForm((s) => ({ ...s, siwesSlots: e.target.value }))} className={inputCls} />
-							</Field>
-						</div>
-
-						<Field label="Street address">
-							<input value={form.address} onChange={(e) => setForm((s) => ({ ...s, address: e.target.value }))} className={inputCls} />
+						<Field label="Approx. SIWES places">
+							<input type="number" min="0" value={form.siwesSlots} onChange={(e) => setForm((s) => ({ ...s, siwesSlots: e.target.value }))} className={inputCls} />
 						</Field>
-						<div className="grid gap-3 sm:grid-cols-3">
-							<Field label="Area" required>
-								<input value={form.area} onChange={(e) => setForm((s) => ({ ...s, area: e.target.value }))} className={inputCls} />
-							</Field>
-							<Field label="City">
-								<input value={form.city} onChange={(e) => setForm((s) => ({ ...s, city: e.target.value }))} className={inputCls} />
-							</Field>
-							<Field label="State">
-								<input value={form.state} onChange={(e) => setForm((s) => ({ ...s, state: e.target.value }))} className={inputCls} />
-							</Field>
-						</div>
+					</div>
 
-						<Field label="Faculties">
-							<div className="flex flex-wrap gap-2">
-								{FACULTIES.map((f) => (
-									<button
-										key={f}
-										type="button"
-										onClick={() => toggleFaculty(f)}
-										aria-pressed={form.faculties.includes(f)}
-										className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
-											form.faculties.includes(f) ? 'bg-primary text-white' : 'border border-muted/20 text-muted'
-										}`}
-									>
-										{f}
-									</button>
-								))}
-							</div>
+					<Field label="Street address">
+						<input value={form.address} onChange={(e) => setForm((s) => ({ ...s, address: e.target.value }))} className={inputCls} />
+					</Field>
+					<div className="grid gap-3 sm:grid-cols-3">
+						<Field label="Area" required>
+							<input value={form.area} onChange={(e) => setForm((s) => ({ ...s, area: e.target.value }))} className={inputCls} />
 						</Field>
-
-						<Field label="Accepted departments" hint="Comma-separated. Stored lowercase.">
-							<textarea
-								rows={2}
-								value={form.acceptedDepartments}
-								onChange={(e) => setForm((s) => ({ ...s, acceptedDepartments: e.target.value }))}
-								className={inputCls}
-							/>
+						<Field label="City">
+							<input value={form.city} onChange={(e) => setForm((s) => ({ ...s, city: e.target.value }))} className={inputCls} />
 						</Field>
-
-						<Field label="Description">
-							<textarea rows={2} value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} className={inputCls} />
+						<Field label="State">
+							<input value={form.state} onChange={(e) => setForm((s) => ({ ...s, state: e.target.value }))} className={inputCls} />
 						</Field>
-						<div className="grid gap-3 sm:grid-cols-2">
-							<Field label="Contact email" hint="shown to students">
-								<input type="email" value={form.contactEmail} onChange={(e) => setForm((s) => ({ ...s, contactEmail: e.target.value }))} className={inputCls} />
-							</Field>
-							<Field label="Contact phone" hint="shown to students">
-								<input value={form.contactPhone} onChange={(e) => setForm((s) => ({ ...s, contactPhone: e.target.value }))} className={inputCls} />
-							</Field>
+					</div>
+
+					<Field label="Faculties">
+						<div className="flex flex-wrap gap-2">
+							{FACULTIES.map((f) => (
+								<button
+									key={f}
+									type="button"
+									onClick={() => toggleFaculty(f)}
+									aria-pressed={form.faculties.includes(f)}
+									className={`rounded-full px-3 py-1.5 text-xs font-bold transition ${
+										form.faculties.includes(f) ? 'bg-primary text-white' : 'border border-muted/20 text-muted'
+									}`}
+								>
+									{f}
+								</button>
+							))}
 						</div>
-						<Field label="Website">
-							<input value={form.website} onChange={(e) => setForm((s) => ({ ...s, website: e.target.value }))} className={inputCls} />
+					</Field>
+
+					<Field label="Accepted departments" hint="Comma-separated. Stored lowercase.">
+						<textarea
+							rows={2}
+							value={form.acceptedDepartments}
+							onChange={(e) => setForm((s) => ({ ...s, acceptedDepartments: e.target.value }))}
+							className={inputCls}
+						/>
+					</Field>
+
+					<Field label="Description">
+						<textarea rows={2} value={form.description} onChange={(e) => setForm((s) => ({ ...s, description: e.target.value }))} className={inputCls} />
+					</Field>
+					<div className="grid gap-3 sm:grid-cols-2">
+						<Field label="Contact email" hint="shown to students">
+							<input type="email" value={form.contactEmail} onChange={(e) => setForm((s) => ({ ...s, contactEmail: e.target.value }))} className={inputCls} />
 						</Field>
+						<Field label="Contact phone" hint="shown to students">
+							<input value={form.contactPhone} onChange={(e) => setForm((s) => ({ ...s, contactPhone: e.target.value }))} className={inputCls} />
+						</Field>
+					</div>
+					<Field label="Website">
+						<input value={form.website} onChange={(e) => setForm((s) => ({ ...s, website: e.target.value }))} className={inputCls} />
+					</Field>
 
-						{/* Nigerian addresses often resolve no better than the
-						    neighbourhood, so an admin who knows the building can
-						    correct it — and that pin then beats our guess. */}
-						<div className="border-t border-muted/10 pt-4">
-							<h3 className="mb-1 text-sm font-bold text-text">Pin on the map</h3>
-							<LocationPicker
-								address={form.address}
-								area={form.area}
-								city={form.city}
-								state={form.state}
-								subject="this placement centre"
-								value={existingPin}
-								onChange={setPin}
-							/>
-						</div>
+					<div className="border-t border-muted/10 pt-4">
+						<h3 className="mb-1 text-sm font-bold text-text">Pin on the map</h3>
+						<LocationPicker
+							address={form.address}
+							area={form.area}
+							city={form.city}
+							state={form.state}
+							subject="this placement centre"
+							value={existingPin}
+							onChange={setPin}
+						/>
+					</div>
 
-						<p className="text-xs text-muted">
-							{pin
-								? 'Your pin will be saved as the exact location.'
-								: 'Leave the pin alone and we\'ll geocode the address automatically on save.'}
-						</p>
+					<p className="text-xs text-muted">
+						{pin
+							? 'Your pin will be saved as the exact location.'
+							: 'Leave the pin alone and we\'ll geocode the address automatically on save.'}
+					</p>
 
-						<div className="flex gap-2 pt-1">
-							<button
-								type="submit"
-								disabled={saving}
-								className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
-							>
-								{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Save
-							</button>
-							<button
-								type="button"
-								onClick={() => setEditing(null)}
-								className="rounded-xl border border-muted/20 px-4 py-2.5 text-sm font-bold text-muted"
-							>
-								Cancel
-							</button>
-						</div>
-					</form>
-				</div>
-			)}
-		</div>
+					<div className="flex gap-2 pt-1">
+						<button
+							type="submit"
+							disabled={saving}
+							className="inline-flex items-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white disabled:opacity-60"
+						>
+							{saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />} Save
+						</button>
+						<button
+							type="button"
+							onClick={() => setEditing(null)}
+							className="rounded-xl border border-muted/20 px-4 py-2.5 text-sm font-bold text-muted"
+						>
+							Cancel
+						</button>
+					</div>
+				</form>
+			</div>
+		)}
+	</AdminNavbar>
 	);
 }
 

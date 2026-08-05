@@ -12,11 +12,11 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-	const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+	const allowed = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'application/pdf'];
 	if (allowed.includes(file.mimetype)) {
 		cb(null, true);
 	} else {
-		cb(new Error('Only image files are allowed (jpeg, jpg, png, webp)'), false);
+		cb(new Error('Only image or PDF files are allowed (jpeg, jpg, png, webp, pdf)'), false);
 	}
 };
 

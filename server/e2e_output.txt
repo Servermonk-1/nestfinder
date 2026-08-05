@@ -1,0 +1,10 @@
+PASS: Student apply
+PASS: Landlord accepts -> pendingPayment
+PASS: Student submits bank transfer
+PASS: Admin approves bank transfer
+PASS: Booking is confirmed after approval
+PASS: Listing unavailable after confirmation
+E2E script error TypeError: Cannot read properties of undefined (reading '_id')
+    at runE2E (file:///C:/Users/HP/Documents/0001-Final%20Year%20Project/Front-end/server/tests/e2e/payment-e2e.js:92:47)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+E2E completed with 1 failure(s)

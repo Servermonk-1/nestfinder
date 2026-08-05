@@ -13,7 +13,7 @@ export const STATUS_META = {
 		student: 'Your application has been sent. The landlord will respond.',
 		landlord: 'A student has applied. Accept or decline.',
 	},
-	accepted: {
+	pendingPayment: {
 		label: 'Accepted — payment due',
 		tone: 'primary',
 		student: 'Accepted. Pay to secure the room — your money is held safely until you move in.',
@@ -31,7 +31,7 @@ export const STATUS_META = {
 		student: 'You withdrew this application.',
 		landlord: 'The student withdrew this application.',
 	},
-	paid: {
+	confirmed: {
 		label: 'Paid — held in escrow',
 		tone: 'success',
 		student: "Paid. We're holding your money until you confirm you've moved in.",

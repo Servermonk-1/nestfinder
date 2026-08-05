@@ -59,10 +59,8 @@ export default function Payouts() {
 	const rows = data?.bookings || [];
 
 	return (
-		<div className="min-h-screen bg-paper text-text">
-			<AdminNavbar />
-
-			<div className="mx-auto max-w-6xl px-6 pb-16 pt-28">
+		<AdminNavbar>
+			<div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
 				<h1 className="font-serif text-3xl font-extrabold">Payouts</h1>
 				<p className="mt-1 text-sm text-muted">
 					Money the platform owes landlords for stays students have confirmed.
@@ -179,9 +177,9 @@ export default function Payouts() {
 					</div>
 				)}
 			</div>
-		</div>
-	);
-}
+		</AdminNavbar>
+	    );
+	}
 
 function Stat({ label, value, tone, icon: Icon }) {
 	const c = tone === 'due' ? 'text-danger-ink' : 'text-success-ink';

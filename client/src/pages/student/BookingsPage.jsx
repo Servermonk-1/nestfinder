@@ -29,7 +29,7 @@ export default function BookingsPage() {
 
 	// Things needing THIS person's action, first.
 	const needsMe = (b) =>
-		isLandlord ? b.status === 'pending' : ['accepted', 'paid'].includes(b.status);
+		isLandlord ? b.status === 'pending' : ['pendingPayment', 'confirmed'].includes(b.status);
 	const sorted = [...bookings].sort((a, b) => Number(needsMe(b)) - Number(needsMe(a)));
 
 	return (

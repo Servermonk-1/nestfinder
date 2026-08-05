@@ -38,7 +38,7 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 				initial={{ y: -24, opacity: 0 }}
 				animate={{ y: scrolled ? 8 : 14, opacity: 1 }}
 				transition={{ type: 'spring', stiffness: 380, damping: 34 }}
-				className="nav-pill pointer-events-auto flex w-full max-w-6xl items-center gap-2 rounded-full py-2 pl-5 pr-2"
+				className="nav-pill pointer-events-auto flex flex-wrap justify-start w-full max-w-6xl items-center gap-2 rounded-full py-2 pl-5 pr-2"
 			>
 				{/* Mark plus name. The mark alone at this size — the arched lettering in
 				    the full badge is unreadable below about 96px. */}
@@ -51,7 +51,7 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 				</Link>
 
 				{/* Desktop links */}
-				<div className="ml-2 hidden flex-1 items-center gap-0.5 md:flex">
+				<div className="ml-2 hidden flex-1 min-w-0 flex-wrap items-center gap-0.5 md:flex">
 					{links.map((link) => {
 						const active = pathname === link.to || (link.match && link.match.test(pathname));
 						return (
@@ -77,7 +77,7 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 					})}
 				</div>
 
-				<div className="ml-auto hidden items-center gap-1 md:flex">{right}</div>
+				<div className="ml-auto hidden min-w-0 items-center gap-1 md:flex">{right}</div>
 
 				<button
 					onClick={() => setOpen((v) => !v)}

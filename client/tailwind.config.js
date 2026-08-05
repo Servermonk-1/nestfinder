@@ -7,66 +7,71 @@ export default {
   theme: {
     extend: {
       colors: {
-        // ── "Coastal Azure" — soft ice ground, ocean blue, sand accent ──
+        // ── "Coastal Azure" — clean cool ground, bright ocean blue, amber accent ──
         //
-        // Light values carry the atmosphere: a soft ice page, pure-white cards
-        // lifting off it, seafoam and sand used as tints. Light colours cannot
-        // carry white text, so every family also has a deeper cut — DEFAULT for
-        // solid fills, `-ink` for text on light grounds — and foregrounds only
-        // ever use those. Each pairing was checked against all THREE grounds,
-        // not just white: a value can pass on white and still fail on a tinted
-        // panel, which is exactly how the previous palette shipped a failure.
-        ink: '#14243D',            // deepest — headlines and hard edges
+        // Saturation raised across the board: the blue now reads as a brand
+        // colour rather than a desaturated slate (57% → 90% saturation), and
+        // the neutrals lost their green cast so text sits crisp on them. The
+        // structure is unchanged — DEFAULT for solid fills that carry white
+        // text, `-ink` a deeper cut for text on light grounds — and every
+        // pairing is still checked against all THREE grounds, not just white:
+        // a value can pass on white and still fail on a tinted panel, which is
+        // exactly how an earlier palette shipped a failure.
+        ink: '#0A1526',            // deepest — headlines and hard edges
         // NOT named `base`. A colour called `base` generates a `text-base`
         // utility that collides with Tailwind's `text-base` FONT SIZE, and the
         // colour wins — so every `text-base` heading rendered in the page colour,
         // invisible on a white card. Renamed rather than worked around.
-        paper: '#F4F7F6',          // page — soft ice, cool and bright
+        paper: '#F5F8FC',          // page — clean cool white, no green cast
         surface: '#FFFFFF',        // cards — pure white, natural elevation, no
                                    // harsh shadow needed against the tinted page
-        'surface-alt': '#E6EEF1',  // inputs / nested / hover
-        line: '#D3E0E5',           // soft cool hairline — the main structural tool
-        muted: '#55677D',          // secondary text — 4.93:1 on the TINTED panel,
-                                   // the worst case, not white (5.80:1)
-        text: '#1D2A44',           // primary text — dark slate
+        'surface-alt': '#EAF1F9',  // inputs / nested / hover
+        line: '#D5E2F0',           // cool hairline — the main structural tool
+        muted: '#4F627C',          // secondary text — 5.47:1 on the TINTED panel,
+                                   // the worst case, not white (6.23:1)
+        text: '#141F33',           // primary text — clean dark slate
 
-        // Ocean blue. `light` is the seafoam wash used for hovers, tag
+        // Bright ocean blue. `light` is the wash used for hovers, tag
         // highlights and focus rings; DEFAULT is what carries white text on a
-        // solid button (5.50:1). `-ink` is a shade deeper for links and labels.
+        // solid button (5.11:1). `-ink` is a deeper cut for links and labels
+        // (6.31:1 on the tinted panel, 7.18:1 on white).
         primary: {
-          DEFAULT: '#2A6F97',
-          light: '#A9D6E5',
-          dark: '#1F5474',
+          DEFAULT: '#0B6BD8',
+          light: '#A9CEFA',
+          dark: '#0854B0',
         },
-        'primary-ink': '#235E80',
+        'primary-ink': '#0A55AE',
         accent: {
-          DEFAULT: '#2A6F97',
-          light: '#A9D6E5',
-          dark: '#1F5474',
+          DEFAULT: '#0B6BD8',
+          light: '#A9CEFA',
+          dark: '#0854B0',
         },
 
-        // Warm sand for attention — "approximate", "awaiting", "check this".
-        // Sea and sand: warm against the blue, so it can never be mistaken for
-        // an action. Too light for white text — a solid chip takes `text-ink`.
+        // Bright amber for attention — "approximate", "awaiting", "check this".
+        // Warm against the blue, so it can never be mistaken for an action.
+        // Far too light for white text — a solid chip takes `text-ink`.
         highlight: {
-          DEFAULT: '#D9A441',
-          light: '#EFCB87',
+          DEFAULT: '#F5A524',
+          light: '#FBCF7A',
         },
-        'highlight-ink': '#8A6410',
+        'highlight-ink': '#8A5A00',  // 5.21:1 on the tinted panel
 
         royal: {
-          DEFAULT: '#35597A',
-          light: '#5E82A5',
-          dark: '#22405C',
+          DEFAULT: '#1D5CA8',
+          light: '#4E86C9',
+          dark: '#123E73',
         },
 
         // Semantic colours stay clearly separate from the blue, so "confirmed"
-        // and "interactive" can never be confused. Both carry white text.
+        // and "interactive" can never be confused. Both carry white text — and
+        // that is the ceiling on how bright they can go: a more vivid green
+        // strands its own label (#0E9F55 is 3.44:1 and fails), so success is
+        // held where it is while the blue and amber move.
         success: '#0A8046',
         'success-ink': '#0A7040',
-        danger: '#C7303F',
-        'danger-ink': '#A81F2C',
-        info: '#2A6F97',
+        danger: '#D62839',
+        'danger-ink': '#B01F2F',
+        info: '#0B6BD8',
       },
       fontFamily: {
         // Archivo carries the interface — a grotesque with more character than
@@ -120,19 +125,19 @@ export default {
         // hovering above it. Depth comes from the hairline, not the blur.
         // Tinted blue rather than neutral grey, so shadows sit in the same
         // light as the page instead of greying it down.
-        glow: '0 20px 48px -22px rgba(42,111,151,0.30)',
-        'glow-sm': '0 10px 28px -16px rgba(42,111,151,0.26)',
-        'glow-ochre': '0 20px 48px -22px rgba(217,164,65,0.30)',
-        card: '0 1px 2px rgba(20,36,61,0.05)',
-        'card-lg': '0 16px 40px -24px rgba(20,36,61,0.20)',
-        lift: '0 24px 56px -28px rgba(20,36,61,0.24)',
+        glow: '0 20px 48px -22px rgba(11,107,216,0.34)',
+        'glow-sm': '0 10px 28px -16px rgba(11,107,216,0.30)',
+        'glow-ochre': '0 20px 48px -22px rgba(245,165,36,0.34)',
+        card: '0 1px 2px rgba(10,21,38,0.05)',
+        'card-lg': '0 16px 40px -24px rgba(10,21,38,0.20)',
+        lift: '0 24px 56px -28px rgba(10,21,38,0.24)',
       },
       backgroundImage: {
         // Every stop is dark enough to carry white text — these are used as
         // button and panel fills, so a light stop would strand the label.
-        'brand-gradient': 'linear-gradient(135deg, #2A6F97 0%, #1F5474 100%)',
-        'brand-sheen': 'linear-gradient(120deg, #3583AF 0%, #2A6F97 58%, #1F5474 100%)',
-        'warm-deep': 'linear-gradient(140deg, #163B52 0%, #1F5474 45%, #2A6F97 100%)',
+        'brand-gradient': 'linear-gradient(135deg, #0B6BD8 0%, #0854B0 100%)',
+        'brand-sheen': 'linear-gradient(120deg, #2F86EE 0%, #0B6BD8 58%, #0854B0 100%)',
+        'warm-deep': 'linear-gradient(140deg, #06336B 0%, #0854B0 45%, #0B6BD8 100%)',
       },
       letterSpacing: {
         meta: '0.14em',

@@ -1,55 +1,39 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-	Loader2, Lock, CreditCard, ShieldCheck, CheckCircle2, XCircle,
-	ArrowLeft, Info, Copy,
-} from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Loader2, ArrowLeft, Info, Copy, Building2, Coins, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudentNavbar from '../../components/common/StudentNavbar';
-import CostBreakdown from '../../components/booking/CostBreakdown';
 import api from '../../services/api';
 
 const naira = (n) => `₦${Number(n || 0).toLocaleString('en-NG')}`;
 
-// Card numbers are grouped for readability while typing, then stripped before
-// they are sent — the server matches on digits alone.
-const groupCard = (v) => v.replace(/\D/g, '').slice(0, 19).replace(/(.{4})/g, '$1 ').trim();
-const groupExpiry = (v) => {
-	const d = v.replace(/\D/g, '').slice(0, 4);
-	return d.length > 2 ? `${d.slice(0, 2)}/${d.slice(2)}` : d;
-};
-
-/**
- * Checkout.
- *
- * The previous flow was a single button that initialised and verified in the
- * same breath, so paying looked like nothing happened. This is the step that
- * was missing: a real card form, a real processing state, real PIN and OTP
- * challenges, and a receipt at the end.
- *
- * The card numbers accepted here are Paystack's own published test cards, so
- * the behaviour matches what real test keys would do. Nothing entered on this
- * page is a real card, and no money moves.
- */
 export default function CheckoutPage() {
 	const { id } = useParams();
 	const navigate = useNavigate();
 
 	const [booking, setBooking] = useState(null);
-	const [init, setInit] = useState(null);
 	const [loading, setLoading] = useState(true);
+	const [settings, setSettings] = useState(null);
+	const [submitting, setSubmitting] = useState(false);
 
-	const [card, setCard] = useState('');
-	const [expiry, setExpiry] = useState('');
-	const [cvv, setCvv] = useState('');
-	const [pin, setPin] = useState('');
-	const [otp, setOtp] = useState('');
+	const [paymentMethod, setPaymentMethod] = useState('bank_transfer');
 
-	// idle → processing → challenge(pin|otp) → done | failed
-	const [stage, setStage] = useState('idle');
-	const [failure, setFailure] = useState('');
-	const [receipt, setReceipt] = useState(null);
+	// Bank transfer
+	const [senderName, setSenderName] = useState('');
+	const [transactionReference, setTransactionReference] = useState('');
+	const [amountPaid, setAmountPaid] = useState('');
+	const [paymentDate, setPaymentDate] = useState('');
+	const [receiptFile, setReceiptFile] = useState(null);
+
+	// USDT
+	const [walletUsed, setWalletUsed] = useState('');
+	const [transactionHash, setTransactionHash] = useState('');
+	const [amountUSDT, setAmountUSDT] = useState('');
+	const [usdtRate, setUsdtRate] = useState(null);
+	const [usdtError, setUsdtError] = useState(null);
+	const [usdtDate, setUsdtDate] = useState('');
+	const [screenshotFile, setScreenshotFile] = useState(null);
 
 	useEffect(() => {
 		let live = true;
@@ -58,20 +42,14 @@ export default function CheckoutPage() {
 				const { data } = await api.get(`/bookings/${id}`);
 				if (!live) return;
 				setBooking(data.booking);
-
-				if (data.booking.status === 'paid' || data.booking.escrow?.state === 'held') {
-					setStage('done');
-					setReceipt({ reference: data.booking.payment?.reference, alreadyPaid: true });
-					return;
+				try {
+					const ps = await api.get('/payments-settings/settings');
+					if (live) setSettings(ps.data.settings);
+				} catch (e) {
+					// Payment settings missing - will show error on submit
 				}
-				if (data.booking.status !== 'accepted') return;
-
-				// Reserve the reference up front, the way a provider does — so the
-				// amount on screen is the amount the server will insist on.
-				const { data: started } = await api.post(`/bookings/${id}/pay`);
-				if (live) setInit(started);
 			} catch (err) {
-				if (live) toast.error(err.response?.data?.message || 'Could not open checkout');
+				if (live) toast.error(err.response?.data?.message || 'Could not open payment page');
 			} finally {
 				if (live) setLoading(false);
 			}
@@ -79,116 +57,52 @@ export default function CheckoutPage() {
 		return () => { live = false; };
 	}, [id]);
 
-	const submit = useCallback(async (e) => {
-		e?.preventDefault();
-		setStage('processing');
-		setFailure('');
-		try {
-			const { data } = await api.post(`/bookings/${id}/verify`, {
-				reference: init?.reference,
-				card: card.replace(/\s/g, ''),
-				pin: pin || undefined,
-				otp: otp || undefined,
-			});
-
-			// Not a failure — the provider wants another factor.
-			if (data.challenge) {
-				setStage(data.challenge);
-				toast(data.message, { icon: '🔒' });
-				return;
+	useEffect(() => {
+		let live = true;
+		if (paymentMethod !== 'usdt') return () => { live = false; };
+		(async () => {
+			try {
+				setUsdtError(null);
+				const { data } = await api.get(`/payments-settings/quote?bookingId=${id}`);
+				if (!live) return;
+				setUsdtRate(data.rate);
+				setAmountUSDT(String(data.usdtAmount));
+			} catch (err) {
+				if (!live) return;
+				setUsdtRate(null);
+				setUsdtError(err.response?.data?.message || 'Exchange rate unavailable');
 			}
-			setReceipt({ reference: data.booking?.payment?.reference, booking: data.booking });
-			setStage('done');
-		} catch (err) {
-			setFailure(err.response?.data?.message || 'Payment could not be completed.');
-			setStage('failed');
-		}
-	}, [id, init, card, pin, otp]);
+		})();
+		return () => { live = false; };
+	}, [paymentMethod, id]);
 
-	const retry = () => { setStage('idle'); setFailure(''); setPin(''); setOtp(''); };
+	if (loading) return (
+		<div className="min-h-screen bg-paper">
+			<StudentNavbar />
+			<div className="flex justify-center py-32"><Loader2 className="h-6 w-6 animate-spin text-muted" /></div>
+		</div>
+	);
 
-	if (loading) {
-		return (
-			<div className="min-h-screen bg-paper">
-				<StudentNavbar />
-				<div className="flex justify-center py-32"><Loader2 className="h-6 w-6 animate-spin text-muted" /></div>
+	if (!booking) return (
+		<div className="min-h-screen bg-paper text-text">
+			<StudentNavbar />
+			<div className="mx-auto max-w-lg px-6 pt-32 text-center">
+				<p className="font-serif text-xl font-bold">Booking not found</p>
+				<Link to="/bookings" className="mt-4 inline-block bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-dark">
+					Back to bookings
+				</Link>
 			</div>
-		);
-	}
+		</div>
+	);
 
-	if (!booking) {
-		return (
-			<div className="min-h-screen bg-paper text-text">
-				<StudentNavbar />
-				<div className="mx-auto max-w-lg px-6 pt-32 text-center">
-					<p className="font-serif text-xl font-bold">Booking not found</p>
-					<Link to="/bookings" className="mt-4 inline-block bg-primary px-5 py-2.5 text-sm font-semibold text-white">
-						Back to bookings
-					</Link>
-				</div>
-			</div>
-		);
-	}
-
-	// ── RECEIPT ──
-	if (stage === 'done') {
-		return (
-			<div className="min-h-screen bg-paper text-text">
-				<StudentNavbar />
-				<div className="mx-auto max-w-lg px-6 pb-20 pt-28">
-					<motion.div
-						initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}
-						className="border border-line bg-surface p-8 text-center shadow-card"
-					>
-						<motion.div
-							initial={{ scale: 0.7, opacity: 0 }} animate={{ scale: 1, opacity: 1 }}
-							transition={{ delay: 0.1, type: 'spring', stiffness: 220, damping: 18 }}
-							className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-full bg-success/12"
-						>
-							<CheckCircle2 className="h-8 w-8 text-success-ink" strokeWidth={2} />
-						</motion.div>
-
-						<h1 className="font-serif text-2xl font-extrabold">
-							{receipt?.alreadyPaid ? 'Already paid' : 'Payment received'}
-						</h1>
-						<p className="mx-auto mt-2 max-w-sm text-sm text-muted">
-							{naira(booking.cost.total)} is now held by NestFinder. The landlord is told your
-							place is secured, but receives nothing until you confirm you have moved in.
-						</p>
-
-						<div className="mt-6 space-y-2 border-t border-line pt-5 text-left">
-							<Row label="Amount" value={naira(booking.cost.total)} />
-							<Row label="Reference" value={receipt?.reference} mono copyable />
-							<Row label="Status" value="Held in escrow" />
-						</div>
-
-						<div className="mt-6 flex flex-col gap-2">
-							<button
-								onClick={() => navigate(`/bookings/${id}`)}
-								className="w-full bg-primary px-5 py-3 text-sm font-bold text-white transition hover:bg-primary-dark"
-							>
-								View this booking
-							</button>
-							<Link to="/bookings" className="px-5 py-2 text-sm font-semibold text-muted hover:text-text">
-								All my bookings
-							</Link>
-						</div>
-					</motion.div>
-				</div>
-			</div>
-		);
-	}
-
-	if (booking.status !== 'accepted') {
+	if (booking.status !== 'pendingPayment') {
 		return (
 			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
 				<div className="mx-auto max-w-lg px-6 pt-32 text-center">
 					<p className="font-serif text-xl font-bold">This booking is not awaiting payment</p>
-					<p className="mt-2 text-sm text-muted">
-						Its status is <span className="font-semibold text-text">{booking.status}</span>.
-					</p>
-					<Link to={`/bookings/${id}`} className="mt-5 inline-block bg-primary px-5 py-2.5 text-sm font-semibold text-white">
+					<p className="mt-2 text-sm text-muted">Its status is <span className="font-semibold text-text">{booking.status}</span>.</p>
+					<Link to={`/bookings/${id}`} className="mt-5 inline-block bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-dark">
 						Back to the booking
 					</Link>
 				</div>
@@ -196,221 +110,357 @@ export default function CheckoutPage() {
 		);
 	}
 
-	const busy = stage === 'processing';
-	const challenging = stage === 'pin' || stage === 'otp';
+	const submit = async (e) => {
+		e.preventDefault();
+		if (!settings) return toast.error('Payment settings not configured');
+		setSubmitting(true);
+		try {
+			const fd = new FormData();
+			fd.append('bookingId', booking._id);
+			fd.append('paymentMethod', paymentMethod);
+			if (paymentMethod === 'usdt') {
+				fd.append('amount', amountUSDT || '');
+				fd.append('transactionHash', transactionHash);
+				fd.append('network', settings.usdtNetwork || 'TRC20');
+				fd.append('walletAddress', walletUsed || '');
+				if (usdtDate) fd.append('paymentDate', usdtDate);
+				if (screenshotFile) fd.append('receipt', screenshotFile);
+			} else {
+				fd.append('amount', amountPaid || booking.cost.total);
+				fd.append('senderName', senderName);
+				fd.append('transactionReference', transactionReference);
+				if (paymentDate) fd.append('paymentDate', paymentDate);
+				if (receiptFile) fd.append('receipt', receiptFile);
+			}
+
+			await api.post('/payments', fd, { headers: { 'Content-Type': 'multipart/form-data' } });
+			toast.success('Payment submitted successfully');
+			navigate(`/bookings/${id}`);
+		} catch (err) {
+			toast.error(err.response?.data?.message || 'Could not submit payment');
+		} finally {
+			setSubmitting(false);
+		}
+	};
+
+	const copy = (text) => {
+		navigator.clipboard?.writeText(text);
+		toast.success('Copied to clipboard');
+	};
 
 	return (
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
-
 			<div className="mx-auto max-w-4xl px-6 pb-20 pt-28">
-				<Link to={`/bookings/${id}`} className="mb-5 inline-flex items-center gap-1.5 text-sm font-semibold text-muted hover:text-text">
+				<Link
+					to={`/bookings/${id}`}
+					className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"
+				>
 					<ArrowLeft className="h-4 w-4" /> Back to the booking
 				</Link>
 
-				{init?.sandbox && (
-					<div className="mb-6 flex items-start gap-3 border border-highlight/40 bg-highlight/10 p-4">
-						<Info className="mt-0.5 h-4 w-4 shrink-0 text-highlight-ink" />
-						<p className="text-sm">
-							<span className="font-bold">Test mode — no real money moves.</span>{' '}
-							This checkout accepts Paystack's published test cards and behaves the way their
-							test environment does. Never enter a real card here.
-						</p>
-					</div>
-				)}
+				<motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+					<p className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary-ink">
+						<span className="h-px w-6 bg-primary/50" /> Complete your payment
+					</p>
+					<h1 className="font-serif text-3xl font-extrabold text-ink">{booking.listing?.title}</h1>
+					<p className="mt-1 text-sm text-muted">Transfer the total amount, then submit proof below</p>
+				</motion.div>
 
-				<div className="grid gap-6 md:grid-cols-[1.15fr_1fr]">
-					{/* ── Card form ── */}
-					<div className="border border-line bg-surface p-6 shadow-card">
-						<div className="mb-5 flex items-center justify-between">
-							<h1 className="font-serif text-xl font-extrabold">Pay {naira(booking.cost.total)}</h1>
-							<span className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted">
-								<Lock className="h-3.5 w-3.5" /> Secured
-							</span>
-						</div>
+				<div className="mt-6 grid gap-6 md:grid-cols-[1fr_1.2fr]">
+					{/* Payment details */}
+					<motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.1 }}>
+						<div className="sticky top-28">
+							<div className="border border-line bg-surface p-6 shadow-card">
+								<p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted">
+									<Building2 className="h-4 w-4" /> Payment method
+								</p>
 
-						<form onSubmit={submit} className="space-y-4">
-							<Field label="Card number">
-								<div className="relative">
-									<CreditCard className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
-									<input
-										value={card}
-										onChange={(e) => setCard(groupCard(e.target.value))}
-										inputMode="numeric"
-										autoComplete="off"
-										placeholder="0000 0000 0000 0000"
-										disabled={busy || challenging}
-										className="w-full border border-line bg-surface-alt py-3 pl-10 pr-3 font-mono text-sm outline-none focus:border-primary disabled:opacity-60"
-									/>
+								<div className="space-y-2">
+									<label className="flex cursor-pointer items-center gap-3 border border-line bg-surface-alt p-3 transition hover:border-primary/30">
+										<input
+											type="radio"
+											name="method"
+											value="bank_transfer"
+											checked={paymentMethod === 'bank_transfer'}
+											onChange={() => setPaymentMethod('bank_transfer')}
+											className="h-4 w-4 accent-primary"
+										/>
+										<div className="flex-1">
+											<span className="block text-sm font-bold text-text">Bank transfer</span>
+											<span className="text-xs text-muted">Recommended — settle in 10 minutes</span>
+										</div>
+									</label>
+									<label className="flex cursor-pointer items-center gap-3 border border-line bg-surface-alt p-3 transition hover:border-primary/30">
+										<input
+											type="radio"
+											name="method"
+											value="usdt"
+											checked={paymentMethod === 'usdt'}
+											onChange={() => setPaymentMethod('usdt')}
+											className="h-4 w-4 accent-primary"
+										/>
+										<div className="flex-1">
+											<span className="block text-sm font-bold text-text">USDT (TRC20)</span>
+											<span className="text-xs text-muted">Crypto — live exchange rate</span>
+										</div>
+									</label>
 								</div>
-							</Field>
 
-							<div className="grid grid-cols-2 gap-3">
-								<Field label="Expiry">
-									<input
-										value={expiry}
-										onChange={(e) => setExpiry(groupExpiry(e.target.value))}
-										inputMode="numeric" placeholder="MM/YY"
-										disabled={busy || challenging}
-										className="w-full border border-line bg-surface-alt px-3 py-3 font-mono text-sm outline-none focus:border-primary disabled:opacity-60"
-									/>
-								</Field>
-								<Field label="CVV">
-									<input
-										value={cvv}
-										onChange={(e) => setCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-										inputMode="numeric" placeholder="123"
-										disabled={busy || challenging}
-										className="w-full border border-line bg-surface-alt px-3 py-3 font-mono text-sm outline-none focus:border-primary disabled:opacity-60"
-									/>
-								</Field>
+								{!settings ? (
+									<p className="mt-4 flex items-start gap-2 border border-danger/30 bg-danger/8 p-3 text-xs text-text">
+										<AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-ink" />
+										Payment details not configured. Contact support.
+									</p>
+								) : (
+									<div className="mt-5 space-y-4 border-t border-line pt-5">
+										{paymentMethod === 'bank_transfer' && (
+											<>
+												<Detail label="Bank name" value={settings.bankName} />
+												<Detail label="Account name" value={settings.accountName} />
+												<Detail label="Account number" value={settings.accountNumber} mono copyable onCopy={() => copy(settings.accountNumber)} />
+											</>
+										)}
+
+										{paymentMethod === 'usdt' && (
+											<>
+												{settings.usdtAddress ? (
+													<>
+														<div className="flex items-start gap-3">
+															<img
+																src={`https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(settings.usdtAddress)}`}
+																alt="QR code"
+																className="h-24 w-24 shrink-0 border border-line"
+															/>
+															<div className="min-w-0 flex-1">
+																<p className="label-meta mb-1">Wallet address</p>
+																<p className="break-all font-mono text-xs text-text">{settings.usdtAddress}</p>
+																<button
+																	onClick={() => copy(settings.usdtAddress)}
+																	className="mt-2 inline-flex items-center gap-1.5 text-xs font-semibold text-primary-ink transition hover:text-primary-dark"
+																>
+																	<Copy className="h-3.5 w-3.5" /> Copy
+																</button>
+															</div>
+														</div>
+														<Detail label="Network" value={settings.usdtNetwork || 'TRC20'} />
+														{settings.usdtWalletLabel && <Detail label="Label" value={settings.usdtWalletLabel} muted />}
+													</>
+												) : (
+													<p className="text-sm text-muted">USDT wallet not configured.</p>
+												)}
+											</>
+										)}
+
+										{settings.instructions && (
+											<div className="border-t border-line pt-4">
+												<p className="label-meta mb-1.5">Instructions</p>
+												<p className="text-sm text-muted">{settings.instructions}</p>
+											</div>
+										)}
+									</div>
+								)}
+
+								<div className="mt-6 border-t border-primary/15 pt-4">
+									<p className="label-meta mb-1.5">Amount to pay</p>
+									<div className="font-serif text-2xl font-bold tabular-nums text-primary-ink font-mono">
+										{naira(booking.cost.total)}
+									</div>
+									{paymentMethod === 'usdt' && usdtRate && amountUSDT && (
+										<p className="mt-1.5 text-xs text-muted">
+											≈ <span className="font-mono font-semibold text-text">{amountUSDT} USDT</span> at ₦{Number(usdtRate).toLocaleString()}/USDT
+										</p>
+									)}
+								</div>
 							</div>
 
-							{/* Extra factors appear only when the provider asks for them. */}
-							<AnimatePresence>
-								{stage === 'pin' && (
-									<Challenge key="pin" label="Card PIN" hint="This card is PIN-protected.">
-										<input
-											autoFocus value={pin} inputMode="numeric" placeholder="••••"
-											onChange={(e) => setPin(e.target.value.replace(/\D/g, '').slice(0, 4))}
-											className="w-full border border-primary/50 bg-surface px-3 py-3 text-center font-mono text-lg tracking-[0.5em] outline-none focus:border-primary"
-										/>
-									</Challenge>
-								)}
-								{stage === 'otp' && (
-									<Challenge key="otp" label="One-time code" hint="Sent to the phone on this account.">
-										<input
-											autoFocus value={otp} inputMode="numeric" placeholder="000000"
-											onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-											className="w-full border border-primary/50 bg-surface px-3 py-3 text-center font-mono text-lg tracking-[0.4em] outline-none focus:border-primary"
-										/>
-									</Challenge>
-								)}
-							</AnimatePresence>
+							<p className="mt-4 flex items-start gap-2 border border-success/30 bg-success/8 p-3 text-xs text-text">
+								<Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success-ink" />
+								<span>
+									Your money is held by NestFinder until you confirm you've moved in. If the room isn't as advertised, you aren't left chasing a refund.
+								</span>
+							</p>
+						</div>
+					</motion.div>
 
-							{stage === 'failed' && (
-								<motion.div
-									initial={{ opacity: 0, y: -4 }} animate={{ opacity: 1, y: 0 }}
-									className="flex items-start gap-2 border border-danger/40 bg-danger/8 p-3.5 text-sm"
-								>
-									<XCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-ink" />
-									<span>
-										<span className="font-bold text-danger-ink">Payment failed.</span> {failure}
-									</span>
-								</motion.div>
-							)}
+					{/* Submit form */}
+					<motion.div initial={{ opacity: 0, x: 10 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.15 }}>
+						<div className="border border-line bg-surface p-6 shadow-card">
+							<p className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-muted">
+								<Coins className="h-4 w-4" /> Submit your transfer
+							</p>
 
-							{stage === 'failed' ? (
-								<button type="button" onClick={retry}
-									className="w-full bg-primary px-5 py-3.5 text-sm font-bold text-white transition hover:bg-primary-dark">
-									Try again
-								</button>
-							) : (
+							<form onSubmit={submit} className="space-y-4">
+								{paymentMethod === 'bank_transfer' && (
+									<>
+										<Field label="Sender's name" required>
+											<input
+												value={senderName}
+												onChange={(e) => setSenderName(e.target.value)}
+												placeholder="Full name on the bank account"
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 text-sm text-text transition placeholder:text-muted/60 focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<Field label="Transaction reference" required>
+											<input
+												value={transactionReference}
+												onChange={(e) => setTransactionReference(e.target.value)}
+												placeholder="Bank reference or confirmation number"
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 text-sm text-text transition placeholder:text-muted/60 focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<Field label="Amount paid">
+											<input
+												value={amountPaid}
+												onChange={(e) => setAmountPaid(e.target.value)}
+												placeholder={String(booking.cost.total)}
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 font-mono text-sm text-text transition placeholder:text-muted/60 focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<Field label="Payment date">
+											<input
+												type="date"
+												value={paymentDate}
+												onChange={(e) => setPaymentDate(e.target.value)}
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 text-sm text-text transition focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<FileField
+											label="Receipt (image or PDF)"
+											file={receiptFile}
+											onChange={setReceiptFile}
+											accept="image/*,.pdf"
+										/>
+									</>
+								)}
+
+								{paymentMethod === 'usdt' && (
+									<>
+										{usdtError && (
+											<div className="flex items-start gap-2 border border-danger/30 bg-danger/8 p-3 text-xs text-text">
+												<AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-danger-ink" />
+												{usdtError}
+											</div>
+										)}
+										<Field label="Wallet address used (optional)">
+											<input
+												value={walletUsed}
+												onChange={(e) => setWalletUsed(e.target.value)}
+												placeholder="Your wallet address"
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 font-mono text-sm text-text transition placeholder:text-muted/60 focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<Field label="Transaction hash (TxID)" required>
+											<input
+												value={transactionHash}
+												onChange={(e) => setTransactionHash(e.target.value)}
+												placeholder="On-chain transaction ID"
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 font-mono text-sm text-text transition placeholder:text-muted/60 focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<Field label="Date">
+											<input
+												type="date"
+												value={usdtDate}
+												onChange={(e) => setUsdtDate(e.target.value)}
+												className="w-full border border-line bg-surface-alt px-3 py-2.5 text-sm text-text transition focus:border-primary/50 focus:outline-none"
+											/>
+										</Field>
+										<FileField
+											label="Screenshot (image or PDF)"
+											file={screenshotFile}
+											onChange={setScreenshotFile}
+											accept="image/*,.pdf"
+										/>
+									</>
+								)}
+
 								<button
 									type="submit"
-									disabled={busy || !card.replace(/\s/g, '')}
-									className="flex w-full items-center justify-center gap-2 bg-primary px-5 py-3.5 text-sm font-bold text-white transition hover:bg-primary-dark disabled:opacity-60"
+									disabled={submitting || (paymentMethod === 'usdt' && (!amountUSDT || usdtError))}
+									className="flex w-full items-center justify-center gap-2 bg-primary px-5 py-3 text-sm font-bold text-white transition hover:bg-primary-dark disabled:opacity-50"
 								>
-									{busy
-										? <><Loader2 className="h-4 w-4 animate-spin" /> Processing…</>
-										: challenging
-											? <>Confirm</>
-											: <><Lock className="h-4 w-4" /> Pay {naira(booking.cost.total)}</>}
+									{submitting ? (
+										<><Loader2 className="h-4 w-4 animate-spin" /> Submitting…</>
+									) : (
+										<><CheckCircle2 className="h-4 w-4" /> Submit payment</>
+									)}
 								</button>
-							)}
-						</form>
 
-						<p className="mt-4 flex items-start gap-2 text-xs text-muted">
-							<ShieldCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-success-ink" />
-							Your money is held by NestFinder, not sent to the landlord. It is released only
-							when you confirm you have moved in — and refundable before that.
-						</p>
-					</div>
-
-					{/* ── Summary + test cards ── */}
-					<div className="space-y-4">
-						<div className="border border-line bg-surface p-5 shadow-card">
-							<h2 className="label-meta mb-3">What you are paying for</h2>
-							<p className="font-serif text-base font-bold">{booking.listing?.title}</p>
-							<p className="mt-0.5 text-sm text-muted">
-								{[booking.listing?.area, booking.listing?.city].filter(Boolean).join(', ')}
-							</p>
-							<div className="mt-4 border-t border-line pt-4">
-								<CostBreakdown cost={booking.cost} />
-							</div>
-						</div>
-
-						{init?.testCards?.length > 0 && (
-							<div className="border border-line bg-surface-alt p-5">
-								<h2 className="label-meta mb-3">Test cards</h2>
-								<p className="mb-3 text-xs text-muted">
-									Any future expiry date works. Tap a card to fill the form.
+								<p className="flex items-start gap-2 text-xs text-muted">
+									<Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+									After submitting, your payment will be marked Pending Verification. An admin will approve it within 24 hours.
 								</p>
-								<ul className="space-y-2">
-									{init.testCards.map((c) => (
-										<li key={c.number}>
-											<button
-												type="button"
-												onClick={() => { setCard(c.number); setCvv(c.cvv); setExpiry('12/30'); retry(); }}
-												className="w-full border border-line bg-surface p-2.5 text-left transition hover:border-primary/50"
-											>
-												<span className="block font-mono text-xs">{c.number}</span>
-												<span className="mt-0.5 block text-xs text-muted">
-													CVV {c.cvv}{c.pin ? ` · PIN ${c.pin}` : ''}{c.otp ? ` · OTP ${c.otp}` : ''} — {c.label}
-												</span>
-											</button>
-										</li>
-									))}
-								</ul>
-							</div>
-						)}
-					</div>
+							</form>
+						</div>
+					</motion.div>
 				</div>
 			</div>
 		</div>
 	);
 }
 
-function Field({ label, children }) {
+function Detail({ label, value, mono = false, muted = false, copyable = false, onCopy }) {
+	return (
+		<div>
+			<p className="label-meta mb-1">{label}</p>
+			<div className="flex items-center justify-between gap-3">
+				<p className={`text-sm font-semibold ${mono ? 'font-mono' : ''} ${muted ? 'text-muted' : 'text-text'}`}>
+					{value || '—'}
+				</p>
+				{copyable && value && (
+					<button
+						onClick={onCopy}
+						className="flex items-center gap-1.5 text-xs font-semibold text-primary-ink transition hover:text-primary-dark"
+					>
+						<Copy className="h-3.5 w-3.5" /> Copy
+					</button>
+				)}
+			</div>
+		</div>
+	);
+}
+
+function Field({ label, required, children }) {
 	return (
 		<label className="block">
-			<span className="label-meta mb-1.5 block">{label}</span>
+			<span className="label-meta mb-1.5 block">
+				{label}
+				{required && <span className="ml-1 text-danger-ink">*</span>}
+			</span>
 			{children}
 		</label>
 	);
 }
 
-function Challenge({ label, hint, children }) {
+function FileField({ label, file, onChange, accept }) {
 	return (
-		<motion.div
-			initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }}
-			className="overflow-hidden"
-		>
-			<div className="border border-primary/30 bg-primary/[0.04] p-4">
-				<p className="label-meta mb-1">{label}</p>
-				<p className="mb-2.5 text-xs text-muted">{hint}</p>
-				{children}
-			</div>
-		</motion.div>
-	);
-}
-
-function Row({ label, value, mono, copyable }) {
-	return (
-		<div className="flex items-baseline justify-between gap-3">
-			<span className="text-sm text-muted">{label}</span>
-			<span className={`text-sm font-semibold ${mono ? 'font-mono text-xs' : ''}`}>
-				{value || '—'}
-				{copyable && value && (
-					<button
-						onClick={() => { navigator.clipboard?.writeText(value); toast.success('Reference copied'); }}
-						aria-label="Copy reference"
-						className="ml-1.5 align-middle text-muted hover:text-text"
-					>
-						<Copy className="inline h-3 w-3" />
-					</button>
-				)}
-			</span>
+		<div>
+			<p className="label-meta mb-1.5">
+				{label}
+			</p>
+			<label className="flex cursor-pointer items-center gap-3 border border-line bg-surface-alt p-3 transition hover:border-primary/30">
+				<Upload className="h-5 w-5 shrink-0 text-muted" />
+				<div className="min-w-0 flex-1">
+					{file ? (
+						<>
+							<p className="truncate text-sm font-semibold text-text">{file.name}</p>
+							<p className="text-xs text-muted">{(file.size / 1024).toFixed(1)} KB</p>
+						</>
+					) : (
+						<>
+							<p className="text-sm font-semibold text-text">Choose file</p>
+							<p className="text-xs text-muted">Click to browse</p>
+						</>
+					)}
+				</div>
+				<input
+					type="file"
+					accept={accept}
+					onChange={(e) => onChange(e.target.files?.[0] || null)}
+					className="hidden"
+				/>
+			</label>
 		</div>
 	);
 }

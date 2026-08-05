@@ -168,7 +168,7 @@ export default function BookingDetailPage() {
 						</>
 					)}
 
-					{isStudent && booking.status === 'accepted' && (
+					{isStudent && booking.status === 'pendingPayment' && (
 						// Goes to a real checkout rather than paying in place. Paying used
 						// to be one click that initialised and verified in the same breath,
 						// which meant nothing on screen ever looked like a payment. The
@@ -183,7 +183,7 @@ export default function BookingDetailPage() {
 						</Link>
 					)}
 
-					{isStudent && ['pending', 'accepted'].includes(booking.status) && (
+					{isStudent && ['pending', 'pendingPayment'].includes(booking.status) && (
 						<button
 							disabled={busy}
 							onClick={() => act(() => api.patch(`/bookings/${id}/cancel`))}
@@ -193,7 +193,7 @@ export default function BookingDetailPage() {
 						</button>
 					)}
 
-					{isStudent && booking.status === 'paid' && (
+					{isStudent && booking.status === 'confirmed' && (
 						<button
 							disabled={busy}
 							onClick={() => {
@@ -207,11 +207,11 @@ export default function BookingDetailPage() {
 					)}
 				</div>
 
-				{sandbox && ['accepted', 'paid'].includes(booking.status) && (
+				{sandbox && ['pendingPayment', 'confirmed'].includes(booking.status) && (
 					<p className="mt-4 flex items-start gap-2 text-xs text-muted">
 						<Info className="mt-0.5 h-3.5 w-3.5 shrink-0 text-primary-ink" />
 						Payments are running in <span className="font-bold">sandbox mode</span> — no real money moves.
-						Adding a Paystack secret key switches this to live checkout without any other change.
+						The checkout uses manual bank-transfer or optional USDT flows; configure these in the admin payment settings.
 					</p>
 				)}
 

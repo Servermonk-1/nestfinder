@@ -48,7 +48,7 @@ export default function CompanyMap({ company, listings = [], radiusKm = 10, heig
 				<Circle
 					center={centre}
 					radius={radiusKm * 1000}
-					pathOptions={{ color: '#C2603F', fillColor: '#C2603F', fillOpacity: 0.07, weight: 1.5, dashArray: '6 6' }}
+					pathOptions={{ color: '#0B6BD8', fillColor: '#0B6BD8', fillOpacity: 0.07, weight: 1.5, dashArray: '6 6' }}
 				/>
 
 				<Marker position={centre} icon={workplaceIcon()}>
