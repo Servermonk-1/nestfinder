@@ -436,8 +436,9 @@ export const loginStudent = async (req, res) => {
 			});
 		}
 
-		// Skip OTP on a device that verified recently ("remember this device").
-		if (isTrustedDevice(student, req.body.deviceToken)) {
+		// Skip OTP on a device that verified recently ("remember this device"),
+		// OR when OTP is disabled for demos/testing (set DISABLE_OTP=true).
+		if (isTrustedDevice(student, req.body.deviceToken) || process.env.DISABLE_OTP === 'true') {
 			const authToken = generateToken(student._id, student.role);
 			sendAuthCookie(res, authToken);
 			return res.status(200).json({
@@ -549,8 +550,9 @@ export const loginLandlord = async (req, res) => {
 		// Password correct — clear the failed-attempt streak.
 		await clearAttempts(email);
 
-		// Skip OTP on a device that verified recently ("remember this device").
-		if (isTrustedDevice(landlord, req.body.deviceToken)) {
+		// Skip OTP on a device that verified recently ("remember this device"),
+		// OR when OTP is disabled for demos/testing (set DISABLE_OTP=true).
+		if (isTrustedDevice(landlord, req.body.deviceToken) || process.env.DISABLE_OTP === 'true') {
 			const authToken = generateToken(landlord._id, landlord.role);
 			sendAuthCookie(res, authToken);
 			return res.status(200).json({
