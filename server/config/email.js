@@ -18,20 +18,69 @@ const getProviders = () => {
 	const resendKey = process.env.RESEND_API_KEY;
 
 	const gmailTransport = (gmailUser && gmailPass)
-		? nodemailer.createTransport({ service: 'gmail', auth: { user: gmailUser, pass: gmailPass } })
+		? nodemailer.createTransport({
+			service: 'gmail',
+			auth: { user: gmailUser, pass: gmailPass },
+			// Render's outbound IPv6 routing cannot reach Gmail reliably; force
+			// IPv4. Without this the socket connects to an IPv6 literal and hangs
+			// indefinitely when the platform's egress path has no IPv6 route.
+			family: 4,
+			// Kill the attempt after 8 seconds — authentication can take 3-4s on
+			// a slow link, but anything longer means the connection is stuck.
+			connectionTimeout: 8000,
+			greetingTimeout: 5000,
+			socketTimeout: 10000,
+		})
 		: null;
 
 	const resend = (!gmailTransport && resendKey) ? new Resend(resendKey) : null;
 
-	const from = gmailTransport
-		? `NestFinder <${gmailUser}>`
-		: (process.env.EMAIL_FROM || 'NestFinder <onboarding@resend.dev>');
+	// EMAIL_FROM was previously read only on the Resend path, so setting it
+	// alongside Gmail credentials appeared to do nothing. It is honoured on both
+	// now — but Gmail will silently rewrite the From header to the authenticated
+	// account unless the address is a verified "send mail as" alias, so a
+	// mismatch is worth saying out loud rather than leaving to be discovered in
+	// a recipient's inbox.
+	const envFrom = process.env.EMAIL_FROM?.trim();
+	let from;
+	if (gmailTransport) {
+		const addressIn = envFrom?.match(/<([^>]+)>/)?.[1] || envFrom;
+		if (envFrom && addressIn?.toLowerCase() !== gmailUser.toLowerCase()) {
+			console.warn(
+				`⚠️  EMAIL_FROM (${addressIn}) is not GMAIL_USER (${gmailUser}). Gmail will rewrite the sender unless it is a verified alias.`,
+			);
+		}
+		from = envFrom || `NestFinder <${gmailUser}>`;
+	} else {
+		from = envFrom || 'NestFinder <onboarding@resend.dev>';
+	}
+
+	console.log(
+		`✉️  Email provider: ${gmailTransport ? `Gmail (${gmailUser})` : resend ? 'Resend' : 'DEMO MODE — nothing will be sent'}`,
+	);
 
 	_providers = { gmailTransport, resend, from };
 	return _providers;
 };
 
 const clientUrl = () => process.env.CLIENT_URL || 'http://localhost:5173';
+
+// Hard ceiling on any provider call. The transport timeouts above cover the
+// phases Nodemailer knows about (connect, greeting, socket), but a stall
+// between them — or inside the Resend HTTP client — is still unbounded. This
+// guarantees the caller gets an answer, because a login request waiting on an
+// SMTP socket is a login request the student has already given up on.
+const SEND_DEADLINE_MS = 9000;
+
+const withDeadline = (promise, ms, label) => {
+	let timer;
+	return Promise.race([
+		promise,
+		new Promise((_, reject) => {
+			timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
+		}),
+	]).finally(() => clearTimeout(timer));
+};
 
 export const isEmailLive = () => {
 	const { gmailTransport, resend } = getProviders();
@@ -82,13 +131,16 @@ const send = async ({ to, subject, html, kind, demoData = {} }) => {
 	}
 	try {
 		if (gmailTransport) {
-			await gmailTransport.sendMail({ from, to, subject, html });
+			await withDeadline(gmailTransport.sendMail({ from, to, subject, html }), SEND_DEADLINE_MS, 'Gmail send');
 		} else {
-			await resend.emails.send({ from, to, subject, html });
+			await withDeadline(resend.emails.send({ from, to, subject, html }), SEND_DEADLINE_MS, 'Resend send');
 		}
 		return { demo: false, ...demoData };
 	} catch (err) {
 		// Never let an email failure break the auth flow — degrade to demo.
+		// ENETUNREACH here means the host cannot route to Gmail at all (Render's
+		// IPv6 egress); the transport pins family:4 to avoid it, but a network
+		// that drops outbound :465 entirely still lands in this branch.
 		console.error(`⚠️  Email send failed (${kind}):`, err.message);
 		return { demo: true, error: err.message, ...demoData };
 	}

@@ -87,7 +87,10 @@ export default function LandlordAuth() {
 			if (data.otpRequired) {
 				setOtpStage({ email: data.email, devOtp: data.devOtp });
 				setOtpCode('');
-				toast.success('We sent a 6-digit code to your email');
+				// See StudentLogin: the send can fail without failing the request,
+				// so the toast follows emailSent rather than assuming success.
+				if (data.emailSent === false) toast.error(data.message || 'We could not send your code. Please try again.');
+				else toast.success(data.message || 'We sent a 6-digit code to your email');
 				return;
 			}
 			login(data.user, data.token);

@@ -464,7 +464,12 @@ export const loginStudent = async (req, res) => {
 
 		// No token here — the session is only issued after the OTP is verified.
 		res.status(200).json({
-			message: 'We sent a 6-digit code to your email.',
+			// If the send failed the code exists but never left the building, so
+			// promising it was sent strands the student on the OTP screen waiting
+			// for an email that is not coming.
+			message: emailResult.demo && !isDev
+				? 'We could not send your code right now. Please try again in a moment.'
+				: 'We sent a 6-digit code to your email.',
 			otpRequired: true,
 			email: student.email,
 			emailSent: !emailResult.demo,
@@ -572,7 +577,9 @@ export const loginLandlord = async (req, res) => {
 
 		// No token here — the session is only issued after the OTP is verified.
 		res.status(200).json({
-			message: 'We sent a 6-digit code to your email.',
+			message: emailResult.demo && !isDev
+				? 'We could not send your code right now. Please try again in a moment.'
+				: 'We sent a 6-digit code to your email.',
 			otpRequired: true,
 			email: landlord.email,
 			emailSent: !emailResult.demo,
