@@ -6,9 +6,8 @@ import { MongoMemoryServer } from 'mongodb-memory-server';
 // code runs so nothing reaches the real world:
 process.env.JWT_SECRET = process.env.JWT_SECRET || 'test_jwt_secret';
 process.env.NODE_ENV = 'test';
-delete process.env.GMAIL_USER;          // → email service falls back to demo mode (no real sends)
-delete process.env.GMAIL_APP_PASSWORD;
-delete process.env.RESEND_API_KEY;
+delete process.env.BREVO_API_KEY;        // → email service falls back to demo mode (no real sends)
+delete process.env.EMAIL_FROM;
 delete process.env.TURNSTILE_SECRET_KEY; // → captcha middleware is a no-op
 // Give mongod room to boot on a busy machine (default is 10s).
 process.env.MONGOMS_STARTUP_TIMEOUT = process.env.MONGOMS_STARTUP_TIMEOUT || '60000';

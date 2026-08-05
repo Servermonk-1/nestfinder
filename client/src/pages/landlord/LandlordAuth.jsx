@@ -85,12 +85,15 @@ export default function LandlordAuth() {
 		try {
 			const { data } = await api.post('/auth/landlord/login', { ...signInData, deviceToken: getDeviceToken(signInData.email) });
 			if (data.otpRequired) {
-				setOtpStage({ email: data.email, devOtp: data.devOtp });
-				setOtpCode('');
 				// See StudentLogin: the send can fail without failing the request,
 				// so the toast follows emailSent rather than assuming success.
-				if (data.emailSent === false) toast.error(data.message || 'We could not send your code. Please try again.');
-				else toast.success(data.message || 'We sent a 6-digit code to your email');
+				if (data.emailSent === false && !data.devOtp) {
+					toast.error(data.message || 'We could not send your code. Please try again.');
+					return;
+				}
+				setOtpStage({ email: data.email, devOtp: data.devOtp });
+				setOtpCode('');
+				toast.success(data.message || 'We sent a 6-digit code to your email');
 				return;
 			}
 			login(data.user, data.token);
@@ -120,8 +123,20 @@ export default function LandlordAuth() {
 		setOtpLoading(true);
 		try {
 			const { data } = await api.post('/auth/landlord/login', signInData);
+			// Same endpoint as step 1, so it can answer with a finished login (OTP
+			// disabled) or with a code it failed to send — see StudentLogin.
+			if (!data.otpRequired) {
+				login(data.user, data.token);
+				toast.success(`Welcome back, ${data.user.fullName}`);
+				navigate('/landlord/dashboard');
+				return;
+			}
 			setOtpStage({ email: data.email, devOtp: data.devOtp });
-			toast.success('New code sent');
+			if (data.emailSent === false && !data.devOtp) {
+				toast.error(data.message || 'We could not send your code. Please try again.');
+			} else {
+				toast.success('New code sent');
+			}
 		} catch (err) {
 			toast.error(err.response?.data?.message || 'Could not resend code');
 		} finally { setOtpLoading(false); }

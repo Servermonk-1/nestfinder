@@ -1,105 +1,106 @@
-import { Resend } from 'resend';
-import nodemailer from 'nodemailer';
-
-// Provider priority:
-//   1. Gmail (Nodemailer + App Password) → real emails to ANY inbox, no domain needed.
-//   2. Resend (API key)                  → real emails (free tier = your own address).
-//   3. DEMO MODE (neither configured)    → logged to console + code returned to caller.
-// Adding credentials to .env flips it live with no code change.
+// Transport: Brevo's transactional HTTPS API.
 //
-// NOTE: providers are initialised LAZILY (on first use), not at import time.
-// Reading process.env at import time is unreliable because dotenv may not have
-// run yet depending on import order — lazy init guarantees the env is loaded.
-let _providers;
-const getProviders = () => {
-	if (_providers) return _providers;
-	const gmailUser = process.env.GMAIL_USER;
-	const gmailPass = process.env.GMAIL_APP_PASSWORD;
-	const resendKey = process.env.RESEND_API_KEY;
-	console.log("EMAIL_PROVIDER =", process.env.EMAIL_PROVIDER);
-	console.log("RESEND KEY EXISTS =", !!process.env.RESEND_API_KEY);
+// This used to be Gmail SMTP (Nodemailer) with a Resend fallback. Render — where
+// this deploys — blocks outbound SMTP on 25/465/587, so the Gmail socket could
+// never open there: it just burned the send deadline and the OTP was lost. Brevo
+// is called over plain HTTPS on 443, which the platform does not block, so the
+// same code path works locally and in production.
+//
+//   BREVO_API_KEY set   → real emails.
+//   BREVO_API_KEY unset → DEMO MODE (logged to console, code returned to caller).
+//
+// Adding the key to .env flips it live with no code change. Nothing here uses an
+// SDK: one fetch to one documented endpoint is fewer moving parts than a client
+// library, and it lets us surface Brevo's own error body verbatim.
+const BREVO_ENDPOINT = 'https://api.brevo.com/v3/smtp/email';
 
-	const gmailTransport = (gmailUser && gmailPass)
-		? nodemailer.createTransport({
-			service: 'gmail',
-			auth: { user: gmailUser, pass: gmailPass },
-			// Render's outbound IPv6 routing cannot reach Gmail reliably; force
-			// IPv4. Without this the socket connects to an IPv6 literal and hangs
-			// indefinitely when the platform's egress path has no IPv6 route.
-			family: 4,
-			// Kill the attempt after 8 seconds — authentication can take 3-4s on
-			// a slow link, but anything longer means the connection is stuck.
-			connectionTimeout: 8000,
-			greetingTimeout: 5000,
-			socketTimeout: 10000,
-		})
-		: null;
-
-	// Resend is built whenever a key exists, NOT only when Gmail is missing.
-	// The old `!gmailTransport && resendKey` meant configuring Gmail silently
-	// disabled Resend — so on a host that blocks SMTP there was no way to send
-	// at all, even with a perfectly good API key sitting in the environment.
-	const resend = resendKey ? new Resend(resendKey) : null;
-
-	// Which provider goes first. Gmail is the better default locally (real mail
-	// to any inbox, no domain to verify), but PaaS hosts including Render block
-	// outbound SMTP on 25/465/587 — the connection simply times out. Set
-	// EMAIL_PROVIDER=resend there to skip straight to HTTPS and avoid burning
-	// the send deadline on a socket that will never open.
-	const preferred = process.env.EMAIL_PROVIDER?.trim().toLowerCase();
-	const order = preferred === 'resend'
-		? ['resend', 'gmail']
-		: preferred === 'gmail'
-			? ['gmail', 'resend']
-			: ['gmail', 'resend'];
-
-	const envFrom = process.env.EMAIL_FROM?.trim();
-	let from;
-	if (order[0] === 'gmail' && gmailTransport) {
-		const addressIn = envFrom?.match(/<([^>]+)>/)?.[1] || envFrom;
-		if (envFrom && addressIn?.toLowerCase() !== gmailUser.toLowerCase()) {
-			console.warn(
-				`⚠️  EMAIL_FROM (${addressIn}) is not GMAIL_USER (${gmailUser}). Gmail will rewrite the sender unless it is a verified alias.`,
-			);
-		}
-		from = envFrom || `NestFinder <${gmailUser}>`;
-	} else {
-		from = envFrom || 'NestFinder <onboarding@resend.dev>';
+// Split "NestFinder <no-reply@example.com>" into Brevo's { name, email } sender
+// object. A bare address is accepted too.
+const parseAddress = (value, fallbackName = 'NestFinder') => {
+	const raw = String(value || '').trim();
+	const match = raw.match(/^(.*?)\s*<([^>]+)>$/);
+	if (match) {
+		return { name: match[1].replace(/^["']|["']$/g, '').trim() || fallbackName, email: match[2].trim() };
 	}
+	return { name: fallbackName, email: raw };
+};
 
-	const primary = order[0] === 'gmail' && gmailTransport ? `Gmail (${gmailUser})` : order[0] === 'resend' && resend ? 'Resend' : null;
-	const fallback = order[1] === 'gmail' && gmailTransport ? `Gmail (${gmailUser})` : order[1] === 'resend' && resend ? 'Resend' : null;
-	const label = primary
-		? fallback ? `${primary} → ${fallback} fallback` : primary
-		: 'DEMO MODE — nothing will be sent';
-	console.log(`✉️  Email provider: ${label}`);
+// NOTE: config is read LAZILY (on first use), not at import time. Reading
+// process.env at import time is unreliable because dotenv may not have run yet
+// depending on import order — lazy init guarantees the env is loaded.
+let _config;
+const getConfig = () => {
+	if (_config) return _config;
 
-	_providers = { gmailTransport, resend, from, order };
-	return _providers;
+	const apiKey = process.env.BREVO_API_KEY?.trim() || null;
+	const envFrom = process.env.EMAIL_FROM?.trim();
+	const sender = parseAddress(envFrom || 'NestFinder <no-reply@nestfinder.app>');
+
+	if (apiKey && !envFrom) {
+		// Brevo rejects a sender it has not verified, and the rejection reads as a
+		// generic 400 — say so up front rather than letting it look like a bad key.
+		console.warn('⚠️  EMAIL_FROM is not set. Brevo will reject sends unless the default sender is a verified one.');
+	}
+	console.log(`✉️  Email provider: ${apiKey ? `Brevo (from ${sender.email})` : 'DEMO MODE — nothing will be sent'}`);
+
+	_config = { apiKey, sender };
+	return _config;
 };
 
 const clientUrl = () => process.env.CLIENT_URL || 'http://localhost:5173';
 
-// Hard ceiling on any provider call. The transport timeouts above cover the
-// phases Nodemailer knows about (connect, greeting, socket), but a stall
-// between them — or inside the Resend HTTP client — is still unbounded. This
-// guarantees the caller gets an answer, because a login request waiting on an
-// SMTP socket is a login request the student has already given up on.
+// Hard ceiling on the provider call. A login request waiting on a stalled HTTP
+// connection is a login request the student has already given up on, so the
+// fetch is aborted rather than merely raced — an abandoned socket left running
+// would still hold the connection open.
 const SEND_DEADLINE_MS = 9000;
 
-const withDeadline = (promise, ms, label) => {
-	let timer;
-	return Promise.race([
-		promise,
-		new Promise((_, reject) => {
-			timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms}ms`)), ms);
-		}),
-	]).finally(() => clearTimeout(timer));
-};
+export const isEmailLive = () => Boolean(getConfig().apiKey);
 
-export const isEmailLive = () => {
-	const { gmailTransport, resend } = getProviders();
-	return Boolean(gmailTransport || resend);
+// One POST to Brevo. Resolves on success, throws with the reason on failure.
+const sendViaBrevo = async ({ apiKey, sender, to, subject, html }) => {
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), SEND_DEADLINE_MS);
+
+	let res;
+	try {
+		res = await fetch(BREVO_ENDPOINT, {
+			method: 'POST',
+			headers: {
+				'api-key': apiKey,
+				'content-type': 'application/json',
+				accept: 'application/json',
+			},
+			body: JSON.stringify({
+				sender,
+				to: [{ email: to }],
+				subject,
+				htmlContent: html,
+			}),
+			signal: controller.signal,
+		});
+	} catch (err) {
+		throw err.name === 'AbortError'
+			? new Error(`Brevo send timed out after ${SEND_DEADLINE_MS}ms`)
+			: new Error(`Brevo request failed: ${err.message}`);
+	} finally {
+		clearTimeout(timer);
+	}
+
+	if (res.ok) return;
+
+	// Brevo answers a rejection with a JSON body carrying the real reason
+	// ({ code, message }). Surface it verbatim: "sender not verified", "bad API
+	// key", and "daily quota exceeded" all arrive as a 4xx but need different
+	// fixes, and a bare status code tells you none of that.
+	const bodyText = await res.text().catch(() => '');
+	let detail = bodyText.slice(0, 300);
+	try {
+		const parsed = JSON.parse(bodyText);
+		if (parsed?.message) detail = `${parsed.code || 'error'}: ${parsed.message}`;
+	} catch { /* not JSON — keep the raw text */ }
+
+	throw new Error(`Brevo ${res.status} ${res.statusText}${detail ? ` — ${detail}` : ''}`);
 };
 
 // ── SHARED HTML SHELL ─────────────────────────────────────
@@ -131,52 +132,30 @@ const shell = (inner) => `
 
 // ── CORE SENDER (with demo fallback) ──────────────────────
 const send = async ({ to, subject, html, kind, demoData = {} }) => {
-	const { gmailTransport, resend, from, order } = getProviders();
+	const { apiKey, sender } = getConfig();
 
 	// DEMO MODE — no provider configured
-	if (!gmailTransport && !resend) {
+	if (!apiKey) {
 		console.log(`\n──────── ✉️  EMAIL [DEMO MODE — not actually sent] ────────`);
 		console.log(`  kind:    ${kind}`);
 		console.log(`  to:      ${to}`);
 		console.log(`  subject: ${subject}`);
 		Object.entries(demoData).forEach(([k, v]) => console.log(`  ${k}: ${v}`));
-		console.log(`  → Add GMAIL_USER + GMAIL_APP_PASSWORD to server/.env for real emails.`);
+		console.log(`  → Add BREVO_API_KEY + EMAIL_FROM to server/.env for real emails.`);
 		console.log(`────────────────────────────────────────────────────────────\n`);
 		return { demo: true, ...demoData };
 	}
 
-	// Try each configured provider in turn. A single provider is not a fallback
-	// chain: Render blocks outbound SMTP (25/465/587), so Gmail times out there
-	// no matter how it is configured, and without a second attempt the OTP is
-	// simply lost. Resend goes over HTTPS, which the platform does not block.
-	const errors = [];
-	for (const name of order) {
-		const transport = name === 'gmail' ? gmailTransport : resend;
-		if (!transport) continue;
-		try {
-			if (name === 'gmail') {
-				await withDeadline(gmailTransport.sendMail({ from, to, subject, html }), SEND_DEADLINE_MS, 'Gmail send');
-			} else {
-				// Gmail's From is the authenticated account; Resend's must be a
-				// verified domain or its shared onboarding sender, so the two
-				// cannot share one value when falling through.
-				const resendFrom = /@gmail\.com/i.test(from) ? 'NestFinder <onboarding@resend.dev>' : from;
-				await withDeadline(resend.emails.send({ from: resendFrom, to, subject, html }), SEND_DEADLINE_MS, 'Resend send');
-			}
-			if (errors.length) console.log(`✉️  Sent via ${name} after ${errors.length} failed attempt(s).`);
-			return { demo: false, ...demoData };
-		} catch (err) {
-			// "Connection timeout" on 465 means the host drops outbound SMTP
-			// altogether — not a credential problem, and not something a longer
-			// timeout would rescue. Say which provider failed so the log points
-			// at the right one.
-			console.error(`⚠️  Email send failed (${kind}) via ${name}:`, err.message);
-			errors.push(`${name}: ${err.message}`);
-		}
+	try {
+		await sendViaBrevo({ apiKey, sender, to, subject, html });
+		return { demo: false, ...demoData };
+	} catch (err) {
+		// Degrade to demo rather than break the auth flow: the caller reads
+		// `demo` and tells the user the code could not be sent, which is far
+		// better than a 500 on the login route.
+		console.error(`⚠️  Email send failed (${kind}) → ${to}: ${err.message}`);
+		return { demo: true, error: err.message, ...demoData };
 	}
-
-	// Every provider failed — degrade to demo rather than break the auth flow.
-	return { demo: true, error: errors.join(' | '), ...demoData };
 };
 
 // ── 1. EMAIL VERIFICATION ─────────────────────────────────

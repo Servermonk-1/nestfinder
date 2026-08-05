@@ -62,8 +62,79 @@ const buildVerifyToken = () => {
 	};
 };
 
-// Helper — generate a 6-digit OTP
-const generateOtp = () => Math.floor(100000 + Math.random() * 900000).toString();
+// Helper — generate a 6-digit OTP.
+// Math.random() is not a CSPRNG: V8 seeds it from a state recoverable after a
+// handful of observed outputs, which is not a property you want in the second
+// factor of a login. randomInt draws from the same pool as the token helpers.
+const generateOtp = () => crypto.randomInt(100000, 1000000).toString();
+
+// Constant-time compare so a wrong code cannot be narrowed by response timing.
+const safeEqual = (a, b) => {
+	const ab = Buffer.from(String(a), 'utf8');
+	const bb = Buffer.from(String(b), 'utf8');
+	return ab.length === bb.length && crypto.timingSafeEqual(ab, bb);
+};
+
+// ── Login OTP lifecycle ───────────────────────────────────
+const OTP_TTL_MS = 10 * 60 * 1000;         // a code is good for 10 minutes
+const OTP_RESEND_COOLDOWN_MS = 60 * 1000;  // at most one code a minute per account
+const MAX_OTP_ATTEMPTS = 5;                // wrong guesses before the code is burned
+
+// Mint and store a fresh code, or refuse when one was just sent. Every press of
+// "Resend" used to mint a new code and fire another email, so a double-click
+// invalidated the code the student was already typing out of their inbox.
+// Returns { otp } on success or { retryAfter } in seconds.
+const issueOtp = (account) => {
+	const lastSent = account.otpSentAt ? new Date(account.otpSentAt).getTime() : 0;
+	const since = Date.now() - lastSent;
+	if (account.otp && since < OTP_RESEND_COOLDOWN_MS) {
+		return { retryAfter: Math.ceil((OTP_RESEND_COOLDOWN_MS - since) / 1000) };
+	}
+
+	const otp = generateOtp();
+	account.otp = hash(otp);
+	account.otpExpires = Date.now() + OTP_TTL_MS;
+	account.otpSentAt = new Date();
+	account.otpAttempts = 0;
+	return { otp };
+};
+
+// Check a submitted code against the stored one, clearing it either way when it
+// is spent. Returns null when the code is good, otherwise the message to show.
+const consumeOtp = async (account, submitted) => {
+	const clear = () => {
+		account.otp = undefined;
+		account.otpExpires = undefined;
+		account.otpSentAt = undefined;
+		account.otpAttempts = 0;
+	};
+
+	if (!account.otp || !account.otpExpires) return 'No pending login. Please sign in again.';
+
+	// An expired code used to sit in the document until the next login, so it
+	// stayed matchable forever from the database's point of view. Drop it.
+	if (new Date(account.otpExpires).getTime() < Date.now()) {
+		clear();
+		await account.save();
+		return 'That code has expired. Please sign in again.';
+	}
+
+	if (!safeEqual(account.otp, hash(submitted))) {
+		// Burn the code after enough wrong guesses. Without a cap, a 6-digit
+		// code with a 10-minute life is ~1M guesses against an endpoint that
+		// will happily answer every single one of them.
+		account.otpAttempts = (account.otpAttempts || 0) + 1;
+		const spent = account.otpAttempts >= MAX_OTP_ATTEMPTS;
+		if (spent) clear();
+		await account.save();
+		return spent
+			? 'Too many incorrect codes. Please sign in again.'
+			: 'Invalid or expired code.';
+	}
+
+	clear();
+	return null;
+};
 
 // Helper — build a fresh password-reset token pair (1-hour lifetime)
 const buildResetToken = () => {
@@ -357,6 +428,8 @@ export const resetPassword = async (req, res) => {
 		account.trustedDevices = [];
 		account.otp = undefined;
 		account.otpExpires = undefined;
+		account.otpSentAt = undefined;
+		account.otpAttempts = 0;
 		await account.save();
 
 		res.status(200).json({ message: 'Password reset successful. You can now sign in with your new password.' });
@@ -405,7 +478,9 @@ export const loginStudent = async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
-		const student = await Student.findOne({ email });
+		// The OTP fields are select:false but the resend cooldown has to read
+		// them, so pull them in with the account.
+		const student = await Student.findOne({ email }).select('+otp +otpExpires +otpSentAt +otpAttempts');
 		if (!student) {
 			await recordAttempt({ email, userType: 'student', success: false, req });
 			return res.status(401).json({ message: 'Invalid email or password' });
@@ -455,13 +530,21 @@ export const loginStudent = async (req, res) => {
 			});
 		}
 
-		// Generate + store OTP (hashed), then send it.
-		const otp = generateOtp();
-		student.otp = hash(otp);
-		student.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+		// Generate + store OTP (hashed), then send it. The cooldown lives in the
+		// account, so a hammered "Resend" cannot keep replacing the code the
+		// student is mid-way through typing.
+		const issued = issueOtp(student);
+		if (!issued.otp) {
+			return res.status(429).json({
+				message: `We already sent a code. Please wait ${issued.retryAfter}s before asking for another.`,
+				otpRequired: true,
+				email: student.email,
+				retryAfter: issued.retryAfter,
+			});
+		}
 		await student.save();
 
-		const emailResult = await sendOTPEmail(student.email, student.fullName, otp);
+		const emailResult = await sendOTPEmail(student.email, student.fullName, issued.otp);
 
 		// No token here — the session is only issued after the OTP is verified.
 		res.status(200).json({
@@ -475,7 +558,7 @@ export const loginStudent = async (req, res) => {
 			email: student.email,
 			emailSent: !emailResult.demo,
 			// In demo mode surface the OTP so login is demoable without email.
-			...(emailResult.demo && isDev ? { devOtp: otp } : {}),
+			...(emailResult.demo && isDev ? { devOtp: issued.otp } : {}),
 		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
@@ -491,19 +574,28 @@ export const verifyStudentOtp = async (req, res) => {
 			return res.status(400).json({ message: 'Email and code are required' });
 		}
 
-		const student = await Student.findOne({ email }).select('+otp +otpExpires');
+		const student = await Student.findOne({ email }).select('+otp +otpExpires +otpSentAt +otpAttempts');
 		if (!student || !student.otp) {
 			return res.status(400).json({ message: 'No pending login. Please sign in again.' });
 		}
 
-		if (student.otp !== hash(otp) || student.otpExpires < Date.now()) {
-			return res.status(400).json({ message: 'Invalid or expired code.' });
+		// Step 1 checked this, but an admin can suspend an account in the window
+		// between the password and the code — the login it started must not finish.
+		if (student.suspended) {
+			return res.status(403).json({ message: 'Your account has been suspended. Contact support.' });
 		}
 
-		student.otp = undefined;
-		student.otpExpires = undefined;
+		const failure = await consumeOtp(student, otp);
+		if (failure) {
+			// Feed the shared lockout counter so guessing a code costs an attacker
+			// the same budget as guessing a password does.
+			await recordAttempt({ email, userType: 'student', success: false, req });
+			return res.status(400).json({ message: failure });
+		}
+
 		const deviceToken = rememberDevice(student, req);
 		await student.save();
+		await clearAttempts(email);
 
 		const authToken = generateToken(student._id, student.role);
 		sendAuthCookie(res, authToken);
@@ -530,7 +622,9 @@ export const loginLandlord = async (req, res) => {
 	try {
 		const { email, password } = req.body;
 
-		const landlord = await Landlord.findOne({ email });
+		// The OTP fields are select:false but the resend cooldown has to read
+		// them, so pull them in with the account.
+		const landlord = await Landlord.findOne({ email }).select('+otp +otpExpires +otpSentAt +otpAttempts');
 		if (!landlord) {
 			await recordAttempt({ email, userType: 'landlord', success: false, req });
 			return res.status(401).json({ message: 'Invalid email or password' });
@@ -570,12 +664,18 @@ export const loginLandlord = async (req, res) => {
 			});
 		}
 
-		const otp = generateOtp();
-		landlord.otp = hash(otp);
-		landlord.otpExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+		const issued = issueOtp(landlord);
+		if (!issued.otp) {
+			return res.status(429).json({
+				message: `We already sent a code. Please wait ${issued.retryAfter}s before asking for another.`,
+				otpRequired: true,
+				email: landlord.email,
+				retryAfter: issued.retryAfter,
+			});
+		}
 		await landlord.save();
 
-		const emailResult = await sendOTPEmail(landlord.email, landlord.fullName, otp);
+		const emailResult = await sendOTPEmail(landlord.email, landlord.fullName, issued.otp);
 
 		// No token here — the session is only issued after the OTP is verified.
 		res.status(200).json({
@@ -585,7 +685,7 @@ export const loginLandlord = async (req, res) => {
 			otpRequired: true,
 			email: landlord.email,
 			emailSent: !emailResult.demo,
-			...(emailResult.demo && isDev ? { devOtp: otp } : {}),
+			...(emailResult.demo && isDev ? { devOtp: issued.otp } : {}),
 		});
 	} catch (error) {
 		res.status(500).json({ message: error.message });
@@ -601,19 +701,28 @@ export const verifyLandlordOtp = async (req, res) => {
 			return res.status(400).json({ message: 'Email and code are required' });
 		}
 
-		const landlord = await Landlord.findOne({ email }).select('+otp +otpExpires');
+		const landlord = await Landlord.findOne({ email }).select('+otp +otpExpires +otpSentAt +otpAttempts');
 		if (!landlord || !landlord.otp) {
 			return res.status(400).json({ message: 'No pending login. Please sign in again.' });
 		}
 
-		if (landlord.otp !== hash(otp) || landlord.otpExpires < Date.now()) {
-			return res.status(400).json({ message: 'Invalid or expired code.' });
+		// Step 1 checked this, but an admin can suspend an account in the window
+		// between the password and the code — the login it started must not finish.
+		if (landlord.suspended) {
+			return res.status(403).json({ message: 'Your account has been suspended. Contact admin.' });
 		}
 
-		landlord.otp = undefined;
-		landlord.otpExpires = undefined;
+		const failure = await consumeOtp(landlord, otp);
+		if (failure) {
+			// Feed the shared lockout counter so guessing a code costs an attacker
+			// the same budget as guessing a password does.
+			await recordAttempt({ email, userType: 'landlord', success: false, req });
+			return res.status(400).json({ message: failure });
+		}
+
 		const deviceToken = rememberDevice(landlord, req);
 		await landlord.save();
+		await clearAttempts(email);
 
 		const authToken = generateToken(landlord._id, landlord.role);
 		sendAuthCookie(res, authToken);

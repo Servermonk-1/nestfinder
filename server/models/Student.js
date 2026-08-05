@@ -44,6 +44,10 @@ const studentSchema = new mongoose.Schema({
 	emailVerifyExpires: { type: Date, select: false },
 	otp: { type: String, select: false },
 	otpExpires: { type: Date, select: false },
+	// When the live code was minted, and how many wrong guesses it has taken.
+	// Both are what stop a 6-digit code from being walked one request at a time.
+	otpSentAt: { type: Date, select: false },
+	otpAttempts: { type: Number, default: 0, select: false },
 	passwordChangedAt: { type: Date },
 	resetPasswordToken: { type: String, select: false },
 	resetPasswordExpires: { type: Date, select: false },

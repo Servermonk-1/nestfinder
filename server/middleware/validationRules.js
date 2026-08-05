@@ -39,6 +39,22 @@ export const loginRules = [
 		.notEmpty().withMessage('Password is required'),
 ];
 
+// ── LOGIN OTP (step 2) ────────────────────────────────────
+// Shape-checks the code before it reaches the database, so junk submissions
+// never consume one of the account's five guesses.
+export const verifyOtpRules = [
+	body('email')
+		.trim()
+		.notEmpty().withMessage('Email is required')
+		.isEmail().withMessage('Please provide a valid email')
+		.normalizeEmail(),
+
+	body('otp')
+		.trim()
+		.isLength({ min: 6, max: 6 }).withMessage('Enter the 6-digit code')
+		.isNumeric().withMessage('Enter the 6-digit code'),
+];
+
 // ── PASSWORD RESET / CHANGE ───────────────────────────────
 export const forgotPasswordRules = [
 	body('email')

@@ -17,7 +17,7 @@ production:
 | Variable | How to regenerate |
 |---|---|
 | `JWT_SECRET` | `node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
-| `GMAIL_APP_PASSWORD` | Revoke and reissue in Google Account → Security → App passwords |
+| `BREVO_API_KEY` | Revoke and reissue in Brevo → SMTP & API → API Keys |
 | `TURNSTILE_SECRET_KEY` | Cloudflare dashboard → Turnstile → rotate |
 | `MONGO_URI` | Atlas → Database Access → edit user → new password |
 
@@ -45,12 +45,18 @@ JWT_SECRET=…                # freshly generated, see above
 JWT_EXPIRE=7d
 CLIENT_URL=https://your-frontend-domain    # ← required, see note below
 ADMIN_EMAIL=…
-GMAIL_USER=…
-GMAIL_APP_PASSWORD=…
+BREVO_API_KEY=…             # Brevo → SMTP & API → API Keys
+EMAIL_FROM=NestFinder <no-reply@yourdomain.com>   # must be a VERIFIED Brevo sender
 TURNSTILE_SECRET_KEY=…      # optional — CAPTCHA is a no-op without it
 SENTRY_DSN=…                # optional — errors are logged locally regardless
 
 ```
+
+> **Email must go over HTTPS, not SMTP.** Render blocks outbound connections on
+> ports 25, 465, and 587, so any SMTP transport (Gmail included) times out there
+> no matter how it is configured. Brevo is called over 443, which is why it is
+> the transport. Without `BREVO_API_KEY` the app runs in demo mode: logins still
+> work, but the OTP is printed to the server log instead of emailed.
 
 > **`CLIENT_URL` is not optional in production.** It is the CORS allowlist and
 > the socket origin. Get it wrong and the frontend silently cannot call the API

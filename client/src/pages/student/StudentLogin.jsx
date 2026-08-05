@@ -83,14 +83,19 @@ export default function StudentAuth() {
 		try {
 			const { data } = await api.post('/auth/student/login', { ...signInData, deviceToken: getDeviceToken(signInData.email) });
 			if (data.otpRequired) {
-				setOtpStage({ email: data.email, devOtp: data.devOtp });
-				setOtpCode('');
 				// The server tells us whether the code actually left the building.
 				// A hardcoded success toast here meant a failed send still read as
 				// "check your email", so the student waited on a code that was
 				// never sent. Use the server's own wording either way.
-				if (data.emailSent === false) toast.error(data.message || 'We could not send your code. Please try again.');
-				else toast.success(data.message || 'We sent a 6-digit code to your email');
+				if (data.emailSent === false && !data.devOtp) {
+					// Nothing was delivered, so there is no code to type. Keep them
+					// on the form instead of parking them on a dead code screen.
+					toast.error(data.message || 'We could not send your code. Please try again.');
+					return;
+				}
+				setOtpStage({ email: data.email, devOtp: data.devOtp });
+				setOtpCode('');
+				toast.success(data.message || 'We sent a 6-digit code to your email');
 				return;
 			}
 			login(data.user, data.token);
@@ -128,8 +133,21 @@ export default function StudentAuth() {
 		setOtpLoading(true);
 		try {
 			const { data } = await api.post('/auth/student/login', signInData);
+			// This is the same endpoint as step 1, so it can answer with a finished
+			// login (OTP disabled) or with a code it failed to send. Assuming a code
+			// came back stranded the user on a blank screen and threw the token away.
+			if (!data.otpRequired) {
+				login(data.user, data.token);
+				toast.success(`Welcome back, ${data.user.fullName}`);
+				navigate('/dashboard');
+				return;
+			}
 			setOtpStage({ email: data.email, devOtp: data.devOtp });
-			toast.success('New code sent');
+			if (data.emailSent === false && !data.devOtp) {
+				toast.error(data.message || 'We could not send your code. Please try again.');
+			} else {
+				toast.success('New code sent');
+			}
 		} catch (err) {
 			toast.error(err.response?.data?.message || 'Could not resend code');
 		} finally { setOtpLoading(false); }

@@ -21,6 +21,7 @@ import {
 	studentRegisterRules,
 	landlordRegisterRules,
 	loginRules,
+	verifyOtpRules,
 	forgotPasswordRules,
 	resetPasswordRules,
 	changePasswordRules,
@@ -36,10 +37,12 @@ router.post('/student/register', verifyCaptcha, studentRegisterRules, validate, 
 router.post('/landlord/register', verifyCaptcha, landlordRegisterRules, validate, registerLandlord);
 
 // ── Login (brute-force protected) ──
+// Step 2 is guarded too: it is the endpoint that accepts a 6-digit secret, so
+// leaving it unmetered made it the cheapest way into an account.
 router.post('/student/login', loginRules, validate, checkBruteForce, loginStudent);
-router.post('/student/verify-otp', verifyStudentOtp); // step 2 of student login
+router.post('/student/verify-otp', verifyOtpRules, validate, checkBruteForce, verifyStudentOtp); // step 2 of student login
 router.post('/landlord/login', loginRules, validate, checkBruteForce, loginLandlord);
-router.post('/landlord/verify-otp', verifyLandlordOtp); // step 2 of landlord login
+router.post('/landlord/verify-otp', verifyOtpRules, validate, checkBruteForce, verifyLandlordOtp); // step 2 of landlord login
 router.post('/admin/login', loginRules, validate, checkBruteForce, loginAdmin);
 
 // ── Email verification ──
