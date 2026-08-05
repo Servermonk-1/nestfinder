@@ -33,17 +33,27 @@ const getProviders = () => {
 		})
 		: null;
 
-	const resend = (!gmailTransport && resendKey) ? new Resend(resendKey) : null;
+	// Resend is built whenever a key exists, NOT only when Gmail is missing.
+	// The old `!gmailTransport && resendKey` meant configuring Gmail silently
+	// disabled Resend — so on a host that blocks SMTP there was no way to send
+	// at all, even with a perfectly good API key sitting in the environment.
+	const resend = resendKey ? new Resend(resendKey) : null;
 
-	// EMAIL_FROM was previously read only on the Resend path, so setting it
-	// alongside Gmail credentials appeared to do nothing. It is honoured on both
-	// now — but Gmail will silently rewrite the From header to the authenticated
-	// account unless the address is a verified "send mail as" alias, so a
-	// mismatch is worth saying out loud rather than leaving to be discovered in
-	// a recipient's inbox.
+	// Which provider goes first. Gmail is the better default locally (real mail
+	// to any inbox, no domain to verify), but PaaS hosts including Render block
+	// outbound SMTP on 25/465/587 — the connection simply times out. Set
+	// EMAIL_PROVIDER=resend there to skip straight to HTTPS and avoid burning
+	// the send deadline on a socket that will never open.
+	const preferred = process.env.EMAIL_PROVIDER?.trim().toLowerCase();
+	const order = preferred === 'resend'
+		? ['resend', 'gmail']
+		: preferred === 'gmail'
+			? ['gmail', 'resend']
+			: ['gmail', 'resend'];
+
 	const envFrom = process.env.EMAIL_FROM?.trim();
 	let from;
-	if (gmailTransport) {
+	if (order[0] === 'gmail' && gmailTransport) {
 		const addressIn = envFrom?.match(/<([^>]+)>/)?.[1] || envFrom;
 		if (envFrom && addressIn?.toLowerCase() !== gmailUser.toLowerCase()) {
 			console.warn(
@@ -55,11 +65,14 @@ const getProviders = () => {
 		from = envFrom || 'NestFinder <onboarding@resend.dev>';
 	}
 
-	console.log(
-		`✉️  Email provider: ${gmailTransport ? `Gmail (${gmailUser})` : resend ? 'Resend' : 'DEMO MODE — nothing will be sent'}`,
-	);
+	const primary = order[0] === 'gmail' && gmailTransport ? `Gmail (${gmailUser})` : order[0] === 'resend' && resend ? 'Resend' : null;
+	const fallback = order[1] === 'gmail' && gmailTransport ? `Gmail (${gmailUser})` : order[1] === 'resend' && resend ? 'Resend' : null;
+	const label = primary
+		? fallback ? `${primary} → ${fallback} fallback` : primary
+		: 'DEMO MODE — nothing will be sent';
+	console.log(`✉️  Email provider: ${label}`);
 
-	_providers = { gmailTransport, resend, from };
+	_providers = { gmailTransport, resend, from, order };
 	return _providers;
 };
 
@@ -116,7 +129,7 @@ const shell = (inner) => `
 
 // ── CORE SENDER (with demo fallback) ──────────────────────
 const send = async ({ to, subject, html, kind, demoData = {} }) => {
-	const { gmailTransport, resend, from } = getProviders();
+	const { gmailTransport, resend, from, order } = getProviders();
 
 	// DEMO MODE — no provider configured
 	if (!gmailTransport && !resend) {
@@ -129,21 +142,39 @@ const send = async ({ to, subject, html, kind, demoData = {} }) => {
 		console.log(`────────────────────────────────────────────────────────────\n`);
 		return { demo: true, ...demoData };
 	}
-	try {
-		if (gmailTransport) {
-			await withDeadline(gmailTransport.sendMail({ from, to, subject, html }), SEND_DEADLINE_MS, 'Gmail send');
-		} else {
-			await withDeadline(resend.emails.send({ from, to, subject, html }), SEND_DEADLINE_MS, 'Resend send');
+
+	// Try each configured provider in turn. A single provider is not a fallback
+	// chain: Render blocks outbound SMTP (25/465/587), so Gmail times out there
+	// no matter how it is configured, and without a second attempt the OTP is
+	// simply lost. Resend goes over HTTPS, which the platform does not block.
+	const errors = [];
+	for (const name of order) {
+		const transport = name === 'gmail' ? gmailTransport : resend;
+		if (!transport) continue;
+		try {
+			if (name === 'gmail') {
+				await withDeadline(gmailTransport.sendMail({ from, to, subject, html }), SEND_DEADLINE_MS, 'Gmail send');
+			} else {
+				// Gmail's From is the authenticated account; Resend's must be a
+				// verified domain or its shared onboarding sender, so the two
+				// cannot share one value when falling through.
+				const resendFrom = /@gmail\.com/i.test(from) ? 'NestFinder <onboarding@resend.dev>' : from;
+				await withDeadline(resend.emails.send({ from: resendFrom, to, subject, html }), SEND_DEADLINE_MS, 'Resend send');
+			}
+			if (errors.length) console.log(`✉️  Sent via ${name} after ${errors.length} failed attempt(s).`);
+			return { demo: false, ...demoData };
+		} catch (err) {
+			// "Connection timeout" on 465 means the host drops outbound SMTP
+			// altogether — not a credential problem, and not something a longer
+			// timeout would rescue. Say which provider failed so the log points
+			// at the right one.
+			console.error(`⚠️  Email send failed (${kind}) via ${name}:`, err.message);
+			errors.push(`${name}: ${err.message}`);
 		}
-		return { demo: false, ...demoData };
-	} catch (err) {
-		// Never let an email failure break the auth flow — degrade to demo.
-		// ENETUNREACH here means the host cannot route to Gmail at all (Render's
-		// IPv6 egress); the transport pins family:4 to avoid it, but a network
-		// that drops outbound :465 entirely still lands in this branch.
-		console.error(`⚠️  Email send failed (${kind}):`, err.message);
-		return { demo: true, error: err.message, ...demoData };
 	}
+
+	// Every provider failed — degrade to demo rather than break the auth flow.
+	return { demo: true, error: errors.join(' | '), ...demoData };
 };
 
 // ── 1. EMAIL VERIFICATION ─────────────────────────────────
