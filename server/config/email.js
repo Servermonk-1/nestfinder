@@ -16,6 +16,8 @@ const getProviders = () => {
 	const gmailUser = process.env.GMAIL_USER;
 	const gmailPass = process.env.GMAIL_APP_PASSWORD;
 	const resendKey = process.env.RESEND_API_KEY;
+	console.log("EMAIL_PROVIDER =", process.env.EMAIL_PROVIDER);
+	console.log("RESEND KEY EXISTS =", !!process.env.RESEND_API_KEY);
 
 	const gmailTransport = (gmailUser && gmailPass)
 		? nodemailer.createTransport({
