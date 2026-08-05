@@ -36,15 +36,94 @@ connectDB();
 const app = express();
 const httpServer = http.createServer(app);
 
-// Only the known frontend origin(s) may call the API or open a socket. Non-browser
-// callers (curl, server-to-server) send no Origin header and are allowed through.
-const allowedOrigins = [process.env.CLIENT_URL, 'http://localhost:5173'].filter(Boolean);
-const corsOrigin = (origin, cb) =>
-	(!origin || allowedOrigins.includes(origin)) ? cb(null, true) : cb(new Error('Not allowed by CORS'));
+// Render (and any PaaS) terminates TLS at a proxy and forwards the real client
+// address in X-Forwarded-For. Without this, req.ip is the proxy for every
+// request — so the rate limiters would bucket the entire internet together, and
+// express-rate-limit v8 emits a validation error when it detects the mismatch.
+app.set('trust proxy', 1);
+
+// ── ALLOWED ORIGINS ───────────────────────────────────────
+// An origin is scheme + host + port with NO path and NO trailing slash. A
+// CLIENT_URL of "https://site.vercel.app/" therefore never equals the Origin
+// header the browser actually sends, and the comparison fails for a reason that
+// is invisible in the logs. Normalise instead of trusting the dashboard value.
+const normaliseOrigin = (value) => {
+	if (!value) return null;
+	const trimmed = String(value).trim().replace(/\/+$/, '');
+	if (!trimmed) return null;
+	try {
+		return new URL(trimmed).origin.toLowerCase();
+	} catch {
+		return trimmed.toLowerCase();
+	}
+};
+
+const allowedOrigins = [
+	...new Set(
+		[
+			process.env.CLIENT_URL,
+			// A second name for the same frontend (custom domain, apex vs www)
+			// without needing a code change to add it.
+			process.env.CLIENT_URL_ALT,
+			'http://localhost:5173',
+			'http://127.0.0.1:5173',
+		]
+			.map(normaliseOrigin)
+			.filter(Boolean),
+	),
+];
+
+// Vercel gives every branch and every commit its own hostname. Those are the
+// same application, so allow them in addition to the production alias — matched
+// on the exact suffix, not a substring, so "evil-vercel.app.attacker.com" is
+// still rejected.
+const isVercelPreview = (origin) => /^https:\/\/[a-z0-9-]+\.vercel\.app$/i.test(origin);
+
+const isAllowedOrigin = (origin) => {
+	const candidate = normaliseOrigin(origin);
+	if (!candidate) return false;
+	return allowedOrigins.includes(candidate) || isVercelPreview(candidate);
+};
+
+// Rejection must NOT be an Error. Passing one to the callback sends it to the
+// error handler, which answers 500 with no CORS headers — indistinguishable
+// from a crash, and the exact failure this deployment hit. `cb(null, false)`
+// instead omits Access-Control-Allow-Origin, which is precisely how CORS is
+// meant to deny: the request still completes, and the browser blocks it.
+const corsOrigin = (origin, cb) => {
+	// No Origin header at all: curl, server-to-server, health checks, and
+	// same-origin navigations. Not a browser cross-origin request, so there is
+	// nothing to authorise.
+	if (!origin) return cb(null, true);
+	if (isAllowedOrigin(origin)) return cb(null, true);
+	console.warn(`[CORS] blocked origin: ${origin}`);
+	return cb(null, false);
+};
+
+const corsOptions = {
+	origin: corsOrigin,
+	credentials: true,
+	methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+	allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+	exposedHeaders: ['Content-Disposition'],
+	// Cache the preflight so the browser stops re-asking on every request.
+	maxAge: 86400,
+	optionsSuccessStatus: 204,
+};
+
+console.log('[CORS] allowed origins:', allowedOrigins.join(', ') || '(none configured)');
+if (!process.env.CLIENT_URL) {
+	console.warn('[CORS] CLIENT_URL is not set — only localhost origins will be accepted.');
+}
 
 // ── SOCKET.IO — real-time message delivery ──────────────────
+// Given the same predicate as the REST API, so a browser that can call the API
+// can also open a socket.
 const io = new Server(httpServer, {
-	cors: { origin: allowedOrigins, credentials: true },
+	cors: {
+		origin: (origin, cb) => (!origin || isAllowedOrigin(origin) ? cb(null, true) : cb(null, false)),
+		credentials: true,
+	},
 });
 
 // Pull the session JWT out of the handshake cookie (the browser sends it
@@ -78,40 +157,40 @@ io.on('connection', (socket) => {
 app.set('io', io);
 
 // ── SECURITY MIDDLEWARE ───────────────────────────────────
-// 1. Helmet — sets secure HTTP headers
-app.use(helmet());
+// 1. CORS FIRST. A preflight must be answered before anything else can reject
+//    it: OPTIONS carries no cookie, no body and no auth header, so every
+//    middleware below would either waste work on it or — in the case of the
+//    rate limiter — count it against the client's budget.
+app.use(cors(corsOptions));
 
-// 2. CORS — restrict to the known frontend origin(s).
-//    `credentials` lets the browser send/receive the httpOnly session cookie.
-app.use(cors({ origin: corsOrigin, credentials: true }));
-
-// TEMP DEBUG: log every incoming request to help diagnose 404s and routing issues.
+// Express 5 removed the string-pattern route ('*' no longer parses), so the
+// explicit preflight short-circuit is a plain middleware. cors() has already
+// attached the headers above; this ends the request at 204 instead of letting
+// an OPTIONS fall through to the rate limiter, the body parser and the 404.
 app.use((req, res, next) => {
-	try {
-		console.log('[REQ]', req.method, req.originalUrl);
-	} catch (e) { /* ignore logging failures */ }
+	if (req.method === 'OPTIONS') return res.sendStatus(204);
 	next();
 });
 
-// TEMP DEBUG: utility to print all registered routes at startup
-function printRegisteredRoutes(router, prefix = '') {
-    if (router.stack) {
-        router.stack.forEach((middleware) => {
-            if (middleware.route) {
-                // This middleware is a route
-                const methods = Object.keys(middleware.route.methods);
-                methods.forEach((m) => {
-                    console.log(`[ROUTE] ${m.toUpperCase().padEnd(6)} ${prefix}${middleware.route.path}`);
-                });
-            } else if (middleware.name === 'router' && middleware.handle.stack) {
-                // This middleware is a nested router (e.g., app.use('/api/payments', router))
-                const routerPrefix = middleware.regexp.source
-                    .replace(/^\^/, '').replace(/\$.*/, '').replace(/\\\//g, '/');
-                printRegisteredRoutes(middleware.handle, routerPrefix);
-            }
-        });
-    }
+// 2. Helmet — secure HTTP headers.
+//    crossOriginResourcePolicy is relaxed because the frontend is on a
+//    different origin (Vercel) than the API (Render); the default
+//    "same-origin" makes the browser refuse to render <img> served from
+//    /uploads. This weakens nothing that CORS is protecting.
+app.use(helmet({
+	crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
+// Request logging, outside production only — on Render this fires for every
+// asset and health poll and buys nothing that the platform's own log does not
+// already show.
+if (process.env.NODE_ENV !== 'production') {
+	app.use((req, res, next) => {
+		console.log('[REQ]', req.method, req.originalUrl);
+		next();
+	});
 }
+
 // 2b. Parse cookies so the auth middleware can read the httpOnly session cookie.
 app.use(cookieParser());
 
@@ -127,14 +206,28 @@ const globalLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,  // 15 minutes
 	max: 100,                   // max 100 requests per window
 	message: { message: 'Too many requests. Please try again later.' },
+	standardHeaders: true,
+	legacyHeaders: false,
+	// A preflight is the browser asking permission, not the user making a
+	// request. Counting it halves every client's real budget.
+	skip: (req) => req.method === 'OPTIONS',
 });
 app.use(globalLimiter);
 
-// 6. Stricter rate limiter for auth routes only
+// 6. Stricter rate limiter for auth routes only.
+//    max:10 with preflights counted meant ~5 real login attempts before a
+//    15-minute lockout, since every cross-origin POST is preceded by an
+//    OPTIONS. Successful logins are not counted either — the limit exists to
+//    slow credential guessing, and locking out someone who just typed their
+//    password correctly is not that.
 const authLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000,
-	max: 10,                    // max 10 login attempts
+	max: 20,
 	message: { message: 'Too many login attempts. Please try again later.' },
+	standardHeaders: true,
+	legacyHeaders: false,
+	skip: (req) => req.method === 'OPTIONS',
+	skipSuccessfulRequests: true,
 });
 
 // ── STATIC FILES ──────────────────────────────────────────
@@ -163,12 +256,6 @@ app.use('/api/companies', companyRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/payments-settings', paymentSettingsRoutes);
-console.log('✓ Mounted paymentSettingsRoutes at /api/payments-settings');
-
-// TEMP DEBUG: print all registered routes before starting the server
-console.log('\n=== REGISTERED EXPRESS ROUTES ===');
-printRegisteredRoutes(app);
-console.log('=== END ROUTE LIST ===\n');
 app.use('/api/saved-searches', savedSearchRoutes);
 
 // ── HEALTH CHECK ──────────────────────────────────────────
@@ -184,6 +271,20 @@ app.get('/healthz', (req, res) => {
 		uptimeSeconds: Math.round(process.uptime()),
 		env: process.env.NODE_ENV || 'development',
 		db: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+	});
+});
+
+// Answers the one question the logs cannot: what this instance actually parsed
+// CLIENT_URL into, and whether the caller's own Origin passes. A trailing
+// slash or stray whitespace in the dashboard is invisible everywhere else.
+app.get('/healthz/cors', (req, res) => {
+	const origin = req.headers.origin || null;
+	res.json({
+		allowedOrigins,
+		clientUrlRaw: process.env.CLIENT_URL ?? null,
+		clientUrlNormalised: normaliseOrigin(process.env.CLIENT_URL),
+		yourOrigin: origin,
+		yourOriginAllowed: origin ? isAllowedOrigin(origin) : null,
 	});
 });
 

@@ -8,7 +8,13 @@ import { reportError } from '../utils/errorReporter.js';
  * detail to whoever triggered it.
  */
 const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused-vars
-	const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+	// Prefer a status the error itself carries. Reading only res.statusCode
+	// meant every thrown Error became a 500, because Express leaves the status
+	// at 200 until something sets it — which is how a rejected CORS origin was
+	// reported as a server crash.
+	const explicit = Number(err.statusCode || err.status);
+	const fromResponse = res.statusCode && res.statusCode !== 200 ? res.statusCode : null;
+	const statusCode = (explicit >= 400 && explicit <= 599) ? explicit : (fromResponse || 500);
 	const isServerFault = statusCode >= 500;
 
 	if (isServerFault) {
@@ -20,6 +26,10 @@ const errorHandler = (err, req, res, next) => { // eslint-disable-line no-unused
 			ip: req.ip,
 		});
 	}
+
+	// If the response has already started streaming, headers are gone and the
+	// only honest thing left is to end it.
+	if (res.headersSent) return res.end();
 
 	res.status(statusCode).json({
 		// A stack trace or a raw driver message tells an attacker about the
