@@ -2,6 +2,7 @@ import Payment from '../models/Payment.js';
 import Booking from '../models/Booking.js';
 import Listing from '../models/Listing.js';
 import PaymentSettings from '../models/PaymentSettings.js';
+import { uploadToCloudinary } from '../config/cloudinary.js';
 import axios from 'axios';
 
 const POPULATE = [
@@ -22,6 +23,19 @@ export const submitPayment = async (req, res) => {
         if (booking.status !== 'pendingPayment') return res.status(400).json({ message: 'This booking is not awaiting payment.' });
 
         const file = req.file; // optional receipt / screenshot upload handled by upload middleware
+
+        // Proof-of-payment is the only evidence an admin has when verifying a
+        // transfer, so it goes to Cloudinary rather than the container disk —
+        // on Render a redeploy would otherwise wipe it while the Payment row
+        // survived, leaving an unverifiable claim.
+        let fileUrl;
+        if (file) {
+            const uploaded = await uploadToCloudinary(file.buffer, {
+                folder: 'nestfinder/payments',
+                resource_type: file.mimetype === 'application/pdf' ? 'raw' : 'image',
+            });
+            fileUrl = uploaded.secure_url;
+        }
 
         const method = String(paymentMethod || 'bank_transfer');
 
@@ -72,7 +86,7 @@ export const submitPayment = async (req, res) => {
                 transactionHash: String(transactionHash).trim(),
                 network: String(network || 'TRC20').trim(),
                 walletAddress: String(walletAddress || '').trim(),
-                blockchainScreenshot: file ? file.filename : undefined,
+                blockchainScreenshot: fileUrl,
                 expectedUsdtAmount,
             };
         } else {
@@ -80,7 +94,7 @@ export const submitPayment = async (req, res) => {
                 senderName: String(senderName || '').trim(),
                 transactionReference: String(transactionReference || '').trim(),
                 paymentDate: paymentDate ? new Date(paymentDate) : undefined,
-                receipt: file ? file.filename : undefined,
+                receipt: fileUrl,
             };
         }
 

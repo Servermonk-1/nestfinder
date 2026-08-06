@@ -369,7 +369,7 @@ This feeds the trust dimension in student comparisons.
 
 **On stored XSS.** React escapes all rendered text and the codebase contains no `dangerouslySetInnerHTML`, so there is no injection point for rendered markup.
 
-**Secrets** live only in `server/.env`, which is git-ignored. `server/uploads/` holds identity documents and is git-ignored except for a `.gitkeep`. No credential is written into source — `createAdmin.js` reads `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the environment and refuses to run without them.
+**Secrets** live only in `server/.env`, which is git-ignored — including the three `CLOUDINARY_*` keys. Uploaded files (listing photos, avatars, identity documents, payment receipts) are never written to the repository or to the server's disk: they are streamed to Cloudinary and only the resulting URL is stored in MongoDB. No credential is written into source — `createAdmin.js` reads `ADMIN_EMAIL` and `ADMIN_PASSWORD` from the environment and refuses to run without them.
 
 ---
 

@@ -8,7 +8,7 @@ import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 import { runFraudShield, computeTrustScore } from '../services/fraudShield.js';
 import { geocodeOne } from '../services/geocodeListing.js';
-import { optimiseUploaded } from '../services/optimiseImages.js';
+import { uploadToCloudinary, deleteFromCloudinary, extractPublicId } from '../config/cloudinary.js';
 import { notifyMatchingSearches } from '../services/savedSearchAlerts.js';
 import { buildListingFilter } from '../utils/listingFilter.js';
 import { geocodeListing as lookupAddress, distanceKm } from '../utils/geocode.js';
@@ -61,8 +61,19 @@ export const createListing = async (req, res) => {
 			contactPhone, contactEmail, cautionDeposit, agentFee, legalFee
 		} = req.body;
 
-		// Get uploaded image paths from Multer
-		const images = req.files ? req.files.map(f => f.path) : [];
+		// Upload images to Cloudinary instead of saving to disk.
+		// Cloudinary handles optimization automatically (resize, compression, format).
+		const imageUrls = [];
+		if (req.files && req.files.length > 0) {
+			const uploadPromises = req.files.map(file =>
+				uploadToCloudinary(file.buffer, {
+					folder: 'nestfinder/listings',
+					resource_type: 'image',
+				})
+			);
+			const uploadResults = await Promise.all(uploadPromises);
+			imageUrls.push(...uploadResults.map(result => result.secure_url));
+		}
 
 		const listing = await Listing.create({
 			title, description, address, city, area,
@@ -74,7 +85,7 @@ export const createListing = async (req, res) => {
 			agentFee: Number(agentFee) || 0,
 			legalFee: Number(legalFee) || 0,
 			amenities: amenities ? JSON.parse(amenities) : [],
-			images,
+			images: imageUrls,
 			contactPhone, contactEmail,
 			landlord: req.user.id,
 		});
@@ -87,11 +98,6 @@ export const createListing = async (req, res) => {
 			applyPin(listing, pin, { address, area, city, state });
 			await listing.save({ timestamps: false });
 		}
-
-		// Shrink the photos in the background. A landlord's 4MB phone photo is
-		// unusable over Nigerian mobile data, but a slow conversion must never
-		// delay their upload — so this runs after the response goes out.
-		optimiseUploaded(req.files || []).catch((err) => console.error('Image optimisation failed:', err.message));
 
 		screenInBackground(listing._id, req.user.id);
 
@@ -397,11 +403,67 @@ export const updateListing = async (req, res) => {
 		}
 
 		// `lat`/`lng` are pin coordinates, not listing columns — strip them so they
-		// can't be written as stray top-level fields.
-		const { lat, lng, ...body } = req.body;
+		// can't be written as stray top-level fields. `images` is handled below:
+		// it must never be written straight from the body, or a landlord could
+		// point a listing at any URL and orphan the Cloudinary assets they replaced.
+		const { lat, lng, images: bodyImages, ...body } = req.body;
+
+		// An edit arrives as multipart now (it can carry new photos), so every
+		// field is a string — including `amenities`, which the form sends as JSON
+		// exactly as create does. Left alone, Mongoose would cast the raw JSON
+		// text into a single-element array and the listing would show one amenity
+		// literally named `["WiFi","Water"]`.
+		if (typeof body.amenities === 'string') {
+			try {
+				const parsed = JSON.parse(body.amenities);
+				body.amenities = Array.isArray(parsed) ? parsed : [];
+			} catch {
+				// A JSON-only client (or a hand-rolled request) may still send a
+				// plain array; anything unparseable is dropped rather than saved
+				// as junk.
+				delete body.amenities;
+			}
+		}
+
+		// ── Photos ──
+		// The client sends `images` as the list of EXISTING URLs it kept (absent
+		// means "unchanged"), plus any brand-new files as multipart `images`.
+		// Anything previously on the listing but missing from the keep-list has
+		// been removed by the landlord, so it is deleted from Cloudinary — an
+		// orphaned asset still costs storage and stays publicly reachable.
+		let nextImages;
+		const keptImages = bodyImages === undefined
+			? null
+			: (Array.isArray(bodyImages) ? bodyImages : [bodyImages]).filter(Boolean);
+
+		if (keptImages !== null || (req.files && req.files.length)) {
+			const previous = listing.images || [];
+			const keep = keptImages === null ? previous : previous.filter((url) => keptImages.includes(url));
+
+			const uploaded = req.files?.length
+				? (await Promise.all(req.files.map((file) =>
+					uploadToCloudinary(file.buffer, { folder: 'nestfinder/listings', resource_type: 'image' })
+				))).map((r) => r.secure_url)
+				: [];
+
+			nextImages = [...keep, ...uploaded];
+
+			// Fire-and-forget: a failed remote delete must not fail the landlord's
+			// edit. The listing no longer references these, so the worst case is a
+			// stray asset, not a broken page.
+			const removed = previous.filter((url) => !keep.includes(url));
+			for (const url of removed) {
+				const publicId = extractPublicId(url);
+				if (publicId) {
+					deleteFromCloudinary(publicId).catch((err) =>
+						console.error('Cloudinary delete failed:', publicId, err.message));
+				}
+			}
+		}
+
 		const updated = await Listing.findByIdAndUpdate(
 			req.params.id,
-			{ ...body, updatedAt: Date.now() },
+			{ ...body, ...(nextImages ? { images: nextImages } : {}), updatedAt: Date.now() },
 			{ new: true, runValidators: true }
 		);
 
@@ -415,7 +477,7 @@ export const updateListing = async (req, res) => {
 		// listing, pass Fraud Shield, then edit it into a scam and never be
 		// checked again — which would defeat the whole pipeline.
 		// Photos may have changed, so drop the cached fingerprints first.
-		if (req.body.images !== undefined) {
+		if (nextImages) {
 			await Listing.findByIdAndUpdate(req.params.id, { imageHashes: [] });
 		}
 		screenInBackground(req.params.id, req.user.id);
@@ -439,6 +501,17 @@ export const deleteListing = async (req, res) => {
 		if (listing.landlord.toString() !== req.user.id) {
 			return res.status(403).json({ message: 'Not authorized to delete this listing' });
 		}
+
+		// Take the photos down with the listing. Cloudinary bills for stored
+		// bytes and serves anything still uploaded, so a deleted listing must not
+		// leave its images reachable. Awaited (unlike the edit path) because
+		// nothing else is waiting on this response, and failures are swallowed
+		// per-image: a Cloudinary outage must not block the landlord's delete.
+		const publicIds = (listing.images || []).map(extractPublicId).filter(Boolean);
+		await Promise.all(publicIds.map((id) =>
+			deleteFromCloudinary(id).catch((err) =>
+				console.error('Cloudinary delete failed:', id, err.message))
+		));
 
 		await listing.deleteOne();
 		res.status(200).json({ message: 'Listing deleted successfully' });

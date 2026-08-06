@@ -37,7 +37,9 @@ router.get('/landlord/mine', protect, getMyListings);
 router.post('/geocode-preview', protect, requireIdentityVerified, previewGeocode);
 // Landlords must be identity-verified before they can publish a listing.
 router.post('/', protect, requireIdentityVerified, upload.array('images', 6), listingRules, validate, createListing);
-router.put('/:id', protect, updateListing);
+// Multipart here too: an edit can add new photos, and without the parser they
+// would arrive as an unread stream and the body would come through empty.
+router.put('/:id', protect, upload.array('images', 6), updateListing);
 router.delete('/:id', protect, deleteListing);
 router.patch('/:id/availability', protect, toggleAvailability);
 router.patch('/:id/view', incrementViews);

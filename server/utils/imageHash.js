@@ -8,9 +8,40 @@ import sharp from 'sharp';
  * records which cells are brighter than the average, so a resized, recompressed
  * or lightly-cropped copy still produces a near-identical fingerprint.
  */
+
+// Photos now live on Cloudinary, so what used to be a local file path is an
+// https URL — and sharp only reads buffers and paths. Fetch remote sources into
+// a buffer first. Capped so a wrong/huge URL can't blow up the container: a
+// listing photo is well under this, and Fraud Shield runs in the background
+// where a slow fetch would otherwise hold memory indefinitely.
+const FETCH_TIMEOUT_MS = 10000;
+const MAX_BYTES = 10 * 1024 * 1024;
+
+const isRemote = (src) => typeof src === 'string' && /^https?:\/\//i.test(src);
+
+const fetchBuffer = async (url) => {
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+	try {
+		const res = await fetch(url, { signal: controller.signal });
+		if (!res.ok) return null;
+		const size = Number(res.headers.get('content-length') || 0);
+		if (size && size > MAX_BYTES) return null;
+		const buf = Buffer.from(await res.arrayBuffer());
+		return buf.length > MAX_BYTES ? null : buf;
+	} catch {
+		return null;
+	} finally {
+		clearTimeout(timer);
+	}
+};
+
 export async function hashImage(pathOrBuffer) {
 	try {
-		const pixels = await sharp(pathOrBuffer)
+		const input = isRemote(pathOrBuffer) ? await fetchBuffer(pathOrBuffer) : pathOrBuffer;
+		if (!input) return null;
+
+		const pixels = await sharp(input)
 			.greyscale()
 			.resize(8, 8, { fit: 'fill' })
 			.raw()

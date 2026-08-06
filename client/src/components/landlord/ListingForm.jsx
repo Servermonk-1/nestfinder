@@ -52,6 +52,10 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 	const [files, setFiles] = useState([]);
 	const [previews, setPreviews] = useState([]);
 	const [errors, setErrors] = useState({});
+	// Which of the already-published photos survive this edit. The server treats
+	// the list it receives as authoritative and deletes from Cloudinary anything
+	// missing from it, so this has to be the full keep-list, not a diff.
+	const [kept, setKept] = useState(existingImages);
 	// The map pin lives beside the form rather than in it — it isn't a listing
 	// column, it's a pair of coordinates the server turns into a GeoJSON point.
 	const [pin, setPin] = useState(initialPin);
@@ -70,7 +74,7 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 
 	const handleFiles = (e) => {
 		const picked = Array.from(e.target.files || []);
-		const room = MAX_IMAGES - existingImages.length - files.length;
+		const room = MAX_IMAGES - kept.length - files.length;
 		const accepted = picked.slice(0, Math.max(room, 0));
 		setFiles((f) => [...f, ...accepted]);
 		setPreviews((p) => [...p, ...accepted.map((f) => URL.createObjectURL(f))]);
@@ -81,6 +85,8 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 		setFiles((f) => f.filter((_, i) => i !== idx));
 		setPreviews((p) => p.filter((_, i) => i !== idx));
 	};
+
+	const removeExisting = (url) => setKept((k) => k.filter((u) => u !== url));
 
 	const validate = () => {
 		const e = {};
@@ -95,6 +101,9 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 		if (!form.contactPhone.trim()) e.contactPhone = 'Contact phone is required';
 		if (!form.contactEmail.trim()) e.contactEmail = 'Contact email is required';
 		if (mode === 'create' && files.length === 0) e.images = 'Add at least one photo';
+		// A published listing with no photo is worse than one the landlord never
+		// got round to editing, so don't let an edit empty it out.
+		if (mode === 'edit' && kept.length + files.length === 0) e.images = 'Keep at least one photo';
 		setErrors(e);
 		return Object.keys(e).length === 0;
 	};
@@ -104,7 +113,7 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 		if (!validate()) return;
 		// Pin is optional — skipping it falls back to automatic geocoding rather
 		// than blocking a landlord whose street isn't on the map.
-		onSubmit(pin ? { ...form, lat: pin.lat, lng: pin.lng } : form, files);
+		onSubmit(pin ? { ...form, lat: pin.lat, lng: pin.lng } : form, files, kept);
 	};
 
 	return (
@@ -294,14 +303,25 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 				<h2 className="mb-4 font-serif text-lg font-bold text-text">Photos</h2>
 				{errors.images && <p className="mb-3 text-xs font-medium text-danger-ink">{errors.images}</p>}
 
-				{existingImages.length > 0 && (
+				{kept.length > 0 && (
 					<div className="mb-4">
 						<p className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted">Current Photos</p>
 						<div className="flex flex-wrap gap-3">
-							{existingImages.map((img, i) => (
-								<img key={i} src={getImageUrl(img)} alt="" className="h-24 w-24 rounded-xl object-cover" />
+							{kept.map((img) => (
+								<div key={img} className="group relative h-24 w-24 overflow-hidden rounded-xl">
+									<img src={getImageUrl(img)} alt="" className="h-full w-full object-cover" />
+									<button
+										type="button"
+										onClick={() => removeExisting(img)}
+										aria-label="Remove photo"
+										className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-paper/80 text-text opacity-0 transition group-hover:opacity-100"
+									>
+										<X className="h-3 w-3" />
+									</button>
+								</div>
 							))}
 						</div>
+						<p className="mt-2 text-xs text-muted">Removed photos are deleted permanently when you save.</p>
 					</div>
 				)}
 
@@ -312,13 +332,14 @@ export default function ListingForm({ mode = 'create', initialData, initialPin =
 							<button
 								type="button"
 								onClick={() => removeFile(i)}
+								aria-label="Remove photo"
 								className="absolute right-1 top-1 flex h-5 w-5 items-center justify-center rounded-full bg-paper/80 text-text opacity-0 transition group-hover:opacity-100"
 							>
 								<X className="h-3 w-3" />
 							</button>
 						</div>
 					))}
-					{existingImages.length + files.length < MAX_IMAGES && (
+					{kept.length + files.length < MAX_IMAGES && (
 						<label className="flex h-24 w-24 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-muted/25 text-muted transition hover:border-primary/50 hover:text-primary-ink">
 							<Upload className="h-5 w-5" />
 							<span className="text-[12px] font-semibold">Add Photo</span>

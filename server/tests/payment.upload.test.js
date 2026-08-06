@@ -1,10 +1,30 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import request from 'supertest';
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import fs from 'fs';
 import path from 'path';
+
+// Receipts go to Cloudinary now, not the local disk. Stub the uploader so the
+// suite stays offline and side-effect-free (same rule the setup file applies to
+// email and captcha) while still proving the controller stores what it is
+// handed back. The multer limits and MIME filter are real and still exercised —
+// they run before this ever gets called.
+const { uploadMock } = vi.hoisted(() => ({ uploadMock: vi.fn() }));
+
+vi.mock('../config/cloudinary.js', () => ({
+	configureCloudinary: vi.fn(),
+	uploadToCloudinary: uploadMock,
+	deleteFromCloudinary: vi.fn().mockResolvedValue({ result: 'ok' }),
+	deleteMultipleFromCloudinary: vi.fn().mockResolvedValue([]),
+	extractPublicId: (url) => {
+		const match = String(url || '').match(/\/upload\/(?:v\d+\/)?(.+?)\.\w+$/);
+		return match ? match[1] : null;
+	},
+	default: {},
+}));
+
+const CLOUD_URL = 'https://res.cloudinary.com/demo/image/upload/v1/nestfinder/payments/receipt.png';
 
 import bookingRoutes from '../routes/bookings.js';
 import paymentRoutes from '../routes/payments.js';
@@ -30,8 +50,10 @@ const iso = (offsetDays) => new Date(Date.now() + offsetDays * 864e5).toISOStrin
 let student, landlord, sToken, lToken, admin, aToken, listing;
 
 beforeEach(async () => {
-	// Ensure uploads folder exists for multer
-	fs.mkdirSync(path.resolve('uploads'), { recursive: true });
+	// No uploads directory to prepare — multer holds the file in memory and the
+	// (stubbed) Cloudinary call is what produces the stored value.
+	uploadMock.mockReset();
+	uploadMock.mockResolvedValue({ secure_url: CLOUD_URL, public_id: 'nestfinder/payments/receipt' });
 
 	landlord = await Landlord.create({ fullName: 'LL', email: `l-${Math.random()}@x.io`, password: await bcrypt.hash('pw', 10), phone: '0801', verified: true });
 	student = await Student.create({ fullName: 'Stu', email: `s-${Math.random()}@x.io`, password: await bcrypt.hash('pw', 10), phone: '0802', institution: 'Uni', verified: true });
@@ -65,9 +87,13 @@ describe('receipt uploads', () => {
 			.attach('receipt', path.resolve('tests/fixtures/receipt.png'));
 
 		expect(res.status).toBe(201);
-		expect(res.body.payment.receipt).toBeTruthy();
-		// file exists
-		expect(fs.existsSync(path.resolve('uploads', res.body.payment.receipt))).toBe(true);
+		expect(res.body.payment.receipt).toBe(CLOUD_URL);
+		// Sent to Cloudinary as a buffer — nothing was written to disk.
+		expect(uploadMock).toHaveBeenCalledTimes(1);
+		const [buffer, options] = uploadMock.mock.calls[0];
+		expect(Buffer.isBuffer(buffer)).toBe(true);
+		expect(options.folder).toBe('nestfinder/payments');
+		expect(options.resource_type).toBe('image');
 	});
 
 	it('accepts a valid PDF receipt', async () => {
@@ -81,8 +107,10 @@ describe('receipt uploads', () => {
 			.attach('receipt', path.resolve('tests/fixtures/receipt.pdf'));
 
 		expect(res.status).toBe(201);
-		expect(res.body.payment.receipt).toBeTruthy();
-		expect(fs.existsSync(path.resolve('uploads', res.body.payment.receipt))).toBe(true);
+		expect(res.body.payment.receipt).toBe(CLOUD_URL);
+		// PDFs are not images — they must go up as Cloudinary "raw" or the image
+		// pipeline rejects them.
+		expect(uploadMock.mock.calls[0][1].resource_type).toBe('raw');
 	});
 
 	it('rejects unsupported file types', async () => {

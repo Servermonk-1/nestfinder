@@ -8,6 +8,7 @@ import Conversation from '../models/Conversation.js';
 import Message from '../models/Message.js';
 import Comparison from '../models/Comparison.js';
 import Listing from '../models/Listing.js';
+import { uploadToCloudinary, deleteFromCloudinary, extractPublicId } from '../config/cloudinary.js';
 
 const MODELS = { student: Student, landlord: Landlord, admin: Admin };
 
@@ -58,8 +59,23 @@ export const uploadAvatar = async (req, res) => {
 		const account = await Model.findById(req.user.id);
 		if (!account) return res.status(404).json({ message: 'Account not found' });
 
-		account.profilePicture = `uploads/${file.filename}`;
+		const previous = account.profilePicture;
+
+		const result = await uploadToCloudinary(file.buffer, {
+			folder: 'nestfinder/avatars',
+			resource_type: 'image',
+		});
+		account.profilePicture = result.secure_url;
 		await account.save();
+
+		// Replacing an avatar orphans the old one — nothing else ever references
+		// it. Fire-and-forget so a Cloudinary hiccup can't fail a save that has
+		// already succeeded.
+		const previousId = extractPublicId(previous);
+		if (previousId) {
+			deleteFromCloudinary(previousId).catch((err) =>
+				console.error('Cloudinary delete failed:', previousId, err.message));
+		}
 
 		res.status(200).json({ message: 'Profile photo updated', profilePicture: account.profilePicture });
 	} catch (error) {

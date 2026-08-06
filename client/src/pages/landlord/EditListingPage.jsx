@@ -32,14 +32,31 @@ export default function EditListingPage() {
 			.finally(() => setLoading(false));
 	}, [id]);
 
-	const handleSubmit = async (form) => {
+	const handleSubmit = async (form, files = [], keptImages = []) => {
 		setSubmitting(true);
 		try {
-			await api.put(`/listings/${id}`, {
-				...form,
-				price: Number(form.price),
-				rooms: Number(form.rooms),
+			// Multipart, not JSON: an edit can now add photos, and the server needs
+			// the surviving image URLs in the same request to know which Cloudinary
+			// assets to keep and which to delete.
+			const fd = new FormData();
+			Object.entries({ ...form, price: Number(form.price), rooms: Number(form.rooms) }).forEach(([key, value]) => {
+				if (key === 'amenities') {
+					fd.append('amenities', JSON.stringify(value));
+				} else {
+					fd.append(key, value);
+				}
 			});
+			// The server reads `images` as the authoritative keep-list. Send an
+			// explicit empty marker when nothing survives, or the key would be
+			// absent and the server would read that as "leave the photos alone".
+			if (keptImages.length === 0) {
+				fd.append('images', '');
+			} else {
+				keptImages.forEach((url) => fd.append('images', url));
+			}
+			files.forEach((file) => fd.append('images', file));
+
+			await api.put(`/listings/${id}`, fd, { headers: { 'Content-Type': 'multipart/form-data' } });
 			toast.success('Listing updated!');
 			navigate('/landlord/dashboard');
 		} catch (err) {
@@ -73,7 +90,7 @@ export default function EditListingPage() {
 					<>
 						<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
 							<h1 className="font-serif text-2xl font-bold text-text md:text-3xl">Edit Listing</h1>
-							<p className="mt-1 text-sm text-muted">Update the details below. Photos can't be changed here yet.</p>
+							<p className="mt-1 text-sm text-muted">Update the details below. Photos can be added or removed.</p>
 						</motion.div>
 
 						<div className="mt-8">

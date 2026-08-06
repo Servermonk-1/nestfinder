@@ -138,7 +138,7 @@ export default function PaymentsPage() {
                                         <div><strong>Sender name:</strong> {selected.senderName}</div>
                                         <div><strong>Transaction reference:</strong> {selected.transactionReference}</div>
                                         <div><strong>Payment date:</strong> {selected.paymentDate ? new Date(selected.paymentDate).toLocaleDateString() : '—'}</div>
-                                        {selected.receipt && (<div><a href={`/uploads/${selected.receipt}`} target="_blank">View receipt</a></div>)}
+                                        {selected.receipt && (<div><a href={selected.receipt} target="_blank" rel="noopener noreferrer">View receipt</a></div>)}
                                     </div>
                                 )}
                                 {selected.paymentMethod === 'usdt' && (
@@ -148,7 +148,7 @@ export default function PaymentsPage() {
                                         <div><strong>Network:</strong> {selected.network}</div>
                                         <div><strong>Transaction hash:</strong> {selected.transactionHash}</div>
                                         <div><strong>Expected USDT:</strong> {selected.expectedUsdtAmount ? `${selected.expectedUsdtAmount} USDT` : '—'}</div>
-                                        {selected.blockchainScreenshot && (<div><a href={`/uploads/${selected.blockchainScreenshot}`} target="_blank">View screenshot</a></div>)}
+                                        {selected.blockchainScreenshot && (<div><a href={selected.blockchainScreenshot} target="_blank" rel="noopener noreferrer">View screenshot</a></div>)}
                                     </div>
                                 )}
                             </div>

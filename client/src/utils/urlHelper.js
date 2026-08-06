@@ -14,23 +14,25 @@ export const getServerBaseUrl = () => {
 
 /**
  * Convert relative image path to full URL
- * @param {string} imagePath - Relative image path (e.g., "uploads/listing-1.jpg")
+ * @param {string} imagePath - Image path (Cloudinary URL or legacy relative path)
  * @returns {string} Full image URL
  */
 export const getImageUrl = (imagePath) => {
 	if (!imagePath) return null;
-	
-	// If it's already an absolute URL, return as-is
+
+	// Already an absolute URL (Cloudinary or any CDN) — return as-is
 	if (imagePath.startsWith('http')) {
 		return imagePath;
 	}
-	
+
+	// Legacy relative path from before the Cloudinary migration — prefix with server base.
+	// New uploads go straight to Cloudinary and never hit this branch.
 	const baseUrl = getServerBaseUrl();
 	return `${baseUrl}/${imagePath}`;
 };
 
 /**
- * Get upload directory URL
+ * Get upload directory URL (legacy — new uploads use Cloudinary)
  * @returns {string} Base uploads URL
  */
 export const getUploadsUrl = () => {

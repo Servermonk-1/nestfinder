@@ -1,5 +1,6 @@
 import Student from '../models/Student.js';
 import Landlord from '../models/Landlord.js';
+import { uploadToCloudinary } from '../config/cloudinary.js';
 
 const MODELS = { student: Student, landlord: Landlord };
 const VALID_TYPES = {
@@ -38,10 +39,26 @@ const makeSubmit = (role) => async (req, res) => {
 			return res.status(400).json({ message: 'Please add a profile photo before submitting your ID — it is compared against the photo on your document.' });
 		}
 
+		// ID scans go to their own folder so they can be access-controlled
+		// separately from public listing photos — these are government documents,
+		// not marketing images.
+		const [frontUpload, backUpload] = await Promise.all([
+			uploadToCloudinary(front.buffer, {
+				folder: 'nestfinder/kyc',
+				resource_type: front.mimetype === 'application/pdf' ? 'raw' : 'image',
+			}),
+			back
+				? uploadToCloudinary(back.buffer, {
+					folder: 'nestfinder/kyc',
+					resource_type: back.mimetype === 'application/pdf' ? 'raw' : 'image',
+				})
+				: Promise.resolve(null),
+		]);
+
 		account.idDocument = {
 			documentType,
-			frontImage: `uploads/${front.filename}`,
-			backImage: back ? `uploads/${back.filename}` : undefined,
+			frontImage: frontUpload.secure_url,
+			backImage: backUpload ? backUpload.secure_url : undefined,
 			submittedAt: new Date(),
 			status: 'pending',
 			rejectionReason: undefined,

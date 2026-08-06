@@ -11,6 +11,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import rateLimit from 'express-rate-limit';
 import connectDB from './config/db.js';
+import { configureCloudinary } from './config/cloudinary.js';
 import authRoutes from './routes/auth.js';
 import listingRoutes from './routes/listings.js';
 import reportRoutes from './routes/reports.js';
@@ -32,6 +33,9 @@ import { reportError } from './utils/errorReporter.js';
 
 dotenv.config();
 connectDB();
+// Reads CLOUDINARY_* from the env loaded above. Warns (rather than throws) when
+// unset so the rest of the API still boots — only uploads depend on it.
+configureCloudinary();
 
 const app = express();
 const httpServer = http.createServer(app);
@@ -174,9 +178,9 @@ app.use((req, res, next) => {
 
 // 2. Helmet — secure HTTP headers.
 //    crossOriginResourcePolicy is relaxed because the frontend is on a
-//    different origin (Vercel) than the API (Render); the default
-//    "same-origin" makes the browser refuse to render <img> served from
-//    /uploads. This weakens nothing that CORS is protecting.
+//    different origin (Vercel) than the API (Render). Images now come from
+//    Cloudinary's CDN rather than this origin, but the relaxed policy is still
+//    needed for any other cross-origin resource this API returns.
 app.use(helmet({
 	crossOriginResourcePolicy: { policy: 'cross-origin' },
 }));
@@ -231,14 +235,10 @@ const authLimiter = rateLimit({
 });
 
 // ── STATIC FILES ──────────────────────────────────────────
-// Helmet's default Cross-Origin-Resource-Policy is "same-origin", which makes
-// the browser refuse to render <img> served from this origin on the frontend's
-// different origin (:5173 vs :5000). Allow cross-origin loading for uploads so
-// profile photos, ID documents and listing images display.
-app.use('/uploads', (req, res, next) => {
-	res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
-	next();
-}, express.static('uploads'));
+// Nothing is served from disk any more. Uploads go straight to Cloudinary and
+// are served from its CDN, so the old `express.static('uploads')` mount was
+// serving a directory that is empty on every fresh Render container. Removing
+// it also removes the last thing that assumed a writable local filesystem.
 
 // ── ROUTES ────────────────────────────────────────────────
 app.use('/api/auth', authLimiter, authRoutes);

@@ -10,13 +10,13 @@ const paymentSchema = new mongoose.Schema({
     senderName: { type: String, trim: true },
     transactionReference: { type: String, trim: true, index: true },
     paymentDate: { type: Date },
-    receipt: { type: String }, // filename in uploads/
+    receipt: { type: String }, // Cloudinary secure_url
 
     // Crypto / USDT fields
     transactionHash: { type: String, trim: true, index: true },
     network: { type: String, trim: true },
     walletAddress: { type: String, trim: true },
-    blockchainScreenshot: { type: String }, // filename in uploads/
+    blockchainScreenshot: { type: String }, // Cloudinary secure_url
     expectedUsdtAmount: { type: Number },
 
     status: { type: String, enum: ['pending', 'approved', 'rejected'], default: 'pending', index: true },
