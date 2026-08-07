@@ -86,9 +86,9 @@ export default function LandlordLanding() {
 			{/* ══ NAVBAR ══ */}
 			<nav className="fixed inset-x-0 top-0 z-50 border-b border-line/70 glass-strong">
 				<div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 md:px-8">
-					<button onClick={() => navigate('/for-landlords')} className="flex items-center gap-2.5">
+					<button onClick={() => navigate('/for-landlords')} className="flex min-w-0 items-center gap-2.5">
 						<BrandMark size={36} className="text-primary" />
-						<span className="font-serif text-xl font-extrabold text-text">NestFinder <span className="text-primary-ink">Landlords</span></span>
+						<span className="whitespace-nowrap font-serif text-lg font-extrabold text-text sm:text-xl">NestFinder <span className="text-primary-ink">Landlords</span></span>
 					</button>
 
 					<div className="hidden items-center gap-8 lg:flex">
@@ -118,7 +118,7 @@ export default function LandlordLanding() {
 					<button onClick={() => setMenu(!menu)} className="rounded-xl border border-line bg-surface p-2 text-text md:hidden">{menu ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
 				</div>
 				{menu && (
-					<div className="space-y-1 border-t border-line px-4 py-4 md:hidden">
+					<div className="max-h-[calc(100vh-80px)] space-y-1 overflow-y-auto border-t border-line px-4 py-4 md:hidden">
 						{NAV.map((l) => <a key={l.href} href={l.href.startsWith('#') ? l.href : undefined} onClick={() => { setMenu(false); if (!l.href.startsWith('#')) navigate(l.href); }} className="block rounded-lg px-3 py-2 text-sm font-semibold text-muted">{l.label}</a>)}
 						{isLandlord
 							? <button onClick={() => navigate('/landlord/dashboard')} className="mt-2 w-full rounded-xl bg-brand-gradient px-4 py-3 text-sm font-bold text-white">Dashboard</button>
@@ -136,15 +136,17 @@ export default function LandlordLanding() {
 				<div className="pointer-events-none absolute -left-40 -top-20 h-[30rem] w-[30rem] rounded-full bg-primary/15 blur-[130px] animate-aurora" />
 				<div className="pointer-events-none absolute -right-32 top-20 h-[26rem] w-[26rem] rounded-full bg-highlight/20 blur-[130px] animate-float-slow" />
 
-				<div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[1.05fr_0.95fr]">
+				<div className="relative mx-auto grid max-w-7xl items-center gap-10 sm:gap-12 lg:grid-cols-[1.05fr_0.95fr]">
 					<div>
 						<motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/5 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-primary-ink">
 							<Sparkles className="h-3.5 w-3.5" /> For landlords &amp; agents
 						</motion.div>
-						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-4xl font-extrabold leading-[1.05] tracking-tight text-text sm:text-5xl sm:leading-[1.02] md:text-7xl">
+						{/* text-4xl is really 40px here (scale lifted in tailwind.config.js),
+						    which is a desktop headline on a phone. Start a notch down. */}
+						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-3xl font-extrabold leading-[1.08] tracking-tight text-text sm:text-5xl sm:leading-[1.02] md:text-7xl">
 							Fill your rooms with <span className="italic text-gradient">verified students</span>
 						</motion.h1>
-						<motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
+						<motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-5 max-w-lg leading-relaxed text-muted sm:mt-6 sm:text-lg">
 							List your off-campus rooms for free and connect directly with ID-verified SIWES students looking for a safe place to stay. No agents, no cuts, no time-wasters.
 						</motion.p>
 						<motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.18 }} className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -180,7 +182,7 @@ export default function LandlordLanding() {
 							<div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success-ink shadow-sm"><BadgeCheck className="h-4 w-4" /> Verified Landlord</span>
 						</div>
-						<motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="glass-strong absolute -right-4 top-10 rounded-2xl p-4 shadow-card-lg">
+						<motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="glass-strong absolute -right-4 top-10 hidden rounded-2xl p-4 shadow-card-lg sm:block">
 							<div className="flex items-center gap-2.5">
 								<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient"><Users className="h-4 w-4 text-white" /></div>
 								<div>
@@ -206,11 +208,11 @@ export default function LandlordLanding() {
 			</section>
 
 			{/* ══ WHY LIST ══ */}
-			<section id="why" className="px-4 py-24 md:px-8">
+			<section id="why" className="px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="mb-14 max-w-2xl">
 						<Eyebrow>Why list with us</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Built to fill rooms, safely</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Built to fill rooms, safely</h2>
 					</div>
 					<div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
 						{benefits.map((bnf, i) => {
@@ -228,11 +230,11 @@ export default function LandlordLanding() {
 			</section>
 
 			{/* ══ HOW IT WORKS ══ */}
-			<section id="how" className="bg-surface/50 px-4 py-24 md:px-8">
+			<section id="how" className="bg-surface/50 px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="mb-14 max-w-2xl">
 						<Eyebrow>How it works</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">From sign-up to signed lease</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">From sign-up to signed lease</h2>
 					</div>
 					<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 						{steps.map((s, i) => {
@@ -253,23 +255,23 @@ export default function LandlordLanding() {
 			</section>
 
 			{/* ══ FAQ ══ */}
-			<section id="faq" className="px-4 py-24 md:px-8">
+			<section id="faq" className="px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-4xl">
 					<div className="mb-10 max-w-2xl">
 						<Eyebrow>Landlord questions</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Good to know</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Good to know</h2>
 					</div>
 					{faqs.map((f, i) => <FaqItem key={f.q} faq={f} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />)}
 				</div>
 			</section>
 
 			{/* ══ CTA ══ */}
-			<section className="px-4 py-24 md:px-8">
+			<section className="px-4 py-16 sm:py-24 md:px-8">
 				<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mx-auto max-w-7xl overflow-hidden rounded-none bg-warm-deep p-10 text-center shadow-card-lg md:p-16">
 					<div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
 					<div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
 					<div className="relative">
-						<h2 className="mx-auto max-w-2xl font-serif text-4xl font-extrabold leading-tight text-white md:text-5xl">Ready to list your first room?</h2>
+						<h2 className="mx-auto max-w-2xl font-serif text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-5xl">Ready to list your first room?</h2>
 						<p className="mx-auto mt-4 max-w-xl leading-relaxed text-white/85">It’s free, and your rooms go live to verified students the moment you’re approved.</p>
 						<div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row">
 							<button onClick={() => navigate(isLandlord ? '/landlord/dashboard' : '/landlord/register')} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-primary-ink shadow-lg transition hover:-translate-y-0.5">

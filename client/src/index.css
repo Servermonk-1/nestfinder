@@ -55,6 +55,45 @@
     font-family: inherit;
   }
 
+  /*
+   * iOS Safari zooms the whole page in when you focus a field whose text is
+   * under 16px — and it does NOT zoom back out on blur. You are left on a
+   * magnified page that scrolls sideways, which reads as "the site isn't
+   * responsive" even though the layout is fine. Desktop DevTools never shows
+   * this; it only happens on a real phone.
+   *
+   * This bites here specifically because the type scale is lifted one notch
+   * (see tailwind.config.js): `text-sm` is 15px and `text-xs` is 13px, so
+   * nearly every input in the app was under the threshold.
+   *
+   * The `:not()` chains are load-bearing, not decoration. A bare `input {}`
+   * is specificity (0,0,1) and would lose to the `.text-sm` utility (0,1,0)
+   * sitting on the element; each `:not([attr])` lifts this to (0,2,1) so it
+   * wins without needing `!important`. The size classes are excluded because
+   * the OTP code fields are deliberately 26px — already past the threshold,
+   * so they never triggered the zoom and should keep their designed size.
+   *
+   * Below `sm` every field is at least 16px. Above it, nothing changes —
+   * desktop never had the problem.
+   */
+  @media (max-width: 639px) {
+    input:not([type='checkbox']):not([type='radio']):not(.text-2xl):not(.text-3xl),
+    textarea:not(.text-2xl):not(.text-3xl),
+    select:not(.text-2xl):not(.text-3xl) {
+      font-size: 16px;
+    }
+  }
+
+  /*
+   * A phone in landscape, or any zoom, can still let a stray wide child paint
+   * past the viewport. `overflow-x: clip` contains it without creating a
+   * scroll container — unlike `hidden`, it does not break `position: sticky`
+   * on descendants, which the booking rail and the compare bar rely on.
+   */
+  html {
+    overflow-x: clip;
+  }
+
   /* Figures line up in columns wherever they appear. */
   .tabular-nums,
   input[type='number'] {

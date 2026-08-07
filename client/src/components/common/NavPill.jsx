@@ -44,7 +44,7 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 				    the full badge is unreadable below about 96px. */}
 				<Link
 					to={wordmarkTo}
-					className="group mr-1 flex shrink-0 items-center gap-2 font-display text-[16px] font-extrabold tracking-tight text-ink"
+					className="group mr-1 flex shrink-0 items-center gap-2 whitespace-nowrap font-display text-[15px] font-extrabold tracking-tight text-ink sm:text-[16px]"
 				>
 					<Logo size={24} className="transition-transform duration-300 group-hover:rotate-45" />
 					{wordmark}
@@ -97,7 +97,7 @@ export default function NavPill({ links = [], right = null, mobileExtras = null,
 						animate={{ opacity: 1, y: 0 }}
 						exit={{ opacity: 0, y: -10 }}
 						transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-						className="glass-strong pointer-events-auto absolute inset-x-3 top-[76px] border border-line/70 p-2 shadow-lift md:hidden"
+						className="glass-strong pointer-events-auto absolute inset-x-3 top-[76px] max-h-[calc(100vh-96px)] overflow-y-auto border border-line/70 p-2 shadow-lift md:hidden"
 					>
 						{links.map((link, i) => {
 							const active = pathname === link.to;

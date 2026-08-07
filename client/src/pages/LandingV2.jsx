@@ -235,11 +235,14 @@ export default function LandingPageV2() {
 							<Sparkles className="h-3.5 w-3.5" /> Verified housing for SIWES students
 						</motion.div>
 
-						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-4xl font-extrabold leading-[1.05] tracking-tight text-text sm:text-5xl sm:leading-[1.02] md:text-7xl">
+						{/* The scale is lifted a notch in tailwind.config.js, so text-4xl is
+						    really 40px — desktop headline size on a 320px screen. Phones
+						    start at text-3xl (32px) and the designed sizes return from sm. */}
+						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-3xl font-extrabold leading-[1.08] tracking-tight text-text sm:text-5xl sm:leading-[1.02] md:text-7xl">
 							Find a home that <span className="italic text-gradient">feels like yours</span>
 						</motion.h1>
 
-						<motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
+						<motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-5 max-w-lg leading-relaxed text-muted sm:mt-6 sm:text-lg">
 							Handpicked, ID-verified accommodation near your industrial-training placement. No scam listings, no endless scrolling — just real homes from real, verified landlords.
 						</motion.p>
 
@@ -279,8 +282,12 @@ export default function LandingPageV2() {
 							<img src={HERO_IMG_2} alt="" className="h-28 w-full object-cover" />
 						</motion.div>
 
-						{/* Floating stat card */}
-						<motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="glass-strong absolute -right-4 top-10 rounded-2xl p-4 shadow-card-lg">
+						{/* Floating stat card. Hidden on phones: it is absolutely
+						    positioned over the photo, and at that width it covers the
+						    subject instead of decorating the corner. The same figure is
+						    the first cell of the stats band directly below, so nothing
+						    is lost. */}
+						<motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }} className="glass-strong absolute -right-4 top-10 hidden rounded-2xl p-4 shadow-card-lg sm:block">
 							<div className="flex items-center gap-2.5">
 								<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-gradient"><Home className="h-4 w-4 text-white" /></div>
 								<div>
@@ -306,12 +313,12 @@ export default function LandingPageV2() {
 			</section>
 
 			{/* ══ FEATURED HOMES ══ */}
-			<section id="featured" className="px-4 py-24 md:px-8">
+			<section id="featured" className="px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="mb-14 flex flex-wrap items-end justify-between gap-6">
 						<div className="max-w-2xl">
 							<Eyebrow>Fresh on NestFinder</Eyebrow>
-							<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Homes worth a look</h2>
+							<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Homes worth a look</h2>
 							<p className="mt-4 text-muted">Every listing comes from a landlord who passed our ID check. Tap any home to see the full details.</p>
 						</div>
 						<button onClick={() => navigate('/dashboard')} className="inline-flex shrink-0 items-center gap-2 rounded-xl border border-primary/30 px-5 py-2.5 text-sm font-bold text-primary-ink transition hover:bg-primary/5 hover:gap-3">
@@ -325,11 +332,11 @@ export default function LandingPageV2() {
 			</section>
 
 			{/* ══ CITIES ══ */}
-			<section id="cities" className="bg-surface/50 px-4 py-24 md:px-8">
+			<section id="cities" className="bg-surface/50 px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="mb-14 max-w-2xl">
 						<Eyebrow>Explore by location</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Wherever your placement takes you</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Wherever your placement takes you</h2>
 					</div>
 					<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 						{cities.map((c, i) => (
@@ -350,11 +357,11 @@ export default function LandingPageV2() {
 			</section>
 
 			{/* ══ HOW IT WORKS ══ */}
-			<section id="journey" className="px-4 py-24 md:px-8">
+			<section id="journey" className="px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="mb-14 max-w-2xl">
 						<Eyebrow>Your path to home</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Four steps to settle in</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Four steps to settle in</h2>
 					</div>
 					<div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
 						{journeySteps.map((s, i) => {
@@ -375,11 +382,11 @@ export default function LandingPageV2() {
 			</section>
 
 			{/* ══ WHY US ══ */}
-			<section id="trust" className="bg-surface/50 px-4 py-24 md:px-8">
+			<section id="trust" className="bg-surface/50 px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto grid max-w-7xl gap-14 lg:grid-cols-[1fr_1fr] lg:items-center">
 					<div>
 						<Eyebrow>Why choose us</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Safe by design</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Safe by design</h2>
 						<p className="mt-5 max-w-lg text-muted">No data brokers. No fake reviews. Just real homes from ID-verified landlords, on a platform built to keep students and owners safe.</p>
 						<div className="mt-10 space-y-7">
 							{trustPoints.map((t) => {
@@ -417,11 +424,11 @@ export default function LandingPageV2() {
 			</section>
 
 			{/* ══ TESTIMONIALS ══ */}
-			<section className="px-4 py-24 md:px-8">
+			<section className="px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-7xl">
 					<div className="mb-14 max-w-2xl">
 						<Eyebrow>From students like you</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Real stories, real moves</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Real stories, real moves</h2>
 					</div>
 					<div className="grid gap-6 md:grid-cols-3">
 						{testimonials.map((t, i) => (
@@ -442,23 +449,23 @@ export default function LandingPageV2() {
 			</section>
 
 			{/* ══ FAQ ══ */}
-			<section id="faq" className="bg-surface/50 px-4 py-24 md:px-8">
+			<section id="faq" className="bg-surface/50 px-4 py-16 sm:py-24 md:px-8">
 				<div className="mx-auto max-w-4xl">
 					<div className="mb-10 max-w-2xl">
 						<Eyebrow>Questions, answered</Eyebrow>
-						<h2 className="font-serif text-4xl font-extrabold text-text md:text-5xl">Frequently asked</h2>
+						<h2 className="font-serif text-3xl font-extrabold text-text sm:text-4xl md:text-5xl">Frequently asked</h2>
 					</div>
 					{faqs.map((f, i) => <FaqItem key={f.q} faq={f} isOpen={openFaq === i} onToggle={() => setOpenFaq(openFaq === i ? -1 : i)} />)}
 				</div>
 			</section>
 
 			{/* ══ CTA ══ */}
-			<section className="px-4 py-24 md:px-8">
+			<section className="px-4 py-16 sm:py-24 md:px-8">
 				<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative mx-auto max-w-7xl overflow-hidden rounded-none bg-warm-deep p-10 text-center shadow-card-lg md:p-16">
 					<div className="pointer-events-none absolute inset-0 bg-grid opacity-20" />
 					<div className="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-white/15 blur-3xl" />
 					<div className="relative">
-						<h2 className="mx-auto max-w-2xl font-serif text-4xl font-extrabold leading-tight text-white md:text-5xl">Ready to find your place?</h2>
+						<h2 className="mx-auto max-w-2xl font-serif text-3xl font-extrabold leading-tight text-white sm:text-4xl md:text-5xl">Ready to find your place?</h2>
 						<p className="mx-auto mt-4 max-w-xl leading-relaxed text-white/85">Join students who’ve already found a safe, verified home for their industrial training.</p>
 						<div className="mt-9 flex flex-col justify-center gap-4 sm:flex-row">
 							<button onClick={() => navigate(user ? dashLink() : '/student/register')} className="inline-flex items-center justify-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-primary-ink shadow-lg transition hover:-translate-y-0.5">
