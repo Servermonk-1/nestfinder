@@ -389,7 +389,7 @@ export default function ListingDetailPage() {
 									{listing.available ? 'Available' : 'Unavailable'}
 								</span>
 							</div>
-							<h1 className="mt-3 font-serif text-4xl font-bold leading-tight tracking-tight sm:text-5xl">{listing.title}</h1>
+							<h1 className="mt-3 break-words font-serif text-3xl font-bold leading-tight tracking-tight sm:text-4xl lg:text-5xl">{listing.title}</h1>
 							<div className="mt-2.5 flex items-start gap-1.5 text-base text-muted">
 								<MapPin className="mt-0.5 h-4 w-4 shrink-0 text-primary-ink" />
 								<span>{[listing.address, listing.area, listing.city, listing.state].filter(Boolean).join(', ')}</span>
@@ -409,8 +409,9 @@ export default function ListingDetailPage() {
 						</div>
 					</div>
 
-					{/* Gallery — full width */}
-					<div className="grid grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-2xl" style={{ height: '520px' }}>
+					{/* Gallery — full width. Height steps up with the viewport: a flat
+					    520px left the single mobile image absurdly tall and narrow. */}
+					<div className="grid h-[260px] grid-cols-4 grid-rows-2 gap-2 overflow-hidden rounded-2xl sm:h-[380px] lg:h-[520px]">
 						{images.length === 0 ? (
 							<div className="col-span-4 row-span-2 flex items-center justify-center bg-surface-alt">
 								<Home className="h-16 w-16 text-muted" />
@@ -445,7 +446,7 @@ export default function ListingDetailPage() {
 					)}
 
 					{/* Two-column split */}
-					<div className="mt-14 grid gap-12 lg:grid-cols-[1fr_400px]">
+					<div className="mt-8 grid gap-8 sm:mt-14 lg:grid-cols-[1fr_400px] lg:gap-12">
 						{/* LEFT — content flow */}
 						<div className="min-w-0 space-y-12">
 							{/* Property Insights */}
@@ -707,7 +708,7 @@ export default function ListingDetailPage() {
 								{listing.location?.coordinates?.length === 2 ? (
 									<ListingMap listing={listing} />
 								) : (
-									<div className="overflow-hidden rounded-xl border border-muted/10" style={{ height: '320px' }}>
+									<div className="h-[240px] overflow-hidden rounded-xl border border-muted/10 sm:h-[320px]">
 										<iframe
 											title="Listing location"
 											src={`https://www.google.com/maps?q=${mapQuery}&output=embed`}
@@ -756,11 +757,13 @@ export default function ListingDetailPage() {
 							<motion.div
 								initial={{ opacity: 0, y: 12 }}
 								animate={{ opacity: 1, y: 0 }}
-								className="space-y-6 rounded-3xl border border-line bg-surface p-7 shadow-card lg:sticky lg:top-24"
+								className="space-y-6 rounded-3xl border border-line bg-surface p-5 shadow-card sm:p-7 lg:sticky lg:top-24"
 							>
 								<div>
-									<div className="flex items-baseline gap-2">
-										<span className="font-serif text-5xl font-bold tracking-tight text-primary-ink">{naira(listing.price)}</span>
+									{/* Wraps because a seven-figure rent at text-5xl is wider than a
+									    320px phone once the card's own padding is taken out. */}
+									<div className="flex flex-wrap items-baseline gap-x-2">
+										<span className="font-serif text-3xl font-bold tracking-tight text-primary-ink sm:text-4xl lg:text-5xl">{naira(listing.price)}</span>
 										<span className="text-base font-medium text-muted">{unitSuffix(unitOf(listing))}</span>
 									</div>
 									<p className="mt-1.5 text-xs text-muted">{formatConverted(listing)} · about {naira(cost.total)}/month with utilities & transport</p>
@@ -841,7 +844,7 @@ export default function ListingDetailPage() {
 											<p className="flex items-center gap-2 text-muted"><Phone className="h-3.5 w-3.5" /> Not provided</p>
 										)}
 										{email ? (
-											<a href={`mailto:${email}`} className="flex items-center gap-2 text-primary-ink hover:underline"><Mail className="h-3.5 w-3.5" /> {email}</a>
+											<a href={`mailto:${email}`} className="flex items-start gap-2 text-primary-ink hover:underline"><Mail className="mt-0.5 h-3.5 w-3.5 shrink-0" /> <span className="min-w-0 break-all">{email}</span></a>
 										) : (
 											<p className="flex items-center gap-2 text-muted"><Mail className="h-3.5 w-3.5" /> Not provided</p>
 										)}
@@ -933,15 +936,17 @@ export default function ListingDetailPage() {
 			</div>
 
 			{/* Mobile sticky bar */}
-			<div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-primary/15 bg-surface/95 px-4 py-3 backdrop-blur-md md:hidden">
-				<div>
-					<p className="font-serif text-xl font-bold tracking-tight text-primary-ink">{naira(listing.price)}<span className="text-xs font-normal text-muted">{unitSuffix(unitOf(listing))}</span></p>
+			<div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-2 border-t border-primary/15 bg-surface/95 px-3 py-3 backdrop-blur-md sm:gap-3 sm:px-4 md:hidden">
+				{/* min-w-0 so the price can actually truncate, and shrink-0 on the
+				    buttons so they keep their labels instead of wrapping at 320px. */}
+				<div className="min-w-0">
+					<p className="truncate font-serif text-lg font-bold tracking-tight text-primary-ink sm:text-xl">{naira(listing.price)}<span className="text-xs font-normal text-muted">{unitSuffix(unitOf(listing))}</span></p>
 				</div>
-				<div className="flex gap-2">
-					<button onClick={handleCompareToggle} className="rounded-xl border border-primary/30 px-4 py-2.5 text-xs font-bold text-primary-ink">
+				<div className="flex shrink-0 gap-2">
+					<button onClick={handleCompareToggle} className="rounded-xl border border-primary/30 px-3 py-2.5 text-xs font-bold text-primary-ink sm:px-4">
 						{inCompare ? 'Remove' : '+ Compare'}
 					</button>
-					<button onClick={handleMessage} disabled={messaging} className="rounded-xl bg-brand-gradient px-4 py-2.5 text-xs font-bold text-white disabled:opacity-50">
+					<button onClick={handleMessage} disabled={messaging} className="rounded-xl bg-brand-gradient px-3 py-2.5 text-xs font-bold text-white disabled:opacity-50 sm:px-4">
 						Contact Now
 					</button>
 				</div>
@@ -978,7 +983,7 @@ export default function ListingDetailPage() {
 							initial={{ opacity: 0, scale: 0.95 }}
 							animate={{ opacity: 1, scale: 1 }}
 							exit={{ opacity: 0, scale: 0.95 }}
-							className="relative w-full max-w-sm rounded-2xl border border-primary/20 bg-surface p-6"
+							className="relative max-h-[85vh] w-full max-w-sm overflow-y-auto rounded-2xl border border-primary/20 bg-surface p-5 sm:p-6"
 						>
 							<button onClick={() => setReportOpen(false)} aria-label="Close" className="absolute right-4 top-4 text-muted hover:text-text">
 								<X className="h-4 w-4" />

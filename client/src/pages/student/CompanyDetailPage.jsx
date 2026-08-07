@@ -117,7 +117,7 @@ export default function CompanyDetailPage() {
 		return (
 			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
-				<div className="mx-auto max-w-2xl px-6 pt-40 text-center">
+				<div className="mx-auto max-w-2xl px-4 pt-40 text-center sm:px-6">
 					<Building2 className="mx-auto mb-3 h-10 w-10 text-muted" />
 					<h1 className="font-serif text-2xl font-bold">Placement centre not found</h1>
 					<Link to="/companies" className="mt-4 inline-block font-bold text-primary-ink hover:underline">
@@ -143,7 +143,7 @@ export default function CompanyDetailPage() {
 				/>
 			)}
 
-			<div className="mx-auto max-w-5xl px-6 pb-16 pt-28">
+			<div className="mx-auto max-w-5xl px-4 pb-16 pt-28 sm:px-6">
 				<button
 					onClick={() => navigate('/companies')}
 					className="mb-4 flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"

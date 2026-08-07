@@ -61,3 +61,16 @@ export const coordsOf = (listing) => {
 	if (typeof lat !== 'number' || typeof lng !== 'number') return null;
 	return [lat, lng];
 };
+
+/**
+ * Turn a map's pixel height into one that survives a phone.
+ *
+ * Callers pass a desktop height (620 for the browse map, 320 for a single
+ * property). Left as a flat pixel value it eats an entire mobile screen and
+ * then some — 620px on a 568px-tall handset means the map IS the page. The
+ * ceiling is what does the work; the requested height wins on any screen tall
+ * enough to afford it, so desktop is untouched.
+ */
+export const mapFrameHeight = (height) =>
+	typeof height === 'number' ? `clamp(240px, ${height}px, 72vh)` : height;
+

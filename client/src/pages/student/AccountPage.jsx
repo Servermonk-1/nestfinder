@@ -27,7 +27,7 @@ export default function AccountPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
-			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">
+			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
 				<div className="mx-auto max-w-3xl">
 					<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 						<span className="h-px w-6 bg-primary/50" /> Your account
@@ -38,7 +38,7 @@ export default function AccountPage() {
 				</div>
 			</div>
 
-			<div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
+			<div className="max-w-3xl mx-auto px-4 py-10 space-y-6 sm:px-6">
 				{/* Profile card */}
 				<motion.div
 					initial={{ opacity: 0, y: 12 }}
@@ -91,22 +91,22 @@ export default function AccountPage() {
 					initial={{ opacity: 0, y: 12 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.1 }}
-					className="grid grid-cols-2 gap-4"
+					className="grid grid-cols-2 gap-3 sm:gap-4"
 				>
 					<button
 						onClick={() => navigate('/saved')}
-						className="rounded-2xl border border-line bg-surface p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40"
+						className="rounded-2xl border border-line bg-surface p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40 sm:p-5"
 					>
 						<Heart className="h-5 w-5 text-primary-ink" />
-						<p className="mt-3 font-serif text-2xl font-bold text-text">{savedListings.length}</p>
+						<p className="mt-3 font-serif text-xl font-bold text-text sm:text-2xl">{savedListings.length}</p>
 						<p className="text-xs text-muted">Saved homes</p>
 					</button>
 					<button
 						onClick={() => navigate('/compare')}
-						className="rounded-2xl border border-line bg-surface p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40"
+						className="rounded-2xl border border-line bg-surface p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40 sm:p-5"
 					>
 						<GitCompare className="h-5 w-5 text-primary-ink" />
-						<p className="mt-3 font-serif text-2xl font-bold text-text">{compareList.length}</p>
+						<p className="mt-3 font-serif text-xl font-bold text-text sm:text-2xl">{compareList.length}</p>
 						<p className="text-xs text-muted">In comparison</p>
 					</button>
 				</motion.div>

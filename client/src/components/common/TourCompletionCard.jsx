@@ -37,7 +37,7 @@ export default function TourCompletionCard({ onClose }) {
 				role="dialog"
 				aria-modal="true"
 				aria-labelledby="tour-done-title"
-				className="relative w-full max-w-md rounded-3xl border border-line bg-surface p-8 text-center shadow-card-lg"
+				className="relative max-h-[88vh] w-full max-w-md overflow-y-auto rounded-3xl border border-line bg-surface p-6 text-center shadow-card-lg sm:p-8"
 			>
 				<motion.div
 					initial={{ scale: 0 }}

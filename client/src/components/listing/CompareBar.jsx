@@ -17,18 +17,18 @@ export default function CompareBar() {
 					exit={{ y: 100, opacity: 0 }}
 					transition={{ type: 'spring', stiffness: 300, damping: 30 }}
 					id="tour-compare-bar"
-					className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4"
+					className="fixed bottom-24 left-1/2 z-50 w-full max-w-2xl -translate-x-1/2 px-4 md:bottom-6"
 				>
 					<div className="glass-strong rounded-2xl border border-line p-4 shadow-card-lg">
 						<div className="flex items-center gap-4">
 
 							{/* Icon */}
-							<div className="w-9 h-9 bg-primary/20 rounded-xl flex items-center justify-center flex-shrink-0">
+							<div className="hidden w-9 h-9 bg-primary/20 rounded-xl sm:flex items-center justify-center flex-shrink-0">
 								<GitCompare className="w-4 h-4 text-primary-ink" />
 							</div>
 
 							{/* Selected listings */}
-							<div className="flex-1 flex items-center gap-3 overflow-hidden">
+							<div className="flex-1 flex flex-wrap gap-2 overflow-y-auto sm:flex-nowrap sm:items-center sm:gap-3 sm:overflow-hidden sm:overflow-x-auto">
 								{compareList.map((listing) => (
 									<motion.div
 										key={listing._id}
@@ -37,7 +37,7 @@ export default function CompareBar() {
 										exit={{ scale: 0, opacity: 0 }}
 										className="flex items-center gap-2 bg-surface-alt border border-line rounded-xl px-3 py-1.5 flex-shrink-0"
 									>
-										<span className="text-text text-xs font-semibold truncate max-w-[100px]">
+										<span className="text-text text-xs font-semibold truncate max-w-[120px] sm:max-w-[100px]">
 											{listing.title}
 										</span>
 										<button
@@ -54,7 +54,7 @@ export default function CompareBar() {
 								{[...Array(3 - compareList.length)].map((_, i) => (
 									<div
 										key={i}
-										className="flex items-center justify-center w-24 h-8 border border-dashed border-muted/15 rounded-xl flex-shrink-0"
+										className="hidden items-center justify-center w-24 h-8 border border-dashed border-muted/15 rounded-xl flex-shrink-0 sm:flex"
 									>
 										<span className="text-muted text-xs">+ Add more</span>
 									</div>

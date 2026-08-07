@@ -12,7 +12,7 @@ export default function SavedPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
-			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">
+			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
 				<div className="mx-auto max-w-7xl">
 					<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 						<span className="h-px w-6 bg-primary/50" /> Saved homes
@@ -26,7 +26,7 @@ export default function SavedPage() {
 				</div>
 			</div>
 
-			<div className="mx-auto max-w-7xl px-6 py-10">
+			<div className="mx-auto max-w-7xl px-4 py-10 sm:px-6">
 				{savedListings.length === 0 ? (
 					<div className="flex flex-col items-center justify-center py-24 text-center">
 						<div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10">

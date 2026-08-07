@@ -69,7 +69,7 @@ export default function PaymentSettingsPage() {
 
     return (
         <AdminNavbar>
-            <div className="mx-auto max-w-3xl px-6 py-14">
+            <div className="mx-auto max-w-3xl px-4 py-14 sm:px-6">
                 <h1 className="font-serif text-2xl font-extrabold mb-4">Payment Settings</h1>
                 <p className="text-sm text-muted mb-6">Configure bank transfer details and optional USDT (TRC20) payment options and exchange rate.</p>
                 <form onSubmit={save} className="space-y-4">

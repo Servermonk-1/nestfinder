@@ -13,6 +13,14 @@ import { getImageUrl } from '../utils/urlHelper';
 
 const HERO_IMG = 'https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1100&q=85';
 const HERO_IMG_2 = 'https://images.unsplash.com/photo-1598928506311-c55ded91a20c?auto=format&fit=crop&w=700&q=85';
+const TRUST_IMG = 'https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=85';
+
+// Unsplash will serve any width from the same photo, so a phone can fetch a
+// file sized for its screen instead of the full-width desktop one.
+const srcSetFor = (url) => {
+	const full = Number(url.match(/w=(\d+)/)?.[1]) || 1100;
+	return `${url.replace(/w=\d+/, 'w=640')} 640w, ${url} ${full}w`;
+};
 
 const stats = [
 	{ value: '1,200+', label: 'Verified Homes' },
@@ -227,7 +235,7 @@ export default function LandingPageV2() {
 							<Sparkles className="h-3.5 w-3.5" /> Verified housing for SIWES students
 						</motion.div>
 
-						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-5xl font-extrabold leading-[1.02] tracking-tight text-text md:text-7xl">
+						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-4xl font-extrabold leading-[1.05] tracking-tight text-text sm:text-5xl sm:leading-[1.02] md:text-7xl">
 							Find a home that <span className="italic text-gradient">feels like yours</span>
 						</motion.h1>
 
@@ -249,7 +257,17 @@ export default function LandingPageV2() {
 					{/* Right — image collage */}
 					<motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto w-full max-w-lg">
 						<div className="relative overflow-hidden rounded-none border-4 border-surface shadow-card-lg">
-							<img src={HERO_IMG} alt="A verified home on NestFinder" className="h-[420px] w-full object-cover md:h-[500px]" />
+							{/* Phones get the photo's own landscape aspect instead of a fixed
+							    height — cropping a 3:2 room shot into a near-square 288×300
+							    box throws away most of the frame. Fixed heights return from
+							    sm up, where the column is wide enough to fill them. */}
+							<img
+								src={HERO_IMG}
+								srcSet={srcSetFor(HERO_IMG)}
+								sizes="(min-width: 1024px) 512px, 100vw"
+								alt="A verified home on NestFinder"
+								className="aspect-[3/2] w-full object-cover sm:aspect-auto sm:h-[420px] md:h-[500px]"
+							/>
 							<div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success-ink shadow-sm">
 								<BadgeCheck className="h-4 w-4" /> Verified Listing
@@ -379,7 +397,13 @@ export default function LandingPageV2() {
 						</div>
 					</div>
 					<motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="relative overflow-hidden rounded-none border-4 border-surface shadow-card-lg">
-						<img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?auto=format&fit=crop&w=1000&q=85" alt="Verified NestFinder home" className="h-[440px] w-full object-cover" />
+						<img
+							src={TRUST_IMG}
+							srcSet={srcSetFor(TRUST_IMG)}
+							sizes="(min-width: 1024px) 512px, 100vw"
+							alt="Verified NestFinder home"
+							className="aspect-[3/2] w-full object-cover sm:aspect-auto sm:h-[440px]"
+						/>
 						<div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
 						<div className="glass-strong absolute inset-x-5 bottom-5 rounded-2xl p-5">
 							<div className="flex items-center gap-2">

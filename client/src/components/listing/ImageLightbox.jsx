@@ -59,7 +59,7 @@ export default function ImageLightbox({ images, index, onClose, onIndexChange })
 					transition={{ duration: 0.2 }}
 					src={getImageUrl(images[index])}
 					alt=""
-					className="max-h-[85vh] max-w-[90vw] rounded-xl object-contain"
+					className="max-h-[80vh] max-w-[70vw] rounded-xl object-contain sm:max-h-[85vh] sm:max-w-[80vw] md:max-w-[90vw]"
 				/>
 
 				{images.length > 1 && (

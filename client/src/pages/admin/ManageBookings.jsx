@@ -39,7 +39,7 @@ export default function ManageBookings() {
 
 	return (
 		<AdminNavbar>
-			<div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
+			<div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6">
 				<h1 className="font-serif text-3xl font-extrabold text-text">Bookings & escrow</h1>
 				<p className="mt-1 text-sm text-muted">
 					Applications, payments, and money the platform is currently holding for students.

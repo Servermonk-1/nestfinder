@@ -10,6 +10,13 @@ import BrandMark from '../components/common/Logo';
 
 const HERO_IMG = 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=1100&q=85';
 
+// Unsplash will serve any width from the same photo, so a phone can fetch a
+// file sized for its screen instead of the full-width desktop one.
+const srcSetFor = (url) => {
+	const full = Number(url.match(/w=(\d+)/)?.[1]) || 1100;
+	return `${url.replace(/w=\d+/, 'w=640')} 640w, ${url} ${full}w`;
+};
+
 const stats = [
 	{ value: '1K+', label: 'Students searching' },
 	{ value: 'Free', label: 'To list a room' },
@@ -134,7 +141,7 @@ export default function LandlordLanding() {
 						<motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/5 px-4 py-1.5 text-xs font-bold uppercase tracking-wide text-primary-ink">
 							<Sparkles className="h-3.5 w-3.5" /> For landlords &amp; agents
 						</motion.div>
-						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-5xl font-extrabold leading-[1.02] tracking-tight text-text md:text-7xl">
+						<motion.h1 initial={{ opacity: 0, y: 22 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.05 }} className="font-serif text-4xl font-extrabold leading-[1.05] tracking-tight text-text sm:text-5xl sm:leading-[1.02] md:text-7xl">
 							Fill your rooms with <span className="italic text-gradient">verified students</span>
 						</motion.h1>
 						<motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.12 }} className="mt-6 max-w-lg text-lg leading-relaxed text-muted">
@@ -159,7 +166,17 @@ export default function LandlordLanding() {
 
 					<motion.div initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }} className="relative mx-auto w-full max-w-lg">
 						<div className="relative overflow-hidden rounded-none border-4 border-surface shadow-card-lg">
-							<img src={HERO_IMG} alt="A room ready to list" className="h-[420px] w-full object-cover md:h-[500px]" />
+							{/* Phones get the photo's own landscape aspect instead of a
+							    fixed height — cropping a 3:2 room shot into a near-square
+							    box throws away most of the frame. Fixed heights return
+							    from sm up, where the column is wide enough to fill them. */}
+							<img
+								src={HERO_IMG}
+								srcSet={srcSetFor(HERO_IMG)}
+								sizes="(min-width: 1024px) 512px, 100vw"
+								alt="A room ready to list"
+								className="aspect-[3/2] w-full object-cover sm:aspect-auto sm:h-[420px] md:h-[500px]"
+							/>
 							<div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
 							<span className="absolute left-5 top-5 flex items-center gap-1.5 rounded-full bg-white/95 px-3 py-1.5 text-xs font-bold text-success-ink shadow-sm"><BadgeCheck className="h-4 w-4" /> Verified Landlord</span>
 						</div>

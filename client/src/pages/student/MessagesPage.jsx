@@ -205,7 +205,10 @@ export default function MessagesPage() {
 											const flags = isMine ? [] : detectRedFlags(m.text);
 											return (
 												<motion.div key={m._id} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}>
-													<div className={`max-w-[75%] rounded-2xl px-4 py-2.5 text-sm shadow-sm ${isMine ? 'rounded-br-md bg-brand-gradient text-white' : 'rounded-bl-md border border-line bg-surface text-text'}`}>
+													{/* break-words, because a pasted listing URL is one
+													    unbreakable token and would otherwise widen the
+													    whole thread past the phone's viewport. */}
+													<div className={`max-w-[85%] whitespace-pre-wrap break-words rounded-2xl px-4 py-2.5 text-sm shadow-sm sm:max-w-[75%] ${isMine ? 'rounded-br-md bg-brand-gradient text-white' : 'rounded-bl-md border border-line bg-surface text-text'}`}>
 														{m.text}
 														<div className={`mt-1 text-[12px] ${isMine ? 'text-white/70' : 'text-muted'}`}>{timeAgo(m.createdAt)}</div>
 													</div>

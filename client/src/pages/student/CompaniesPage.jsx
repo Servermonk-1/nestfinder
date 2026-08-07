@@ -70,7 +70,7 @@ export default function CompaniesPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
-			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">
+			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
 				<div className="mx-auto max-w-6xl">
 					<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 						<span className="h-px w-6 bg-primary/50" /> SIWES directory
@@ -85,10 +85,10 @@ export default function CompaniesPage() {
 				</div>
 			</div>
 
-			<div className="mx-auto max-w-6xl px-6 py-8">
+			<div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
 				{/* ── Controls ── */}
 				<div className="mb-6 flex flex-wrap items-center gap-3">
-					<div className="relative min-w-[240px] flex-1">
+					<div className="relative w-full flex-1 sm:w-auto sm:min-w-[240px]">
 						<label htmlFor="company-search" className="sr-only">Search companies</label>
 						<Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
 						<input

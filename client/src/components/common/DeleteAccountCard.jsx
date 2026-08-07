@@ -74,7 +74,7 @@ export default function DeleteAccountCard() {
 							initial={{ opacity: 0, scale: 0.95 }}
 							animate={{ opacity: 1, scale: 1 }}
 							exit={{ opacity: 0, scale: 0.95 }}
-							className="relative w-full max-w-sm rounded-2xl border border-line bg-surface p-6 shadow-card-lg"
+							className="relative max-h-[85vh] w-full max-w-sm overflow-y-auto rounded-2xl border border-line bg-surface p-5 shadow-card-lg sm:p-6"
 						>
 							<button onClick={close} aria-label="Close dialog" className="absolute right-4 top-4 text-muted hover:text-text">
 								<X className="h-4 w-4" />

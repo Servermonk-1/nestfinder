@@ -33,18 +33,20 @@ export default function AdminLogin() {
 	};
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-paper via-surface-alt to-paper flex items-center justify-center p-4">
+		<div className="relative min-h-screen overflow-hidden bg-gradient-to-br from-paper via-surface-alt to-paper flex items-center justify-center p-4">
 
-			{/* Animated background blobs */}
+			{/* Animated background blobs. They deliberately hang off the corners, so
+			    the container clips them — without that they widen the page and the
+			    whole screen scrolls sideways on a phone. */}
 			<motion.div
 				animate={{ scale: [1, 1.3, 1], rotate: [0, 60, 0] }}
 				transition={{ duration: 12, repeat: Infinity, ease: 'easeInOut' }}
-				className="absolute top-[-150px] right-[-150px] w-[500px] h-[500px] bg-primary/15 rounded-full blur-3xl"
+				className="pointer-events-none absolute top-[-150px] right-[-150px] w-[500px] h-[500px] bg-primary/15 rounded-full blur-3xl"
 			/>
 			<motion.div
 				animate={{ scale: [1.2, 1, 1.2], rotate: [40, 0, 40] }}
 				transition={{ duration: 15, repeat: Infinity, ease: 'easeInOut' }}
-				className="absolute bottom-[-100px] left-[-100px] w-[400px] h-[400px] bg-danger/10 rounded-full blur-3xl"
+				className="pointer-events-none absolute bottom-[-100px] left-[-100px] w-[400px] h-[400px] bg-danger/10 rounded-full blur-3xl"
 			/>
 
 			<motion.div
@@ -54,7 +56,7 @@ export default function AdminLogin() {
 				className="relative w-full max-w-md"
 			>
 				{/* Card */}
-				<div className="rounded-3xl border border-line bg-surface p-10 shadow-card-lg">
+				<div className="rounded-3xl border border-line bg-surface p-6 shadow-card-lg sm:p-10">
 
 					{/* The full badge, not the mark — at 72px the arched lettering reads,
 					    and a login screen is one of the few places with room for it. */}

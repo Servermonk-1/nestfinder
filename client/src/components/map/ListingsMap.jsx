@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 import { MapPinOff, Star } from 'lucide-react';
 import { monthlyRent } from '../../utils/price';
 import { getImageUrl } from '../../utils/urlHelper';
-import { TILE_URL, TILE_ATTRIBUTION, priceMarker, coordsOf } from './mapSetup';
+import { TILE_URL, TILE_ATTRIBUTION, priceMarker, coordsOf, mapFrameHeight } from './mapSetup';
 import './map.css';
 
 // Compact rent for a marker: ₦45,000 becomes "₦45k" so pills stay readable at
@@ -45,6 +45,7 @@ function FitToMarkers({ points }) {
  * "is this near my placement?" is spatial, and a list can't answer it.
  */
 export default function ListingsMap({ listings = [], height = 620, anchor = null }) {
+	const frameHeight = mapFrameHeight(height);
 	const placed = useMemo(
 		() => listings.map((l) => ({ listing: l, position: coordsOf(l) })).filter((m) => m.position),
 		[listings]
@@ -62,7 +63,7 @@ export default function ListingsMap({ listings = [], height = 620, anchor = null
 		return (
 			<div
 				className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-muted/15 bg-surface px-6 text-center"
-				style={{ height }}
+				style={{ height: frameHeight }}
 			>
 				<MapPinOff className="h-8 w-8 text-muted" />
 				<p className="font-serif text-xl font-bold text-ink">Nothing to map yet</p>
@@ -77,7 +78,7 @@ export default function ListingsMap({ listings = [], height = 620, anchor = null
 
 	return (
 		<div>
-			<div className="overflow-hidden rounded-2xl border border-muted/15" style={{ height }}>
+			<div className="overflow-hidden rounded-2xl border border-muted/15" style={{ height: frameHeight }}>
 				<MapContainer center={points[0]} zoom={13} scrollWheelZoom style={{ height: '100%', width: '100%' }}>
 					<TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
 					<FitToMarkers points={points} />

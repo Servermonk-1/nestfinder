@@ -8,6 +8,7 @@ import api from '../../services/api';
 import { getDeviceToken, saveDeviceToken } from '../../utils/deviceTrust';
 import Turnstile, { captchaEnabled } from '../../components/common/Turnstile';
 import BrandMark from '../../components/common/Logo';
+import { useIsDesktop } from '../../hooks/useMediaQuery';
 
 function AuthBackdrop() {
 	return (
@@ -57,6 +58,9 @@ export default function LandlordAuth() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const { login } = useAuth();
+	// See StudentLogin: below md the two halves stack, so the slide has to be
+	// disabled from JS rather than with a utility class.
+	const isDesktop = useIsDesktop();
 	const [isSignIn, setIsSignIn] = useState(!location.pathname.includes('register'));
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -172,7 +176,7 @@ export default function LandlordAuth() {
 		return (
 			<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 				<AuthBackdrop />
-				<motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="glass-strong relative w-full max-w-md rounded-3xl p-8 shadow-card-lg">
+				<motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="glass-strong relative w-full max-w-md rounded-3xl p-6 shadow-card-lg sm:p-8">
 					<button onClick={() => { setOtpStage(null); setOtpCode(''); }} className="mb-6 flex items-center gap-2 text-xs font-semibold text-muted transition hover:text-primary-ink">
 						<ArrowLeft className="h-4 w-4" /> Back to sign in
 					</button>
@@ -184,7 +188,7 @@ export default function LandlordAuth() {
 					<p className="mt-2 text-center text-sm text-muted">We sent a 6-digit code to <span className="font-semibold text-text">{otpStage.email}</span></p>
 					<form onSubmit={handleVerifyOtp} className="mt-7 space-y-4">
 						<input autoFocus inputMode="numeric" maxLength={6} value={otpCode} onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))} placeholder="••••••"
-							className="w-full rounded-2xl border border-line bg-surface-alt py-4 text-center font-serif text-3xl font-bold tracking-[0.55em] text-text outline-none transition focus:border-primary/60 focus:bg-white focus:ring-2 focus:ring-primary/20" />
+							className="w-full rounded-2xl border border-line bg-surface-alt py-4 text-center font-serif text-2xl font-bold tracking-[0.35em] text-text outline-none sm:text-3xl sm:tracking-[0.55em] transition focus:border-primary/60 focus:bg-white focus:ring-2 focus:ring-primary/20" />
 						<motion.button type="submit" disabled={otpLoading} whileHover={{ scale: 1.015 }} whileTap={{ scale: 0.985 }}
 							className="w-full rounded-xl bg-brand-gradient py-3.5 text-sm font-bold uppercase tracking-wide text-white shadow-glow-sm transition-all hover:shadow-glow disabled:opacity-60">
 							{otpLoading ? <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : 'Verify & Sign In'}
@@ -207,13 +211,13 @@ export default function LandlordAuth() {
 		<div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-paper p-4">
 			<AuthBackdrop />
 			<motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-				className="glass-strong relative flex min-h-[680px] w-[1000px] max-w-full overflow-hidden rounded-none shadow-card-lg">
+				className="glass-strong relative flex w-full max-w-[1000px] overflow-hidden rounded-none shadow-card-lg md:min-h-[680px]">
 				{/* SIGN IN */}
-				<motion.div initial={false} animate={{ x: isSignIn ? '0%' : '-100%', opacity: isSignIn ? 1 : 0 }} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }} style={{ pointerEvents: isSignIn ? 'all' : 'none' }}
-					className="absolute inset-y-0 left-0 z-10 flex w-1/2 items-center justify-center bg-surface/55 p-12">
+				<motion.div initial={false} animate={isDesktop ? { x: isSignIn ? '0%' : '-100%', opacity: isSignIn ? 1 : 0 } : { x: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }} style={{ pointerEvents: !isDesktop || isSignIn ? 'all' : 'none' }}
+					className={`${isSignIn ? 'flex' : 'hidden'} z-10 w-full items-center justify-center bg-surface/55 p-6 sm:p-8 md:absolute md:inset-y-0 md:left-0 md:flex md:w-1/2 md:p-12`}>
 					<div className="w-full max-w-sm">
 						<Logo />
-						<h1 className="font-serif text-4xl font-extrabold leading-tight text-text">Welcome <span className="text-gradient">back</span></h1>
+						<h1 className="font-serif text-3xl font-extrabold leading-tight text-text sm:text-4xl">Welcome <span className="text-gradient">back</span></h1>
 						<p className="mb-8 mt-2 text-sm text-muted">Manage your accommodation listings</p>
 						<form onSubmit={handleSignIn} className="space-y-4">
 							<InputField icon={Mail} type="email" placeholder="Email address" value={signInData.email} onChange={e => { setSignInData({ ...signInData, email: e.target.value }); setErrors({ ...errors, email: '' }); }} error={errors.email} />
@@ -223,16 +227,24 @@ export default function LandlordAuth() {
 								{loading ? <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : 'Sign In'}
 							</motion.button>
 						</form>
-						<p className="mt-7 text-center text-xs text-muted">Are you a student? <Link to="/student/login" className="font-bold text-primary-ink hover:underline">Login here</Link></p>
+						{/* The showcase panel carries the sign-up switch on desktop, but it
+						    is hidden on phones — so the toggle has to live here too. */}
+						<p className="mt-7 text-center text-xs text-muted md:hidden">
+							New here?{' '}
+							<button type="button" onClick={switchToSignUp} className="font-bold text-primary-ink hover:underline">
+								List your property
+							</button>
+						</p>
+						<p className="mt-3 text-center text-xs text-muted md:mt-7">Are you a student? <Link to="/student/login" className="font-bold text-primary-ink hover:underline">Login here</Link></p>
 					</div>
 				</motion.div>
 
 				{/* SIGN UP */}
-				<motion.div initial={false} animate={{ x: isSignIn ? '100%' : '0%', opacity: isSignIn ? 0 : 1 }} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }} style={{ pointerEvents: isSignIn ? 'none' : 'all' }}
-					className="absolute inset-y-0 left-1/2 z-10 flex w-1/2 items-center justify-center bg-surface/55 p-12">
+				<motion.div initial={false} animate={isDesktop ? { x: isSignIn ? '100%' : '0%', opacity: isSignIn ? 0 : 1 } : { x: 0, opacity: 1 }} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }} style={{ pointerEvents: !isDesktop || !isSignIn ? 'all' : 'none' }}
+					className={`${isSignIn ? 'hidden' : 'flex'} z-10 w-full items-center justify-center bg-surface/55 p-6 sm:p-8 md:absolute md:inset-y-0 md:left-1/2 md:flex md:w-1/2 md:p-12`}>
 					<div className="w-full max-w-sm">
 						<Logo />
-						<h1 className="font-serif text-4xl font-extrabold leading-tight text-text">List <span className="text-gradient">with us</span></h1>
+						<h1 className="font-serif text-3xl font-extrabold leading-tight text-text sm:text-4xl">List <span className="text-gradient">with us</span></h1>
 						<p className="mb-5 mt-2 text-sm text-muted">Start listing verified student housing</p>
 						<form onSubmit={handleSignUp} className="space-y-3">
 							<InputField icon={User} type="text" placeholder="Full name" value={signUpData.fullName} onChange={e => { setSignUpData({ ...signUpData, fullName: e.target.value }); setErrors({ ...errors, fullName: '' }); }} error={errors.fullName} />
@@ -247,11 +259,18 @@ export default function LandlordAuth() {
 								{loading ? <div className="mx-auto h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent" /> : 'Create Account'}
 							</motion.button>
 						</form>
+						{/* Mobile counterpart to the showcase panel's switch button. */}
+						<p className="mt-6 text-center text-xs text-muted md:hidden">
+							Already have an account?{' '}
+							<button type="button" onClick={switchToSignIn} className="font-bold text-primary-ink hover:underline">
+								Sign in
+							</button>
+						</p>
 					</div>
 				</motion.div>
 
-				{/* SHOWCASE PANEL */}
-				<motion.div initial={false} animate={{ x: isSignIn ? '100%' : '0%' }} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }} className="absolute inset-y-0 left-0 z-20 w-1/2 overflow-hidden">
+				{/* SHOWCASE PANEL — decorative; hidden where there is no room beside a form. */}
+				<motion.div initial={false} animate={{ x: isSignIn ? '100%' : '0%' }} transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }} className="hidden overflow-hidden md:absolute md:inset-y-0 md:left-0 md:z-20 md:block md:w-1/2">
 					<div className="absolute inset-0 bg-brand-gradient" />
 					<div className="absolute inset-0 bg-grid opacity-20" />
 					<motion.div animate={{ scale: [1, 1.25, 1], rotate: [0, 40, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-white/20 blur-3xl" />

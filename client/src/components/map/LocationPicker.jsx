@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-lea
 import { MapPin, Crosshair, Loader2, Check, Info } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
-import { TILE_URL, TILE_ATTRIBUTION, pinMarker } from './mapSetup';
+import { TILE_URL, TILE_ATTRIBUTION, pinMarker, mapFrameHeight } from './mapSetup';
 import './map.css';
 
 // Ibadan — where the platform's listings are. Only a starting frame; the
@@ -95,7 +95,7 @@ export default function LocationPicker({ address, area, city, state, value, onCh
 				</button>
 			</div>
 
-			<div className="overflow-hidden rounded-xl border border-muted/15" style={{ height: 300 }}>
+			<div className="overflow-hidden rounded-xl border border-muted/15" style={{ height: mapFrameHeight(300) }}>
 				<MapContainer center={centre} zoom={position ? 16 : 12} style={{ height: '100%', width: '100%' }}>
 					<TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
 					<Recentre position={position} zoom={suggestion === 'address' ? 17 : position ? 16 : 12} />

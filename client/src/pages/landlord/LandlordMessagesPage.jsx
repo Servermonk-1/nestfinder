@@ -215,7 +215,10 @@ export default function LandlordMessagesPage() {
 													animate={{ opacity: 1, y: 0 }}
 													className={`flex flex-col ${isMine ? 'items-end' : 'items-start'}`}
 												>
-													<div className={`max-w-[75%] px-4 py-2.5 text-sm ${isMine ? 'rounded-2xl rounded-br-md bg-brand-gradient text-white shadow-glow-sm' : 'rounded-2xl rounded-bl-md border border-line bg-surface text-text'}`}>
+													{/* break-words, because a pasted listing URL is one
+													    unbreakable token and would otherwise widen the
+													    whole thread past the phone's viewport. */}
+													<div className={`max-w-[85%] whitespace-pre-wrap break-words px-4 py-2.5 text-sm sm:max-w-[75%] ${isMine ? 'rounded-2xl rounded-br-md bg-brand-gradient text-white shadow-glow-sm' : 'rounded-2xl rounded-bl-md border border-line bg-surface text-text'}`}>
 														{m.text}
 														<div className={`mt-1 text-[12px] ${isMine ? 'text-white/70' : 'text-muted'}`}>{timeAgo(m.createdAt)}</div>
 													</div>

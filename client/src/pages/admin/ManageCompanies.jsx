@@ -155,7 +155,7 @@ export default function ManageCompanies() {
 
 	return (
 		<AdminNavbar>
-			<div className="mx-auto max-w-6xl px-6 pb-16 pt-10">
+			<div className="mx-auto max-w-6xl px-4 pb-16 pt-10 sm:px-6">
 				<div className="mb-6 flex flex-wrap items-end justify-between gap-4">
 					<div>
 						<h1 className="font-serif text-3xl font-extrabold text-text">SIWES directory</h1>

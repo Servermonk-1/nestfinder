@@ -71,7 +71,7 @@ export default function VerifyEmailPage() {
 				<div className="absolute -right-40 bottom-0 h-[24rem] w-[24rem] rounded-full bg-highlight/20 blur-[120px] animate-float-slow" />
 			</div>
 
-			<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="glass-strong relative w-full max-w-md rounded-3xl p-8 text-center shadow-card-lg">
+			<motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="glass-strong relative w-full max-w-md rounded-3xl p-6 text-center shadow-card-lg sm:p-8">
 				<div className="relative mx-auto mb-6 h-16 w-16">
 					<div className="absolute inset-0 rounded-2xl bg-primary/40 blur-lg" />
 					<div className="relative flex h-16 w-16 items-center justify-center rounded-2xl bg-brand-gradient shadow-glow-sm">

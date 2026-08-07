@@ -71,7 +71,7 @@ export default function SaveSearchButton({ filters, nearPlacement, radiusKm }) {
 				onChange={(e) => setName(e.target.value)}
 				maxLength={60}
 				placeholder="Name this search"
-				className="min-w-[200px] flex-1 border border-line bg-surface-alt px-3 py-2 text-sm outline-none focus:border-primary"
+				className="w-full flex-1 border border-line bg-surface-alt px-3 py-2 text-sm outline-none focus:border-primary sm:w-auto sm:min-w-[200px]"
 			/>
 			<button
 				type="submit"

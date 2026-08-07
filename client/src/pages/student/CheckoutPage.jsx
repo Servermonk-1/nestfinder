@@ -86,7 +86,7 @@ export default function CheckoutPage() {
 	if (!booking) return (
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
-			<div className="mx-auto max-w-lg px-6 pt-32 text-center">
+			<div className="mx-auto max-w-lg px-4 pt-32 text-center sm:px-6">
 				<p className="font-serif text-xl font-bold">Booking not found</p>
 				<Link to="/bookings" className="mt-4 inline-block bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-dark">
 					Back to bookings
@@ -99,7 +99,7 @@ export default function CheckoutPage() {
 		return (
 			<div className="min-h-screen bg-paper text-text">
 				<StudentNavbar />
-				<div className="mx-auto max-w-lg px-6 pt-32 text-center">
+				<div className="mx-auto max-w-lg px-4 pt-32 text-center sm:px-6">
 					<p className="font-serif text-xl font-bold">This booking is not awaiting payment</p>
 					<p className="mt-2 text-sm text-muted">Its status is <span className="font-semibold text-text">{booking.status}</span>.</p>
 					<Link to={`/bookings/${id}`} className="mt-5 inline-block bg-primary px-5 py-2.5 text-sm font-bold text-white transition hover:bg-primary-dark">
@@ -151,7 +151,7 @@ export default function CheckoutPage() {
 	return (
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
-			<div className="mx-auto max-w-4xl px-6 pb-20 pt-28">
+			<div className="mx-auto max-w-4xl px-4 pb-20 pt-28 sm:px-6">
 				<Link
 					to={`/bookings/${id}`}
 					className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"

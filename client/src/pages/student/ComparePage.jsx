@@ -343,12 +343,16 @@ export default function ComparePage() {
 					<ComparePrioritySliders weights={weights} onChange={setWeights} />
 				</div>
 
-				<p className="mb-4 text-xs font-semibold uppercase tracking-widest text-muted md:hidden">
+				{/* Only true in the sm–md band now; phones scroll vertically. */}
+				<p className="mb-4 hidden text-xs font-semibold uppercase tracking-widest text-muted sm:block md:hidden">
 					Swipe sideways to compare →
 				</p>
 
 				{/* Comparison cards */}
-				<div className="flex snap-x snap-mandatory gap-6 overflow-x-auto pb-6">
+				{/* Phones stack the cards full-width — a 280px card in a swipe rail
+				    leaves almost nothing readable at 320px. The snap rail returns
+				    from sm up, where two cards actually fit side by side. */}
+				<div className="flex flex-col gap-6 pb-6 sm:flex-row sm:snap-x sm:snap-mandatory sm:overflow-x-auto">
 					<AnimatePresence>
 						{scored.map((listing, rank) => {
 							const id = getId(listing);
@@ -372,7 +376,7 @@ export default function ComparePage() {
 									animate={{ opacity: 1, y: 0 }}
 									exit={{ opacity: 0, scale: 0.95 }}
 									transition={{ duration: 0.5, delay: rank * 0.1 }}
-									className={`relative min-w-[280px] flex-1 snap-center rounded-2xl border bg-surface ${
+									className={`relative w-full flex-1 rounded-2xl border bg-surface sm:min-w-[280px] sm:snap-center ${
 										isWinner ? 'border-primary/60 shadow-xl shadow-primary/20' : 'border-primary/10'
 									}`}
 								>

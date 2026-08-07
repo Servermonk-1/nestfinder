@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import { monthlyRent } from '../../utils/price';
 import { commuteSummary } from '../../utils/commute';
-import { TILE_URL, TILE_ATTRIBUTION, priceMarker, coordsOf } from './mapSetup';
+import { TILE_URL, TILE_ATTRIBUTION, priceMarker, coordsOf, mapFrameHeight } from './mapSetup';
 import './map.css';
 
 // A distinct marker for the workplace, so it can't be mistaken for a room.
@@ -41,7 +41,7 @@ export default function CompanyMap({ company, listings = [], radiusKm = 10, heig
 	const zoom = radiusKm <= 3 ? 14 : radiusKm <= 5 ? 13 : radiusKm <= 10 ? 12 : radiusKm <= 15 ? 11.5 : 11;
 
 	return (
-		<div className="overflow-hidden rounded-2xl border border-muted/15" style={{ height }}>
+		<div className="overflow-hidden rounded-2xl border border-muted/15" style={{ height: mapFrameHeight(height) }}>
 			<MapContainer center={centre} zoom={zoom} scrollWheelZoom={false} style={{ height: '100%', width: '100%' }}>
 				<TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
 

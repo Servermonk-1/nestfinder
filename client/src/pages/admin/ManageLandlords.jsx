@@ -82,7 +82,7 @@ export default function ManageLandlords() {
 				</motion.div>
 
 				<div className="mt-6 flex flex-wrap items-center gap-3">
-					<div className="relative flex-1 min-w-[220px]">
+					<div className="relative w-full flex-1 sm:w-auto sm:min-w-[220px]">
 						<Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
 						<input
 							value={q}

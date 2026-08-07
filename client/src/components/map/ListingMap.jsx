@@ -1,6 +1,6 @@
 import { MapContainer, TileLayer, Marker, Circle } from 'react-leaflet';
 import { Info, BadgeCheck } from 'lucide-react';
-import { TILE_URL, TILE_ATTRIBUTION, pinMarker, PRECISION_COPY, coordsOf } from './mapSetup';
+import { TILE_URL, TILE_ATTRIBUTION, pinMarker, PRECISION_COPY, coordsOf, mapFrameHeight } from './mapSetup';
 import './map.css';
 
 /**
@@ -23,7 +23,7 @@ export default function ListingMap({ listing, height = 320 }) {
 
 	return (
 		<div>
-			<div className="overflow-hidden rounded-xl border border-muted/10" style={{ height }}>
+			<div className="overflow-hidden rounded-xl border border-muted/10" style={{ height: mapFrameHeight(height) }}>
 				<MapContainer
 					center={center}
 					zoom={zoom}

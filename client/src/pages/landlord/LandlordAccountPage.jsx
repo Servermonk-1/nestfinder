@@ -36,7 +36,7 @@ export default function LandlordAccountPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
 
-			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">
+			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
 				<div className="mx-auto max-w-3xl">
 					<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 						<span className="h-px w-6 bg-primary/50" /> Your account
@@ -47,7 +47,7 @@ export default function LandlordAccountPage() {
 				</div>
 			</div>
 
-			<div className="mx-auto max-w-3xl space-y-6 px-6 py-10">
+			<div className="mx-auto max-w-3xl space-y-6 px-4 py-10 sm:px-6">
 				{/* Identity */}
 				<motion.div
 					initial={{ opacity: 0, y: 12 }}
@@ -101,24 +101,24 @@ export default function LandlordAccountPage() {
 					initial={{ opacity: 0, y: 12 }}
 					animate={{ opacity: 1, y: 0 }}
 					transition={{ delay: 0.1 }}
-					className="grid grid-cols-3 gap-4"
+					className="grid grid-cols-3 gap-3 sm:gap-4"
 				>
 					<button
 						onClick={() => navigate('/landlord/dashboard')}
-						className="rounded-2xl border border-line bg-surface p-5 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40"
+						className="rounded-2xl border border-line bg-surface p-4 text-left shadow-card transition hover:-translate-y-0.5 hover:border-primary/40 sm:p-5"
 					>
 						<Home className="h-5 w-5 text-primary-ink" />
-						<p className="mt-3 font-serif text-2xl font-bold text-text">{stats.listings}</p>
+						<p className="mt-3 font-serif text-xl font-bold text-text sm:text-2xl">{stats.listings}</p>
 						<p className="text-xs text-muted">Listings</p>
 					</button>
-					<div className="rounded-2xl border border-line bg-surface p-5 shadow-card">
+					<div className="rounded-2xl border border-line bg-surface p-4 shadow-card sm:p-5">
 						<Eye className="h-5 w-5 text-primary-ink" />
-						<p className="mt-3 font-serif text-2xl font-bold text-text">{stats.views}</p>
+						<p className="mt-3 font-serif text-xl font-bold text-text sm:text-2xl">{stats.views}</p>
 						<p className="text-xs text-muted">Total views</p>
 					</div>
-					<div className={`rounded-2xl border p-5 shadow-card ${stats.flagged ? 'border-danger/30 bg-danger/5' : 'border-line bg-surface'}`}>
+					<div className={`rounded-2xl border p-4 shadow-card sm:p-5 ${stats.flagged ? 'border-danger/30 bg-danger/5' : 'border-line bg-surface'}`}>
 						<Flag className={`h-5 w-5 ${stats.flagged ? 'text-danger-ink' : 'text-muted'}`} />
-						<p className="mt-3 font-serif text-2xl font-bold text-text">{stats.flagged}</p>
+						<p className="mt-3 font-serif text-xl font-bold text-text sm:text-2xl">{stats.flagged}</p>
 						<p className="text-xs text-muted">Flagged</p>
 					</div>
 				</motion.div>

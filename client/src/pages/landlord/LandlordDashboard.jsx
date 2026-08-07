@@ -161,14 +161,14 @@ export default function LandlordDashboard() {
 				</div>
 
 				{!loading && listings.length > 0 && (
-					<div className="mt-6 grid grid-cols-3 gap-3">
+					<div className="mt-6 grid grid-cols-3 gap-2 sm:gap-3">
 						{[
 							{ label: 'Listings', value: listings.length },
 							{ label: 'Available', value: availableCount },
 							{ label: 'Total Views', value: totalViews },
 						].map((s) => (
-							<div key={s.label} className="rounded-xl border border-line bg-surface p-4 text-center shadow-card">
-								<p className="font-serif text-2xl font-bold text-primary-ink">{s.value}</p>
+							<div key={s.label} className="rounded-xl border border-line bg-surface p-3 text-center shadow-card sm:p-4">
+								<p className="font-serif text-xl font-bold text-primary-ink sm:text-2xl">{s.value}</p>
 								<p className="mt-0.5 text-xs font-semibold uppercase tracking-wide text-muted">{s.label}</p>
 							</div>
 						))}

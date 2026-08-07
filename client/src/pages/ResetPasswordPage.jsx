@@ -50,7 +50,7 @@ export default function ResetPasswordPage() {
 				<motion.div
 					initial={{ opacity: 0, y: 18 }}
 					animate={{ opacity: 1, y: 0 }}
-					className="glass-strong relative w-full max-w-md rounded-3xl p-8 text-center shadow-card-lg"
+					className="glass-strong relative w-full max-w-md rounded-3xl p-6 text-center shadow-card-lg sm:p-8"
 				>
 					<div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-danger/10">
 						<ShieldAlert className="h-8 w-8 text-danger-ink" />
@@ -88,7 +88,7 @@ export default function ResetPasswordPage() {
 			<motion.div
 				initial={{ opacity: 0, y: 18 }}
 				animate={{ opacity: 1, y: 0 }}
-				className="glass-strong relative w-full max-w-md rounded-3xl p-8 shadow-card-lg"
+				className="glass-strong relative w-full max-w-md rounded-3xl p-6 shadow-card-lg sm:p-8"
 			>
 				<div className="relative mx-auto mb-5 h-16 w-16">
 					<div className="absolute inset-0 rounded-2xl bg-primary/40 blur-lg animate-glow-pulse" />

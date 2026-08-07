@@ -8,6 +8,7 @@ import api from '../../services/api';
 import { getDeviceToken, saveDeviceToken } from '../../utils/deviceTrust';
 import Turnstile, { captchaEnabled } from '../../components/common/Turnstile';
 import BrandMark from '../../components/common/Logo';
+import { useIsDesktop } from '../../hooks/useMediaQuery';
 
 /* Bright ambient backdrop — soft colour washes + fine grid */
 function AuthBackdrop() {
@@ -58,6 +59,11 @@ const Logo = () => (
 export default function StudentAuth() {
 	const navigate = useNavigate();
 	const { login } = useAuth();
+	// The sliding split-panel only works where there are two halves to slide
+	// between. Below md the panels stack and we show one form at a time, so the
+	// animation has to be switched off from JS — framer-motion writes `x` as an
+	// inline transform that no responsive utility can override.
+	const isDesktop = useIsDesktop();
 	const [isSignIn, setIsSignIn] = useState(true);
 	const [showPassword, setShowPassword] = useState(false);
 	const [loading, setLoading] = useState(false);
@@ -185,7 +191,7 @@ export default function StudentAuth() {
 				<motion.div
 					initial={{ opacity: 0, y: 18 }}
 					animate={{ opacity: 1, y: 0 }}
-					className="glass-strong relative w-full max-w-md rounded-3xl p-8 shadow-card-lg"
+					className="glass-strong relative w-full max-w-md rounded-3xl p-6 shadow-card-lg sm:p-8"
 				>
 					<button
 						onClick={() => { setOtpStage(null); setOtpCode(''); }}
@@ -214,7 +220,7 @@ export default function StudentAuth() {
 							value={otpCode}
 							onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
 							placeholder="••••••"
-							className="w-full rounded-2xl border border-line bg-surface-alt py-4 text-center font-serif text-3xl font-bold tracking-[0.55em] text-text outline-none transition focus:border-primary/60 focus:bg-white focus:ring-2 focus:ring-primary/20"
+							className="w-full rounded-2xl border border-line bg-surface-alt py-4 text-center font-serif text-2xl font-bold tracking-[0.35em] text-text outline-none sm:text-3xl sm:tracking-[0.55em] transition focus:border-primary/60 focus:bg-white focus:ring-2 focus:ring-primary/20"
 						/>
 						<motion.button
 							type="submit"
@@ -256,19 +262,19 @@ export default function StudentAuth() {
 				initial={{ opacity: 0, y: 24 }}
 				animate={{ opacity: 1, y: 0 }}
 				transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-				className="glass-strong relative flex min-h-[640px] w-[1000px] max-w-full overflow-hidden rounded-none shadow-card-lg"
+				className="glass-strong relative flex w-full max-w-[1000px] overflow-hidden rounded-none shadow-card-lg md:min-h-[640px]"
 			>
 				{/* ══ SIGN IN FORM ══ */}
 				<motion.div
 					initial={false}
-					animate={{ x: isSignIn ? '0%' : '-100%', opacity: isSignIn ? 1 : 0 }}
+					animate={isDesktop ? { x: isSignIn ? '0%' : '-100%', opacity: isSignIn ? 1 : 0 } : { x: 0, opacity: 1 }}
 					transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-					style={{ pointerEvents: isSignIn ? 'all' : 'none' }}
-					className="absolute inset-y-0 left-0 z-10 flex w-1/2 items-center justify-center bg-surface/55 p-12"
+					style={{ pointerEvents: !isDesktop || isSignIn ? 'all' : 'none' }}
+					className={`${isSignIn ? 'flex' : 'hidden'} z-10 w-full items-center justify-center bg-surface/55 p-6 sm:p-8 md:absolute md:inset-y-0 md:left-0 md:flex md:w-1/2 md:p-12`}
 				>
 					<div className="w-full max-w-sm">
 						<Logo />
-						<h1 className="font-serif text-4xl font-extrabold leading-tight text-text">
+						<h1 className="font-serif text-3xl font-extrabold leading-tight text-text sm:text-4xl">
 							Welcome <span className="text-gradient">back</span>
 						</h1>
 						<p className="mb-8 mt-2 text-sm text-muted">Sign in to your accommodation dashboard</p>
@@ -311,7 +317,16 @@ export default function StudentAuth() {
 							</motion.button>
 						</form>
 
-						<p className="mt-7 text-center text-xs text-muted">
+						{/* The showcase panel carries the sign-up switch on desktop, but it
+						    is hidden on phones — so the toggle has to live here too. */}
+						<p className="mt-7 text-center text-xs text-muted md:hidden">
+							New to NestFinder?{' '}
+							<button type="button" onClick={switchToSignUp} className="font-bold text-primary-ink hover:underline">
+								Create an account
+							</button>
+						</p>
+
+						<p className="mt-3 text-center text-xs text-muted md:mt-7">
 							Are you a landlord?{' '}
 							<Link to="/landlord/login" className="font-bold text-primary-ink hover:underline">Login here</Link>
 						</p>
@@ -321,14 +336,14 @@ export default function StudentAuth() {
 				{/* ══ SIGN UP FORM ══ */}
 				<motion.div
 					initial={false}
-					animate={{ x: isSignIn ? '100%' : '0%', opacity: isSignIn ? 0 : 1 }}
+					animate={isDesktop ? { x: isSignIn ? '100%' : '0%', opacity: isSignIn ? 0 : 1 } : { x: 0, opacity: 1 }}
 					transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-					style={{ pointerEvents: isSignIn ? 'none' : 'all' }}
-					className="absolute inset-y-0 left-1/2 z-10 flex w-1/2 items-center justify-center bg-surface/55 p-12"
+					style={{ pointerEvents: !isDesktop || !isSignIn ? 'all' : 'none' }}
+					className={`${isSignIn ? 'hidden' : 'flex'} z-10 w-full items-center justify-center bg-surface/55 p-6 sm:p-8 md:absolute md:inset-y-0 md:left-1/2 md:flex md:w-1/2 md:p-12`}
 				>
 					<div className="w-full max-w-sm">
 						<Logo />
-						<h1 className="font-serif text-4xl font-extrabold leading-tight text-text">
+						<h1 className="font-serif text-3xl font-extrabold leading-tight text-text sm:text-4xl">
 							Create <span className="text-gradient">account</span>
 						</h1>
 						<p className="mb-6 mt-2 text-sm text-muted">Join thousands of SIWES students</p>
@@ -367,15 +382,25 @@ export default function StudentAuth() {
 									: 'Create Account'}
 							</motion.button>
 						</form>
+
+						{/* Mobile counterpart to the showcase panel's switch button. */}
+						<p className="mt-6 text-center text-xs text-muted md:hidden">
+							Already have an account?{' '}
+							<button type="button" onClick={switchToSignIn} className="font-bold text-primary-ink hover:underline">
+								Sign in
+							</button>
+						</p>
 					</div>
 				</motion.div>
 
 				{/* ══ VIVID SHOWCASE PANEL ══ */}
+				{/* Decorative, and there is no room for it beside a form on a phone —
+				    the switch button it carries is mirrored under each form instead. */}
 				<motion.div
 					initial={false}
 					animate={{ x: isSignIn ? '100%' : '0%' }}
 					transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-					className="absolute inset-y-0 left-0 z-20 w-1/2 overflow-hidden"
+					className="hidden overflow-hidden md:absolute md:inset-y-0 md:left-0 md:z-20 md:block md:w-1/2"
 				>
 					<div className="absolute inset-0 bg-brand-gradient" />
 					<div className="absolute inset-0 bg-grid opacity-20" />

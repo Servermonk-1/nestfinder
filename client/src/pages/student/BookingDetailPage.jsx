@@ -73,7 +73,7 @@ export default function BookingDetailPage() {
 		return (
 			<div className="min-h-screen bg-paper text-text">
 				{isLandlord ? <LandlordNavbar /> : <StudentNavbar />}
-				<div className="mx-auto max-w-2xl px-6 pt-40 text-center">
+				<div className="mx-auto max-w-2xl px-4 pt-40 text-center sm:px-6">
 					<h1 className="font-serif text-2xl font-bold">Booking not found</h1>
 					<Link to={isLandlord ? '/landlord/bookings' : '/bookings'} className="mt-4 inline-block font-bold text-primary-ink hover:underline">
 						Back to bookings
@@ -90,7 +90,7 @@ export default function BookingDetailPage() {
 		<div className="min-h-screen bg-paper text-text">
 			{isLandlord ? <LandlordNavbar /> : <StudentNavbar />}
 
-			<div className="mx-auto max-w-3xl px-6 pb-16 pt-28">
+			<div className="mx-auto max-w-3xl px-4 pb-16 pt-28 sm:px-6">
 				<button
 					onClick={() => navigate(isLandlord ? '/landlord/bookings' : '/bookings')}
 					className="mb-4 flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"

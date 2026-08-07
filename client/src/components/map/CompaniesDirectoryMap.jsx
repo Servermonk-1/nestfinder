@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Link } from 'react-router-dom';
 import L from 'leaflet';
 import { MapPinOff } from 'lucide-react';
-import { TILE_URL, TILE_ATTRIBUTION, coordsOf } from './mapSetup';
+import { TILE_URL, TILE_ATTRIBUTION, coordsOf, mapFrameHeight } from './mapSetup';
 import './map.css';
 
 const workplaceIcon = () =>
@@ -33,6 +33,7 @@ function FitAll({ points }) {
  * difference decides where a student can afford to live.
  */
 export default function CompaniesDirectoryMap({ companies = [], height = 620 }) {
+	const frameHeight = mapFrameHeight(height);
 	const placed = useMemo(
 		() => companies.map((c) => ({ company: c, position: coordsOf(c) })).filter((m) => m.position),
 		[companies]
@@ -42,7 +43,7 @@ export default function CompaniesDirectoryMap({ companies = [], height = 620 }) 
 
 	if (!placed.length) {
 		return (
-			<div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-muted/15 bg-surface px-6 text-center" style={{ height }}>
+			<div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-muted/15 bg-surface px-6 text-center" style={{ height: frameHeight }}>
 				<MapPinOff className="h-8 w-8 text-muted" />
 				<p className="font-serif text-xl font-bold text-ink">Nothing to map</p>
 				<p className="max-w-sm text-sm text-muted">None of these placement centres have been located yet.</p>
@@ -52,7 +53,7 @@ export default function CompaniesDirectoryMap({ companies = [], height = 620 }) 
 
 	return (
 		<div>
-			<div className="overflow-hidden rounded-2xl border border-muted/15" style={{ height }}>
+			<div className="overflow-hidden rounded-2xl border border-muted/15" style={{ height: frameHeight }}>
 				<MapContainer center={points[0]} zoom={12} scrollWheelZoom style={{ height: '100%', width: '100%' }}>
 					<TileLayer url={TILE_URL} attribution={TILE_ATTRIBUTION} />
 					<FitAll points={points} />

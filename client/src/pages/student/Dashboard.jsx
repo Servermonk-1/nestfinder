@@ -5,6 +5,7 @@ import { SlidersHorizontal, X, TrendingUp, ChevronDown, Search, Map, LayoutGrid,
 import FilterPanel from '../../components/search/FilterPanel';
 import ListingGrid from '../../components/listing/ListingGrid';
 import ListingsMap from '../../components/map/ListingsMap';
+import { mapFrameHeight } from '../../components/map/mapSetup';
 import SaveSearchButton from '../../components/search/SaveSearchButton';
 import CompareBar from '../../components/listing/CompareBar';
 import StudentNavbar from '../../components/common/StudentNavbar';
@@ -150,7 +151,7 @@ export default function Dashboard() {
 			<StudentNavbar onRestartTour={tour.start} />
 
 			{/* ── Page Header ── */}
-			<div className="border-b border-line bg-surface/70 px-6 pt-28 pb-8">
+			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
 				<div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4">
 					<div>
 						<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
@@ -212,8 +213,8 @@ export default function Dashboard() {
 			</div>
 
 			{/* ── Main Layout ── */}
-			<div className="w-full max-w-full px-6 py-10">
-				<div className="flex gap-10">
+			<div className="w-full max-w-full px-4 py-10 sm:px-6">
+				<div className="flex gap-6 xl:gap-10">
 
 					{/* ── Sidebar Filter (Desktop) ── */}
 					<aside id="tour-filters" className="hidden lg:block w-72 flex-shrink-0">
@@ -370,7 +371,7 @@ export default function Dashboard() {
 						{/* Results */}
 						{view === 'map' ? (
 							loading ? (
-								<div className="flex items-center justify-center rounded-2xl border border-muted/15 bg-surface" style={{ height: 620 }}>
+								<div className="flex items-center justify-center rounded-2xl border border-muted/15 bg-surface" style={{ height: mapFrameHeight(620) }}>
 									<span className="text-sm text-muted">Loading map…</span>
 								</div>
 							) : (
