@@ -111,9 +111,9 @@ export default function MessagesPage() {
 					Messages
 				</motion.h1>
 
-				<div className="grid overflow-hidden rounded-2xl border border-line bg-surface shadow-card md:grid-cols-[320px_1fr]" style={{ minHeight: '65vh' }}>
+				<div className="grid h-[calc(100dvh-190px)] max-h-[900px] min-h-[420px] overflow-hidden rounded-2xl border border-line bg-surface shadow-card md:h-[calc(100dvh-210px)] md:grid-cols-[320px_1fr]">
 					{/* Conversation list */}
-					<div className={`border-r border-line ${activeId ? 'hidden md:block' : 'block'}`}>
+					<div className={`overflow-y-auto border-r border-line ${activeId ? 'hidden md:block' : 'block'}`}>
 						{loadingList ? (
 							<div className="p-6 text-sm text-muted">Loading conversations…</div>
 						) : conversations.length === 0 ? (
@@ -153,7 +153,7 @@ export default function MessagesPage() {
 					</div>
 
 					{/* Thread */}
-					<div className={`flex flex-col ${activeId ? 'flex' : 'hidden md:flex'}`}>
+					<div className={`min-h-0 flex-col ${activeId ? 'flex' : 'hidden md:flex'}`}>
 						{!activeConversation ? (
 							<div className="flex h-full flex-col items-center justify-center p-8 text-center">
 								<MessageCircle className="h-10 w-10 text-muted" />
@@ -161,7 +161,7 @@ export default function MessagesPage() {
 							</div>
 						) : (
 							<>
-								<div className="flex items-center gap-3 border-b border-line p-4">
+								<div className="flex shrink-0 items-center gap-2 border-b border-line p-3 sm:gap-3 sm:p-4">
 									<button onClick={() => setActiveId(null)} aria-label="Back to conversations" className="text-muted hover:text-text md:hidden">
 										<ArrowLeft className="h-5 w-5" />
 									</button>
@@ -190,7 +190,7 @@ export default function MessagesPage() {
 
 								<SafetyTipsBanner />
 
-								<div className="flex-1 space-y-3 overflow-y-auto bg-paper/40 p-4">
+								<div className="min-h-0 flex-1 space-y-3 overflow-y-auto bg-paper/40 p-4">
 									{loadingThread ? (
 										<p className="text-sm text-muted">Loading messages…</p>
 									) : messages.length === 0 ? (
@@ -232,7 +232,7 @@ export default function MessagesPage() {
 										</p>
 									</div>
 								) : (
-								<form onSubmit={handleSend} className="flex items-center gap-2 border-t border-line p-4">
+								<form onSubmit={handleSend} className="flex shrink-0 items-center gap-2 border-t border-line p-3 sm:p-4">
 									<input
 										type="text"
 										value={draft}

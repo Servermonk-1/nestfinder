@@ -2,6 +2,16 @@ import { useState, useLayoutEffect, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const PADDING = 8;
+// Below this the tooltip is nearly as wide as the screen, so there is no room
+// beside a target for a left/right placement — see resolvePlacement.
+const NARROW = 640;
+// 18rem — so 288px on desktop, but 270px below `sm` where index.css drops the
+// root to 15px. Both estimates here are deliberately the larger desktop value:
+// over-estimating only insets the card further from the edge, which is safe,
+// whereas under-estimating would let it hang off.
+const TIP_W = 288;
+const TIP_H = 280;   // approx. rendered card height, incl. the 16px gap
+const MARGIN = 12;   // keeps the card off the very edge of the screen
 
 function measure(selector) {
 	const el = document.querySelector(selector);
@@ -11,12 +21,36 @@ function measure(selector) {
 	return rect;
 }
 
+/**
+ * On a phone a 288px tooltip cannot sit beside a target that already spans the
+ * screen — `left`/`right` pushed it almost entirely out of view. Collapse those
+ * to a vertical placement, then make sure the vertical side actually has room;
+ * otherwise a target near the bottom of the screen pushes the card off it.
+ */
+function resolvePlacement(rect, placement) {
+	if (window.innerWidth >= NARROW) return placement;
+	const spaceAbove = rect.top;
+	const spaceBelow = window.innerHeight - rect.bottom;
+	const roomier = spaceBelow >= spaceAbove ? 'bottom' : 'top';
+
+	if (placement === 'left' || placement === 'right') return roomier;
+	// Keep the authored side when it fits, else flip to the roomier one.
+	if (placement === 'bottom' && spaceBelow < TIP_H) return roomier;
+	if (placement === 'top' && spaceAbove < TIP_H) return roomier;
+	return placement;
+}
+
 /** Tooltip position + arrow direction, anchored via CSS transform so we never need the tooltip's own size. */
 function tooltipStyle(rect, placement) {
 	const gap = 16;
 	const vw = window.innerWidth;
 	const vh = window.innerHeight;
-	const clampX = (x) => Math.min(Math.max(x, 170), vw - 170);
+	// The tooltip is centred on these coordinates, so the centre has to stay at
+	// least half a tooltip away from each edge or the card hangs off the screen.
+	// On a 360px phone the old fixed 170px inset left a 20px window and still
+	// overflowed; half the real width is the value that actually fits.
+	const halfTip = Math.min(TIP_W, vw - MARGIN * 2) / 2;
+	const clampX = (x) => Math.min(Math.max(x, halfTip + MARGIN), vw - halfTip - MARGIN);
 	const clampY = (y) => Math.min(Math.max(y, 130), vh - 130);
 
 	switch (placement) {
@@ -92,7 +126,7 @@ export default function TourSpotlight({ step, stepIndex, totalSteps, onNext, onP
 		width: rect.width + PADDING * 2,
 		height: rect.height + PADDING * 2,
 	};
-	const placement = step.placement || 'bottom';
+	const placement = resolvePlacement(rect, step.placement || 'bottom');
 	const arrowPlacement = { top: 'bottom', bottom: 'top', left: 'right', right: 'left' }[placement];
 
 	return (
@@ -112,7 +146,9 @@ export default function TourSpotlight({ step, stepIndex, totalSteps, onNext, onP
 				style={cutout}
 			/>
 
-			<div className="fixed w-72" style={tooltipStyle(rect, placement)}>
+			{/* w-72 on anything but the narrowest phones; below that the card
+			    takes the screen minus a small margin so it can never hang off. */}
+			<div className="fixed w-[min(18rem,calc(100vw-24px))]" style={tooltipStyle(rect, placement)}>
 				<AnimatePresence mode="wait">
 					<motion.div
 						key={stepIndex}

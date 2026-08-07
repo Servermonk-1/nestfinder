@@ -151,8 +151,8 @@ export default function Dashboard() {
 			<StudentNavbar onRestartTour={tour.start} />
 
 			{/* ── Page Header ── */}
-			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
-				<div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-4">
+			<div className="border-b border-line bg-surface/70 px-4 pt-24 pb-5 sm:px-6 sm:pt-28 sm:pb-8">
+				<div className="mx-auto flex max-w-7xl flex-wrap items-end justify-between gap-3 sm:gap-4">
 					<div>
 						<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 							<span className="h-px w-6 bg-primary/50" /> Student dashboard
@@ -213,7 +213,7 @@ export default function Dashboard() {
 			</div>
 
 			{/* ── Main Layout ── */}
-			<div className="w-full max-w-full px-4 py-10 sm:px-6">
+			<div className="w-full max-w-full px-4 py-6 sm:px-6 sm:py-10">
 				<div className="flex gap-6 xl:gap-10">
 
 					{/* ── Sidebar Filter (Desktop) ── */}

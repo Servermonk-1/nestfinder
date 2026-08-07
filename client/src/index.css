@@ -29,6 +29,30 @@
     min-height: 100%;
   }
 
+  /*
+   * The type scale in tailwind.config.js is lifted one notch on purpose — 14px
+   * body read as small on a desktop mock. On an actual 360px phone that same
+   * lift is what makes every card, heading and stat tile feel oversized: a
+   * `text-3xl` section heading is 32px on a screen a fifth the width of the
+   * one it was judged on.
+   *
+   * Every size in this system — font sizes, but also Tailwind's padding,
+   * margin, gap and width scales — is expressed in `rem`, so the root font
+   * size is a single proportional lever over the whole interface. Dropping it
+   * to 15px below `sm` shrinks type AND spacing by 6.25% together, which keeps
+   * the design's proportions exactly as drawn instead of shrinking text inside
+   * unchanged padding (the thing that actually looks broken).
+   *
+   * Concretely: body 17px → 15.9px, section headings 32px → 30px, card padding
+   * 24px → 22.5px. The 16px input floor above is set in `px`, so it is immune
+   * to this and keeps holding off the iOS focus-zoom.
+   */
+  @media (max-width: 639px) {
+    html {
+      font-size: 15px;
+    }
+  }
+
   body {
     font-family: 'Archivo', system-ui, sans-serif;
     color: #141F33;

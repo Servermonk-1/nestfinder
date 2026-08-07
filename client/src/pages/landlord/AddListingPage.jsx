@@ -44,7 +44,7 @@ export default function AddListingPage() {
 	return (
 		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
-			<div className="mx-auto max-w-3xl px-4 pb-16 pt-28 md:px-8">
+			<div className="mx-auto max-w-3xl px-4 pb-12 pt-24 sm:pb-16 sm:pt-28 md:px-8">
 				<button
 					onClick={() => navigate('/landlord/dashboard')}
 					className="mb-4 flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"

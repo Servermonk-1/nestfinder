@@ -50,7 +50,7 @@ export default function SavedSearchesPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
-			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
+			<div className="border-b border-line bg-surface/70 px-4 pt-24 pb-5 sm:px-6 sm:pt-28 sm:pb-8">
 				<div className="mx-auto max-w-4xl">
 					<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="label-meta mb-2 inline-flex items-center gap-2">
 						<span className="h-px w-6 bg-primary/50" /> Student dashboard

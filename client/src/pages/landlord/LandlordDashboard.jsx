@@ -134,7 +134,7 @@ export default function LandlordDashboard() {
 	return (
 		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
-			<div className="mx-auto max-w-5xl px-4 pb-16 pt-28 md:px-8">
+			<div className="mx-auto max-w-5xl px-4 pb-12 pt-24 sm:pb-16 sm:pt-28 md:px-8">
 				<div className="flex flex-wrap items-center justify-between gap-4">
 					<motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
 						<AvatarUpload size="md" />

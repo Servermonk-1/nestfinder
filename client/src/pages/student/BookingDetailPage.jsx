@@ -90,7 +90,7 @@ export default function BookingDetailPage() {
 		<div className="min-h-screen bg-paper text-text">
 			{isLandlord ? <LandlordNavbar /> : <StudentNavbar />}
 
-			<div className="mx-auto max-w-3xl px-4 pb-16 pt-28 sm:px-6">
+			<div className="mx-auto max-w-3xl px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28">
 				<button
 					onClick={() => navigate(isLandlord ? '/landlord/bookings' : '/bookings')}
 					className="mb-4 flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"

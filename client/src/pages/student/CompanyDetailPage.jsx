@@ -143,7 +143,7 @@ export default function CompanyDetailPage() {
 				/>
 			)}
 
-			<div className="mx-auto max-w-5xl px-4 pb-16 pt-28 sm:px-6">
+			<div className="mx-auto max-w-5xl px-4 pb-12 pt-24 sm:px-6 sm:pb-16 sm:pt-28">
 				<button
 					onClick={() => navigate('/companies')}
 					className="mb-4 flex items-center gap-2 text-sm font-semibold text-muted transition hover:text-text"

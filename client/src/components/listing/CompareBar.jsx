@@ -19,8 +19,13 @@ export default function CompareBar() {
 					id="tour-compare-bar"
 					className="fixed bottom-24 left-1/2 z-50 w-full max-w-2xl -translate-x-1/2 px-4 md:bottom-6"
 				>
-					<div className="glass-strong rounded-2xl border border-line p-4 shadow-card-lg">
-						<div className="flex items-center gap-4">
+					<div className="glass-strong rounded-2xl border border-line p-3 shadow-card-lg sm:p-4">
+						{/* Chips and actions share one row from sm up. On a phone they
+						    cannot: the action cluster alone is ~200px and a single chip
+						    is ~160px, which exceeds the 296px available at 360px and
+						    pushed the Compare button off the right edge. Stacking is
+						    what keeps it reachable. */}
+						<div className="flex flex-col gap-2.5 sm:flex-row sm:items-center sm:gap-4">
 
 							{/* Icon */}
 							<div className="hidden w-9 h-9 bg-primary/20 rounded-xl sm:flex items-center justify-center flex-shrink-0">
@@ -28,7 +33,7 @@ export default function CompareBar() {
 							</div>
 
 							{/* Selected listings */}
-							<div className="flex-1 flex flex-wrap gap-2 overflow-y-auto sm:flex-nowrap sm:items-center sm:gap-3 sm:overflow-hidden sm:overflow-x-auto">
+							<div className="flex min-w-0 flex-1 flex-wrap gap-2 sm:flex-nowrap sm:items-center sm:gap-3 sm:overflow-hidden sm:overflow-x-auto">
 								{compareList.map((listing) => (
 									<motion.div
 										key={listing._id}
@@ -62,7 +67,7 @@ export default function CompareBar() {
 							</div>
 
 							{/* Actions */}
-							<div className="flex items-center gap-2 flex-shrink-0">
+							<div className="flex shrink-0 items-center justify-between gap-2 sm:justify-start">
 								<button
 									onClick={clearCompare}
 									className="text-muted hover:text-text text-xs transition-colors px-2"
@@ -74,7 +79,7 @@ export default function CompareBar() {
 									disabled={selectedCount < 2}
 									whileHover={{ scale: 1.03 }}
 									whileTap={{ scale: 0.97 }}
-									className="flex items-center gap-2 bg-brand-gradient text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-glow-sm hover:shadow-glow"
+									className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-gradient px-5 py-2.5 text-sm font-bold text-white shadow-glow-sm transition-all hover:shadow-glow disabled:cursor-not-allowed disabled:opacity-50 sm:flex-initial"
 								>
 									Compare ({compareList.length})
 									<ArrowRight className="w-4 h-4" />

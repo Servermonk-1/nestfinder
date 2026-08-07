@@ -27,7 +27,7 @@ export default function AccountPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<StudentNavbar />
 
-			<div className="border-b border-line bg-surface/70 px-4 pt-28 pb-8 sm:px-6">
+			<div className="border-b border-line bg-surface/70 px-4 pt-24 pb-5 sm:px-6 sm:pt-28 sm:pb-8">
 				<div className="mx-auto max-w-3xl">
 					<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 						<span className="h-px w-6 bg-primary/50" /> Your account
@@ -38,7 +38,7 @@ export default function AccountPage() {
 				</div>
 			</div>
 
-			<div className="max-w-3xl mx-auto px-4 py-10 space-y-6 sm:px-6">
+			<div className="mx-auto max-w-3xl space-y-5 px-4 py-6 sm:space-y-6 sm:px-6 sm:py-10">
 				{/* Profile card */}
 				<motion.div
 					initial={{ opacity: 0, y: 12 }}

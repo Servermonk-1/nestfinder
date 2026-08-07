@@ -104,7 +104,7 @@ export default function LandlordMessagesPage() {
 		<div className="min-h-screen bg-paper text-text">
 			<LandlordNavbar />
 
-			<div className="mx-auto max-w-7xl px-4 pb-10 pt-28 md:px-8">
+			<div className="mx-auto max-w-7xl px-4 pb-6 pt-24 sm:pb-10 sm:pt-28 md:px-8">
 				<motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mb-2 inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.24em] text-primary-ink">
 					<span className="h-px w-6 bg-primary/50" /> Messages
 				</motion.p>
@@ -117,9 +117,13 @@ export default function LandlordMessagesPage() {
 				</motion.h1>
 				<p className="mb-6 text-sm text-muted">Reply to students asking about your listings.</p>
 
-				<div className="grid overflow-hidden rounded-2xl border border-line bg-surface md:grid-cols-[320px_1fr]" style={{ minHeight: '65vh' }}>
+				{/* The mobile subtraction is larger than the student page's because this
+				    header carries an eyebrow, a "Welcome" line AND a subtitle above the
+				    grid (~192px at 360px). Subtracting only 190px overshot the viewport
+				    and put the composer right on the fold. */}
+				<div className="grid h-[calc(100dvh-235px)] max-h-[900px] min-h-[420px] overflow-hidden rounded-2xl border border-line bg-surface md:h-[calc(100dvh-210px)] md:grid-cols-[320px_1fr]">
 					{/* Conversation list */}
-					<div className={`border-r border-line ${activeId ? 'hidden md:block' : 'block'}`}>
+					<div className={`overflow-y-auto border-r border-line ${activeId ? 'hidden md:block' : 'block'}`}>
 						{loadingList ? (
 							<div className="p-6 text-sm text-muted">Loading conversations…</div>
 						) : conversations.length === 0 ? (
@@ -161,7 +165,7 @@ export default function LandlordMessagesPage() {
 					</div>
 
 					{/* Thread */}
-					<div className={`flex flex-col ${activeId ? 'flex' : 'hidden md:flex'}`}>
+					<div className={`min-h-0 flex-col ${activeId ? 'flex' : 'hidden md:flex'}`}>
 						{!activeConversation ? (
 							<div className="flex h-full flex-col items-center justify-center p-8 text-center">
 								<MessageCircle className="h-10 w-10 text-muted" />
@@ -169,7 +173,7 @@ export default function LandlordMessagesPage() {
 							</div>
 						) : (
 							<>
-								<div className="flex items-center gap-3 border-b border-line p-4">
+								<div className="flex shrink-0 items-center gap-2 border-b border-line p-3 sm:gap-3 sm:p-4">
 									<button onClick={() => setActiveId(null)} aria-label="Back to conversations" className="text-muted hover:text-text md:hidden">
 										<ArrowLeft className="h-5 w-5" />
 									</button>
@@ -195,7 +199,7 @@ export default function LandlordMessagesPage() {
 
 								<SafetyTipsBanner />
 
-								<div className="flex-1 space-y-3 overflow-y-auto p-4">
+								<div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-4">
 									{loadingThread ? (
 										<p className="text-sm text-muted">Loading messages…</p>
 									) : messages.length === 0 ? (
@@ -242,7 +246,7 @@ export default function LandlordMessagesPage() {
 										</p>
 									</div>
 								) : (
-								<form onSubmit={handleSend} className="flex items-center gap-2 border-t border-line p-4">
+								<form onSubmit={handleSend} className="flex shrink-0 items-center gap-2 border-t border-line p-3 sm:p-4">
 									<input
 										type="text"
 										value={draft}
